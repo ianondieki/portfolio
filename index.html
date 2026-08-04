@@ -1,0 +1,2739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ian Ondieki — Software Engineer & Agentic AI developer in Nairobi. Agentic automations, RAG chatbots, and systems wired into WhatsApp, Calendar, Gmail, Sheets, and payment rails. ex-Safaricom NOC." />
+  <meta name="theme-color" content="#0C1018" />
+  <meta property="og:title" content="Ian Ondieki — Agentic AI & Automation" />
+  <meta property="og:description" content="Software engineer building agentic systems, RAG chatbots, and real API automations. Nairobi, Kenya · ex-Safaricom NOC." />
+  <meta property="og:type" content="website" />
+  <title>Ian Ondieki — Software Engineer · Agentic AI & Automation</title>
+
+  <!-- Favicon: node-graph mark -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2310151F'/%3E%3Ccircle cx='8' cy='16' r='3' fill='%230F8B5C'/%3E%3Ccircle cx='24' cy='10' r='2.5' fill='%23E8A33D'/%3E%3Ccircle cx='24' cy='22' r='2.5' fill='%23EDEAE2'/%3E%3Cpath d='M11 16 L21.5 10.5 M11 16 L21.5 21.5' stroke='%230F8B5C' stroke-width='1.5' fill='none' opacity='0.85'/%3E%3C/svg%3E" />
+
+  <!--
+    FONT LOADING
+    Display: Space Grotesk (headings)
+    Body:    DM Sans (readable UI copy)
+    Mono:    JetBrains Mono (tags, labels, payloads, code)
+    Tweak: swap family names here + in Tailwind fontFamily config below.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    /* ─── PALETTE & TYPE TOKENS (tweak here) ─── */
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base: '#0C1018',
+            surface: '#161D2A',
+            'surface-2': '#1E2736',
+            forest: {
+              DEFAULT: '#0F8B5C',
+              dim: '#0A6B47',
+              glow: '#14A870',
+            },
+            gold: {
+              DEFAULT: '#E8A33D',
+              dim: '#C4882E',
+            },
+            rust: {
+              DEFAULT: '#B8492E',
+              dim: '#8F3722',
+            },
+            ink: {
+              DEFAULT: '#F2EFE6',
+              mute: '#B0ABA0',
+              faint: '#7A766C',
+            },
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+            body: ['"DM Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+          },
+          maxWidth: {
+            content: '72rem',
+          },
+          boxShadow: {
+            glow: '0 0 40px -8px rgba(15, 139, 92, 0.35)',
+            panel: '0 1px 0 0 rgba(237, 234, 226, 0.04) inset',
+          },
+          animation: {
+            'pulse-dot': 'pulse-dot 2.4s ease-in-out infinite',
+            'fade-up': 'fade-up 0.7s ease-out both',
+          },
+          keyframes: {
+            'pulse-dot': {
+              '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+              '50%': { opacity: '0.55', transform: 'scale(0.85)' },
+            },
+            'fade-up': {
+              from: { opacity: '0', transform: 'translateY(16px)' },
+              to: { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ═══════════════════════════════════════════
+       CUSTOM STYLES — node graphs, motion, a11y
+       Comment blocks mark easy tweak zones.
+       ═══════════════════════════════════════════ */
+
+    :root {
+      --base: #0C1018;
+      --base-mid: #10151F;
+      --surface: #161D2A;
+      --surface-2: #1E2736;
+      --forest: #0F8B5C;
+      --forest-glow: #14A870;
+      --gold: #E8A33D;
+      --rust: #B8492E;
+      --ink: #F2EFE6;
+      --ink-mute: #B0ABA0;
+      --ink-faint: #7A766C;
+      --edge: rgba(237, 234, 226, 0.075);
+      --edge-strong: rgba(15, 139, 92, 0.45);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+
+    body {
+      /* Quiet base only — section bands carry diversity (not one stretched wash) */
+      background-color: var(--base);
+      color: var(--ink);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      overflow-x: hidden;
+      min-height: 100%;
+    }
+
+    /*
+      GLOBAL AMBIENT — intentionally soft.
+      Section bands do the heavy lifting; this only adds grain + tiny color air.
+    */
+    .site-ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .site-ambient .mesh {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.28;
+      /* no permanent will-change — keeps scroll memory lower */
+    }
+    .site-ambient .mesh-a {
+      width: min(42vw, 400px);
+      height: min(42vw, 400px);
+      top: -12%;
+      right: -6%;
+      background: radial-gradient(circle, rgba(15, 139, 92, 0.35) 0%, transparent 70%);
+      animation: mesh-drift-a 26s ease-in-out infinite alternate;
+    }
+    .site-ambient .mesh-b {
+      width: min(36vw, 340px);
+      height: min(36vw, 340px);
+      bottom: 8%;
+      left: -8%;
+      background: radial-gradient(circle, rgba(232, 163, 61, 0.18) 0%, transparent 70%);
+      animation: mesh-drift-b 32s ease-in-out infinite alternate;
+    }
+    .site-ambient .mesh-c {
+      display: none; /* was overstretching mid-page; section bands replace this */
+    }
+    @keyframes mesh-drift-a {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(-4%, 6%) scale(1.06); }
+    }
+    @keyframes mesh-drift-b {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(6%, -4%) scale(1.08); }
+    }
+
+    .site-ambient .grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.028;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+    }
+
+    .site-ambient .vignette {
+      /* Lighter global vignette — sections own their edges */
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 90% 80% at 50% 30%, transparent 40%, rgba(8, 10, 14, 0.25) 100%);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION BAND SYSTEM
+       Alternating plates: deep / lift / console / stage / panel.
+       Soft top hairlines + local radial light — never harsh blocks.
+       Tweak palette per band below without touching content.
+       ═══════════════════════════════════════════════════════════ */
+    .band {
+      position: relative;
+      isolation: isolate;
+    }
+    /* Soft seam between bands */
+    .band::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 1px;
+      z-index: 3;
+      pointer-events: none;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(15, 139, 92, 0.22) 20%,
+        rgba(237, 234, 226, 0.1) 50%,
+        rgba(232, 163, 61, 0.12) 80%,
+        transparent 100%
+      );
+      opacity: 0.85;
+    }
+    #top.band::before {
+      display: none; /* hero has no top seam */
+    }
+    /* Content wrapper stays above decorative band layers (grids, glows) */
+    .band-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HERO — deepest, cinematic, graph-friendly */
+    .band-hero {
+      background:
+        radial-gradient(ellipse 90% 70% at 70% 30%, rgba(15, 139, 92, 0.1) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 10% 90%, rgba(232, 163, 61, 0.05) 0%, transparent 50%),
+        linear-gradient(165deg, #0E1520 0%, #0A0E15 48%, #080C12 100%);
+    }
+
+    /* ABOUT — quiet lift, readable essay band */
+    .band-about {
+      background:
+        radial-gradient(ellipse 70% 50% at 20% 0%, rgba(30, 40, 56, 0.55) 0%, transparent 60%),
+        linear-gradient(180deg, #121820 0%, #10161F 100%);
+    }
+
+    /* EXPERIENCE — cooler console plate (ops feel) */
+    .band-console {
+      background:
+        radial-gradient(ellipse 60% 45% at 85% 20%, rgba(15, 139, 92, 0.09) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 10% 80%, rgba(20, 50, 70, 0.25) 0%, transparent 50%),
+        linear-gradient(180deg, #0A1018 0%, #0C131C 45%, #0A0F16 100%);
+    }
+    .band-console::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      background-image:
+        linear-gradient(rgba(237, 234, 226, 0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(237, 234, 226, 0.018) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, black 0%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, black 0%, transparent 75%);
+    }
+    .band-console > .band-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* PROJECTS — stage: slightly elevated, forest wash at top */
+    .band-stage {
+      background:
+        radial-gradient(ellipse 100% 55% at 50% -5%, rgba(15, 139, 92, 0.11) 0%, transparent 52%),
+        radial-gradient(ellipse 40% 30% at 100% 60%, rgba(232, 163, 61, 0.04) 0%, transparent 50%),
+        linear-gradient(180deg, #131B28 0%, #101722 40%, #0E1520 100%);
+    }
+
+    /* SKILLS — mid surface, crisp terminal cards */
+    .band-skills {
+      background:
+        radial-gradient(ellipse 50% 40% at 0% 50%, rgba(15, 139, 92, 0.06) 0%, transparent 55%),
+        linear-gradient(180deg, #0F151F 0%, #121A26 100%);
+    }
+
+    /* CERTS — warmer lift (gold whisper) for credential moment */
+    .band-certs {
+      background:
+        radial-gradient(ellipse 55% 45% at 75% 30%, rgba(232, 163, 61, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 35% at 15% 80%, rgba(15, 139, 92, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #141C2A 0%, #111822 100%);
+    }
+
+    /* CONTACT — close deep, quiet focus on CTAs */
+    .band-contact {
+      background:
+        radial-gradient(ellipse 70% 50% at 30% 0%, rgba(15, 139, 92, 0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #0C121A 0%, #090D13 55%, #070A0F 100%);
+    }
+
+    /* Standalone hairlines become optional; bands own seams */
+    .hairline-between {
+      display: none;
+    }
+
+    ::selection {
+      background: rgba(15, 139, 92, 0.35);
+      color: var(--ink);
+    }
+
+    /* Focus rings — visible, on-brand */
+    :focus-visible {
+      outline: 2px solid var(--forest);
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: -100%;
+      z-index: 100;
+      padding: 0.5rem 1rem;
+      background: var(--forest);
+      color: var(--ink);
+      border-radius: 0.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+    }
+    .skip-link:focus {
+      top: 1rem;
+    }
+
+    /* ── Sticky nav ── */
+    .site-nav {
+      backdrop-filter: blur(16px) saturate(1.2);
+      -webkit-backdrop-filter: blur(16px) saturate(1.2);
+      background: rgba(12, 16, 24, 0.72);
+      border-bottom: 1px solid var(--edge);
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+    .site-nav.scrolled {
+      border-bottom-color: rgba(15, 139, 92, 0.18);
+      background: rgba(12, 16, 24, 0.88);
+    }
+
+    .nav-link {
+      position: relative;
+      color: var(--ink-mute);
+      transition: color 0.2s ease;
+    }
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--ink);
+    }
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -4px;
+      height: 2px;
+      background: var(--forest);
+      border-radius: 1px;
+    }
+
+    /* ── Hero ambient node canvas ──
+       Graph lives on the RIGHT / back; text column gets a scrim so
+       pulses never compete with the headline (Awwwards-level restraint). */
+    .hero-graph {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0.42;
+      /* Fade graph under the text column (left) — full presence on right */
+      mask-image: linear-gradient(105deg, transparent 0%, transparent 18%, rgba(0,0,0,0.35) 38%, black 58%, black 100%);
+      -webkit-mask-image: linear-gradient(105deg, transparent 0%, transparent 18%, rgba(0,0,0,0.35) 38%, black 58%, black 100%);
+    }
+    @media (max-width: 640px) {
+      .hero-graph {
+        opacity: 0.28;
+        mask-image: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 55%, transparent 100%);
+        -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 55%, transparent 100%);
+      }
+    }
+    .hero-graph svg {
+      width: 100%;
+      height: 100%;
+      transform: translateX(4%);
+    }
+    .hero-scrim {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      /* Matches band-hero depth — keeps type crisp without a flat box */
+      background:
+        linear-gradient(105deg, rgba(10, 14, 21, 0.94) 0%, rgba(10, 14, 21, 0.8) 30%, rgba(10, 14, 21, 0.22) 52%, transparent 70%),
+        linear-gradient(180deg, rgba(10, 14, 21, 0.5) 0%, transparent 26%, transparent 68%, rgba(8, 12, 18, 0.9) 100%);
+    }
+    .hero-copy {
+      position: relative;
+      /* Soft local glow behind type — improves perceived contrast without a box */
+      text-shadow: 0 1px 24px rgba(12, 16, 24, 0.65);
+    }
+    .hero-copy h1 {
+      text-shadow:
+        0 0 40px rgba(12, 16, 24, 0.9),
+        0 2px 28px rgba(12, 16, 24, 0.75);
+    }
+
+    /* ── Signal pulse along edges (signature motion) ── */
+    .edge-path {
+      fill: none;
+      stroke: rgba(15, 139, 92, 0.22);
+      stroke-width: 1.5;
+    }
+    .edge-pulse {
+      fill: none;
+      stroke: var(--forest-glow);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-dasharray: 10 120;
+      animation: edge-travel 3.2s linear infinite;
+      opacity: 0.85;
+      /* drop-shadow on animated paths is expensive while scrolling — keep light */
+    }
+    @media (min-width: 1024px) {
+      .edge-pulse {
+        filter: drop-shadow(0 0 3px rgba(20, 168, 112, 0.45));
+      }
+    }
+    .edge-pulse.delay-1 { animation-delay: 0.8s; }
+    .edge-pulse.delay-2 { animation-delay: 1.6s; }
+    .edge-pulse.delay-3 { animation-delay: 2.4s; }
+
+    @keyframes edge-travel {
+      to { stroke-dashoffset: -130; }
+    }
+
+    .node-core {
+      transition: fill 0.25s ease, r 0.25s ease, filter 0.25s ease;
+    }
+    .flow-node {
+      cursor: pointer;
+    }
+    .flow-node:hover .node-core,
+    .flow-node:focus-visible .node-core,
+    .flow-node.is-active .node-core {
+      filter: drop-shadow(0 0 8px rgba(20, 168, 112, 0.7));
+    }
+    .flow-node:hover .node-ring,
+    .flow-node:focus-visible .node-ring,
+    .flow-node.is-active .node-ring {
+      stroke: var(--gold);
+      opacity: 1;
+    }
+    .flow-node:focus-visible {
+      outline: none;
+    }
+    .node-ring {
+      fill: none;
+      stroke: rgba(237, 234, 226, 0.15);
+      stroke-width: 1;
+      opacity: 0.7;
+      transition: stroke 0.25s ease, opacity 0.25s ease;
+    }
+    .node-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      fill: var(--ink-mute);
+      pointer-events: none;
+      transition: fill 0.2s ease;
+    }
+    .flow-node:hover .node-label,
+    .flow-node.is-active .node-label {
+      fill: var(--ink);
+    }
+
+    /* Highlight connected edges on node hover */
+    .edge-group.is-lit .edge-path {
+      stroke: rgba(15, 139, 92, 0.55);
+    }
+    .edge-group.is-lit .edge-pulse {
+      opacity: 1;
+      stroke: var(--gold);
+      filter: drop-shadow(0 0 5px rgba(232, 163, 61, 0.55));
+    }
+
+    /* Diagrams always visible — only edge pulses animate (signature motion) */
+    .diagram-stage .flow-node,
+    .diagram-stage .edge-group {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Payload tooltip */
+    .payload-tip {
+      position: fixed;
+      z-index: 60;
+      max-width: min(20rem, calc(100vw - 2rem));
+      padding: 0.65rem 0.8rem;
+      background: #0C1018;
+      border: 1px solid rgba(15, 139, 92, 0.4);
+      border-radius: 0.4rem;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(237, 234, 226, 0.04);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      line-height: 1.55;
+      color: #C8E6D5;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .payload-tip.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .payload-tip .tip-key { color: var(--gold); }
+    .payload-tip .tip-str { color: #7DCEA0; }
+    .payload-tip .tip-num { color: #85C1E9; }
+    .payload-tip .tip-muted { color: var(--ink-mute); }
+
+    /* Terminal-style panels — solid paint (blur only on capable desktops) */
+    .term-panel {
+      background: rgba(18, 24, 36, 0.97);
+      border: 1px solid rgba(237, 234, 226, 0.09);
+      border-radius: 0.5rem;
+      box-shadow:
+        0 1px 0 0 rgba(237, 234, 226, 0.05) inset,
+        0 16px 48px -20px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+    }
+    @media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .term-panel {
+        background: rgba(18, 24, 36, 0.94);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+    }
+    /* On cooler console band, panels sit slightly cooler */
+    .band-console .term-panel {
+      background: rgba(14, 20, 30, 0.96);
+      border-color: rgba(15, 139, 92, 0.14);
+    }
+    /* On stage (projects), panels lift warmer */
+    .band-stage .term-panel {
+      background: rgba(20, 28, 42, 0.95);
+    }
+    .term-chrome {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid var(--edge);
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .term-dot {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 999px;
+      background: var(--ink-faint, #6B675E);
+    }
+    .term-dot.live { background: var(--forest); box-shadow: 0 0 6px rgba(15, 139, 92, 0.6); }
+    .term-dot.warn { background: var(--gold); }
+    .term-dot.alert { background: var(--rust); }
+
+    /* Tech tags */
+    .tech-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.02em;
+      color: var(--ink-mute);
+      background: rgba(15, 139, 92, 0.08);
+      border: 1px solid rgba(15, 139, 92, 0.22);
+      border-radius: 0.25rem;
+      padding: 0.2rem 0.5rem;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .tech-tag:hover {
+      color: var(--ink);
+      border-color: rgba(15, 139, 92, 0.5);
+      background: rgba(15, 139, 92, 0.14);
+    }
+
+    /* Why callout */
+    .why-callout {
+      border-left: 2px solid var(--gold);
+      background: linear-gradient(90deg, rgba(232, 163, 61, 0.06), transparent 70%);
+    }
+
+    /* Code block */
+    .code-block {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.65;
+      color: #C5C0B5;
+      background: #0C1018;
+      border: 1px solid var(--edge);
+      border-radius: 0.4rem;
+      overflow-x: auto;
+    }
+    .code-block .c-kw { color: #C792EA; }
+    .code-block .c-fn { color: #82AAFF; }
+    .code-block .c-str { color: #C3E88D; }
+    .code-block .c-cm { color: #546E7A; }
+    .code-block .c-num { color: #F78C6C; }
+    .code-block .c-prop { color: #FFCB6B; }
+
+    /* Cert badge */
+    .cert-badge {
+      background: rgba(18, 25, 38, 0.96);
+      border: 1px solid rgba(237, 234, 226, 0.09);
+      border-radius: 0.5rem;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+    .band-certs .cert-badge {
+      background: rgba(16, 22, 34, 0.94);
+      box-shadow: 0 10px 28px -18px rgba(0, 0, 0, 0.45);
+    }
+    .cert-badge:hover {
+      border-color: rgba(15, 139, 92, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+    .cert-badge.in-progress {
+      border-color: rgba(232, 163, 61, 0.35);
+    }
+
+    /* No scroll-fade — content is fully visible on load (max scroll speed) */
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Long project blocks: skip offscreen layout work during scroll */
+    .project-section {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 720px;
+    }
+
+    /* Mobile nav */
+    .mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .mobile-menu.open {
+      max-height: 20rem;
+    }
+
+    /* Status dot in footer */
+    .status-dot {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 999px;
+      background: var(--forest);
+      box-shadow: 0 0 0 0 rgba(15, 139, 92, 0.5);
+      animation: status-ping 2.5s ease-out infinite;
+    }
+    @keyframes status-ping {
+      0% { box-shadow: 0 0 0 0 rgba(15, 139, 92, 0.45); }
+      70% { box-shadow: 0 0 0 8px rgba(15, 139, 92, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(15, 139, 92, 0); }
+    }
+
+    /* Horizontal flow → vertical stack on small screens */
+    .flow-diagram-wrap {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .flow-diagram-wrap svg {
+      min-width: 640px;
+      width: 100%;
+      height: auto;
+    }
+    @media (max-width: 640px) {
+      .flow-diagram-wrap svg {
+        min-width: 100%;
+      }
+    }
+
+    /* Reduced motion: kill decorative animation */
+    @media (prefers-reduced-motion: reduce) {
+      .edge-pulse,
+      .status-dot,
+      .animate-pulse-dot,
+      .site-ambient .mesh {
+        animation: none !important;
+      }
+
+      .cert-badge:hover {
+        transform: none;
+      }
+    }
+
+    /* Subtle grid texture on hero — right-weighted, never under headline */
+    .hero-grid {
+      background-image:
+        linear-gradient(rgba(237, 234, 226, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(237, 234, 226, 0.028) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 65% 55% at 72% 42%, black 10%, transparent 72%);
+      -webkit-mask-image: radial-gradient(ellipse 65% 55% at 72% 42%, black 10%, transparent 72%);
+    }
+
+    /* Section surface lift — readable bands without harsh cards */
+    .section-band {
+      position: relative;
+    }
+    .section-band::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(27, 34, 48, 0.45) 0%, transparent 70%);
+      opacity: 0.9;
+    }
+    .section-band > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Asymmetric project layout helpers */
+    .project-section:nth-child(even) .project-grid {
+      direction: ltr;
+    }
+
+    /* Gradient hairline */
+    .hairline {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(15, 139, 92, 0.35), transparent);
+    }
+
+    /* ── Experience: SOC orbit console ── */
+    .soc-orbit {
+      position: relative;
+      aspect-ratio: 1;
+      max-width: 22rem;
+      margin: 0 auto;
+    }
+    .soc-orbit-ring {
+      position: absolute;
+      inset: 12%;
+      border: 1px dashed rgba(15, 139, 92, 0.22);
+      border-radius: 50%;
+      animation: soc-spin 48s linear infinite;
+    }
+    .soc-orbit-ring-2 {
+      inset: 28%;
+      border-style: solid;
+      border-color: rgba(237, 234, 226, 0.06);
+      animation-duration: 36s;
+      animation-direction: reverse;
+    }
+    @keyframes soc-spin {
+      to { transform: rotate(360deg); }
+    }
+    .soc-hub {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 5.5rem;
+      height: 5.5rem;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #243044, #1B2230 55%, #141a26);
+      border: 1px solid rgba(15, 139, 92, 0.45);
+      box-shadow: 0 0 32px rgba(15, 139, 92, 0.18), inset 0 1px 0 rgba(237, 234, 226, 0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 2;
+    }
+    .soc-node {
+      position: absolute;
+      width: 4.25rem;
+      height: 4.25rem;
+      margin: -2.125rem;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid rgba(237, 234, 226, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: default;
+      transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease, background 0.35s ease;
+      z-index: 3;
+    }
+    .soc-node .soc-dot {
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 50%;
+      background: var(--ink-faint, #6B675E);
+      margin-bottom: 0.25rem;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .soc-node.is-active {
+      border-color: rgba(15, 139, 92, 0.65);
+      background: rgba(15, 139, 92, 0.1);
+      box-shadow: 0 0 24px rgba(15, 139, 92, 0.28);
+      transform: scale(1.06);
+    }
+    .soc-node.is-active .soc-dot {
+      background: var(--forest-glow);
+      box-shadow: 0 0 8px rgba(20, 168, 112, 0.7);
+    }
+    .soc-node.is-alert {
+      border-color: rgba(232, 163, 61, 0.55);
+    }
+    .soc-node.is-alert .soc-dot {
+      background: var(--gold);
+    }
+    /* Position SOCs around the ring (percent of container) */
+    .soc-node[data-soc="ip"] { left: 50%; top: 8%; }
+    .soc-node[data-soc="tx"] { left: 92%; top: 38%; }
+    .soc-node[data-soc="ran"] { left: 78%; top: 88%; }
+    .soc-node[data-soc="digital"] { left: 22%; top: 88%; }
+    .soc-node[data-soc="core"] { left: 8%; top: 38%; }
+
+    .soc-beam {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 2px;
+      height: 34%;
+      margin-left: -1px;
+      transform-origin: 50% 0;
+      background: linear-gradient(to bottom, rgba(15, 139, 92, 0.55), transparent);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+      transition: opacity 0.3s;
+    }
+    .soc-beam.is-on { opacity: 1; }
+
+    .ops-log {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      line-height: 1.7;
+      color: var(--ink-mute);
+      max-height: 9.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+    .ops-log::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 2rem;
+      background: linear-gradient(transparent, var(--surface));
+      pointer-events: none;
+    }
+    .ops-log .log-line {
+      opacity: 0.35;
+      transform: translateX(-4px);
+      transition: opacity 0.4s, transform 0.4s, color 0.3s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ops-log .log-line.is-fresh {
+      opacity: 1;
+      transform: none;
+      color: #C8E6D5;
+    }
+    .ops-log .log-ts { color: var(--ink-faint, #6B675E); }
+    .ops-log .log-ok { color: var(--forest-glow); }
+    .ops-log .log-warn { color: var(--gold); }
+
+    /* Project panel scan + activity strip */
+    .term-panel.has-scan {
+      position: relative;
+    }
+    .term-panel.has-scan::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 28%;
+      top: -28%;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(15, 139, 92, 0.04),
+        transparent
+      );
+      pointer-events: none;
+      animation: panel-scan 7s ease-in-out infinite;
+      opacity: 0;
+    }
+    .term-panel.has-scan.is-inview::after {
+      opacity: 1;
+    }
+    @keyframes panel-scan {
+      0% { top: -28%; }
+      45%, 100% { top: 100%; }
+    }
+
+    .activity-strip {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 1rem;
+      padding: 0 0.85rem 0.55rem;
+    }
+    .activity-strip span {
+      flex: 1;
+      max-width: 6px;
+      border-radius: 1px 1px 0 0;
+      background: rgba(15, 139, 92, 0.35);
+      height: 30%;
+      animation: activity-bar 1.4s ease-in-out infinite;
+    }
+    .activity-strip span:nth-child(2) { animation-delay: 0.1s; }
+    .activity-strip span:nth-child(3) { animation-delay: 0.2s; }
+    .activity-strip span:nth-child(4) { animation-delay: 0.35s; }
+    .activity-strip span:nth-child(5) { animation-delay: 0.15s; }
+    .activity-strip span:nth-child(6) { animation-delay: 0.45s; }
+    .activity-strip span:nth-child(7) { animation-delay: 0.25s; }
+    .activity-strip span:nth-child(8) { animation-delay: 0.5s; }
+    .activity-strip span:nth-child(odd) { background: rgba(232, 163, 61, 0.35); }
+    @keyframes activity-bar {
+      0%, 100% { height: 25%; opacity: 0.5; }
+      50% { height: 95%; opacity: 1; }
+    }
+
+    /* More-builds mini flow icons */
+    .mini-flow {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--ink-faint, #6B675E);
+    }
+    .mini-flow .mf-node {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: rgba(15, 139, 92, 0.5);
+      box-shadow: 0 0 0 0 rgba(15, 139, 92, 0.4);
+      animation: mf-pulse 2.2s ease-out infinite;
+    }
+    .mini-flow .mf-node:nth-child(3) { animation-delay: 0.35s; background: rgba(232, 163, 61, 0.6); }
+    .mini-flow .mf-node:nth-child(5) { animation-delay: 0.7s; }
+    .mini-flow .mf-edge {
+      width: 1.1rem;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(15, 139, 92, 0.15), rgba(15, 139, 92, 0.5), rgba(15, 139, 92, 0.15));
+      position: relative;
+      overflow: hidden;
+    }
+    .mini-flow .mf-edge::after {
+      content: '';
+      position: absolute;
+      left: -40%;
+      top: 0;
+      width: 40%;
+      height: 100%;
+      background: var(--forest-glow);
+      animation: mf-travel 1.8s linear infinite;
+    }
+    @keyframes mf-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(15, 139, 92, 0.45); }
+      70% { box-shadow: 0 0 0 6px rgba(15, 139, 92, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(15, 139, 92, 0); }
+    }
+    @keyframes mf-travel {
+      to { left: 120%; }
+    }
+
+    .exp-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--ink-mute);
+      background: rgba(15, 139, 92, 0.08);
+      border: 1px solid rgba(15, 139, 92, 0.25);
+      border-radius: 999px;
+      padding: 0.3rem 0.7rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .soc-orbit-ring,
+      .panel-scan,
+      .term-panel.has-scan::after,
+      .activity-strip span,
+      .mini-flow .mf-node,
+      .mini-flow .mf-edge::after,
+      .site-ambient .mesh {
+        animation: none !important;
+      }
+      .soc-node.is-active {
+        transform: none;
+      }
+    }
+
+    /* Contact phone link */
+    .contact-phone {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body class="text-ink font-body antialiased">
+  <!-- Fixed ambient atmosphere (mesh + grain + vignette) -->
+  <div class="site-ambient" aria-hidden="true">
+    <div class="mesh mesh-a"></div>
+    <div class="mesh mesh-b"></div>
+    <div class="mesh mesh-c"></div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ═══════════════ NAV ═══════════════ -->
+  <header class="site-nav fixed top-0 inset-x-0 z-50" id="site-nav">
+    <div class="mx-auto max-w-content px-5 sm:px-8">
+      <div class="flex h-14 sm:h-16 items-center justify-between gap-4">
+        <a href="#top" class="font-display font-semibold tracking-tight text-ink text-[0.95rem] sm:text-base group flex items-center gap-2">
+          <span class="inline-flex h-2 w-2 rounded-full bg-forest group-hover:shadow-glow transition-shadow" aria-hidden="true"></span>
+          Ian Ondieki
+        </a>
+
+        <nav class="hidden md:flex items-center gap-6 lg:gap-7 text-sm font-medium" aria-label="Primary">
+          <a href="#experience" class="nav-link" data-section="experience">Experience</a>
+          <a href="#projects" class="nav-link" data-section="projects">Projects</a>
+          <a href="#skills" class="nav-link" data-section="skills">Skills</a>
+          <a href="#certifications" class="nav-link" data-section="certifications">Certs</a>
+          <a href="#contact" class="nav-link" data-section="contact">Contact</a>
+          <span class="w-px h-4 bg-ink/10" aria-hidden="true"></span>
+          <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="nav-link font-mono text-xs tracking-wide" aria-label="GitHub (opens in new tab)">GitHub ↗</a>
+          <a href="https://www.linkedin.com/in/ian-ondieki/" target="_blank" rel="noopener noreferrer" class="nav-link font-mono text-xs tracking-wide" aria-label="LinkedIn (opens in new tab)">LinkedIn ↗</a>
+        </nav>
+
+        <button type="button" id="menu-toggle" class="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-md border border-ink/10 text-ink-mute hover:text-ink hover:border-forest/40 transition-colors" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+          <svg class="h-5 w-5" id="menu-icon-open" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+          <svg class="h-5 w-5 hidden" id="menu-icon-close" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+
+      <div id="mobile-menu" class="mobile-menu md:hidden border-t border-ink/5">
+        <nav class="flex flex-col gap-1 py-3 text-sm" aria-label="Mobile">
+          <a href="#experience" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Experience</a>
+          <a href="#projects" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Projects</a>
+          <a href="#skills" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Skills</a>
+          <a href="#certifications" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Certifications</a>
+          <a href="#contact" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Contact</a>
+          <div class="flex gap-4 px-2 pt-2 pb-1 font-mono text-xs">
+            <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="text-forest hover:text-forest-glow">GitHub ↗</a>
+            <a href="https://www.linkedin.com/in/ian-ondieki/" target="_blank" rel="noopener noreferrer" class="text-forest hover:text-forest-glow">LinkedIn ↗</a>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <section id="top" class="band band-hero relative min-h-[100svh] flex items-center pt-20 pb-16 sm:pt-24 sm:pb-24 overflow-hidden" aria-labelledby="hero-heading">
+      <!-- Ambient node graph — masked away from text column -->
+      <div class="hero-graph hero-grid" aria-hidden="true">
+        <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" class="absolute inset-0 w-full h-full">
+          <g class="edge-group">
+            <path class="edge-path" d="M80 420 C200 420 220 180 380 200" />
+            <path class="edge-pulse delay-1" d="M80 420 C200 420 220 180 380 200" />
+          </g>
+          <g class="edge-group">
+            <path class="edge-path" d="M380 200 C520 220 540 360 700 340" />
+            <path class="edge-pulse" d="M380 200 C520 220 540 360 700 340" />
+          </g>
+          <g class="edge-group">
+            <path class="edge-path" d="M700 340 C820 320 860 160 1000 180" />
+            <path class="edge-pulse delay-2" d="M700 340 C820 320 860 160 1000 180" />
+          </g>
+          <g class="edge-group">
+            <path class="edge-path" d="M380 200 C400 320 480 480 620 520" />
+            <path class="edge-pulse delay-3" d="M380 200 C400 320 480 480 620 520" />
+          </g>
+          <g class="edge-group">
+            <path class="edge-path" d="M700 340 C760 440 880 500 1040 480" />
+            <path class="edge-pulse delay-1" d="M700 340 C760 440 880 500 1040 480" />
+          </g>
+          <g class="edge-group">
+            <path class="edge-path" d="M80 420 C160 500 280 560 420 580" />
+            <path class="edge-pulse delay-2" d="M80 420 C160 500 280 560 420 580" />
+          </g>
+          <circle cx="80" cy="420" r="4" fill="#0F8B5C" opacity="0.55" />
+          <circle cx="380" cy="200" r="5" fill="#E8A33D" opacity="0.45" />
+          <circle cx="700" cy="340" r="4.5" fill="#0F8B5C" opacity="0.55" />
+          <circle cx="1000" cy="180" r="3.5" fill="#EDEAE2" opacity="0.28" />
+          <circle cx="620" cy="520" r="4" fill="#0F8B5C" opacity="0.4" />
+          <circle cx="1040" cy="480" r="3.5" fill="#E8A33D" opacity="0.35" />
+          <circle cx="420" cy="580" r="3" fill="#EDEAE2" opacity="0.2" />
+          <circle cx="920" cy="300" r="2.5" fill="#0F8B5C" opacity="0.35" />
+          <circle cx="240" cy="300" r="2.5" fill="#9B978C" opacity="0.3" />
+        </svg>
+      </div>
+
+      <!-- Readability scrim: type wins over graph + mesh -->
+      <div class="hero-scrim" aria-hidden="true"></div>
+      <div class="absolute right-[-5%] top-[15%] w-[48vw] h-[48vw] max-w-2xl max-h-2xl rounded-full bg-forest/[0.07] blur-3xl pointer-events-none" aria-hidden="true"></div>
+      <div class="absolute left-[-10%] bottom-[-10%] w-[40vw] h-[40vw] max-w-lg max-h-lg rounded-full bg-gold/[0.04] blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+      <div class="relative mx-auto max-w-content px-5 sm:px-8 w-full">
+        <div class="max-w-3xl hero-copy">
+          <p class="font-mono text-xs sm:text-[0.7rem] tracking-[0.14em] uppercase text-forest-glow mb-5 sm:mb-6 flex items-center gap-2">
+            <span class="inline-block h-1.5 w-1.5 rounded-full bg-forest animate-pulse-dot" aria-hidden="true"></span>
+            Software Engineer · Agentic AI &amp; Automation
+          </p>
+
+          <!--
+            HEADLINE OPTIONS (pick one, comment the rest):
+            1. I build agentic systems that act on real tools.          ← active
+            2. Automations that book, message, and report — without hand-holding.
+            3. From live network ops to systems that run themselves.
+          -->
+          <h1 id="hero-heading" class="font-display text-[2.15rem] sm:text-5xl lg:text-[3.35rem] font-semibold leading-[1.12] tracking-tight text-ink">
+            I build agentic systems<br class="hidden sm:block" />
+            that act on <span class="text-transparent bg-clip-text bg-gradient-to-r from-forest-glow via-[#3DBF8C] to-gold">real tools</span>.
+          </h1>
+
+          <p class="mt-6 sm:mt-7 text-base sm:text-lg text-ink-mute leading-relaxed max-w-xl">
+            Automations and RAG systems that connect business APIs to LLM agents — WhatsApp, Calendar, Gmail, Sheets, payment rails, document retrieval — orchestrated through n8n and LangGraph.
+          </p>
+
+          <div class="mt-8 sm:mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
+            <a href="#projects" class="inline-flex items-center gap-2 rounded-md bg-forest px-5 py-2.5 text-sm font-medium text-ink hover:bg-forest-glow transition-colors shadow-glow">
+              View Projects
+              <svg class="h-3.5 w-3.5 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </a>
+            <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-md border border-ink/15 bg-surface/70 backdrop-blur-sm px-5 py-2.5 text-sm font-medium text-ink hover:border-forest/40 hover:bg-surface transition-colors">
+              GitHub
+              <span class="font-mono text-[0.65rem] text-ink-mute">↗</span>
+            </a>
+          </div>
+
+          <p class="mt-10 sm:mt-12 font-mono text-[0.65rem] sm:text-xs text-ink-faint tracking-wide flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span>Nairobi, Kenya · GMT+3</span>
+            <span class="hidden sm:inline text-ink/20">|</span>
+            <span>B.Sc. Software Engineering · MMU Kenya</span>
+            <span class="hidden sm:inline text-ink/20">|</span>
+            <span>ex-Safaricom NOC</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ ABOUT ═══════════════ -->
+    <section id="about" class="band band-about py-20 sm:py-28" aria-labelledby="about-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+        <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          <div class="lg:col-span-4 reveal">
+            <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">About</p>
+            <h2 id="about-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Built where systems stay up.</h2>
+          </div>
+          <div class="lg:col-span-7 lg:col-start-6 reveal" style="transition-delay: 80ms">
+            <p class="text-ink-mute text-[1.02rem] sm:text-lg leading-[1.75]">
+              I came up monitoring live network and M-Pesa infrastructure across Safaricom’s SOCs — IP, Transmission, RAN, Digital Services, Core — watching business processes run and break in real time. Now I build the automations that own those same kinds of flows: agents that book, message, route, and report, plus RAG chatbots grounded in real documents — not waiting on a human for every step. I work iteratively — build, break, debug, rebuild — and I’m aiming to become an AWS AI/ML Agent Engineer. Still shipping, still learning the hard parts of reliability.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ EXPERIENCE ═══════════════ -->
+    <section id="experience" class="band band-console py-20 sm:py-28" aria-labelledby="experience-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12 sm:mb-14 reveal">
+          <div>
+            <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Experience</p>
+            <h2 id="experience-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Where I learned systems under load.</h2>
+          </div>
+          <p class="text-sm text-ink-mute max-w-xs sm:text-right font-mono text-[0.7rem] leading-relaxed">
+            Live rotation through Safaricom’s SOCs — watch the beam cycle.
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          <!-- Role copy -->
+          <div class="lg:col-span-5 reveal">
+            <div class="flex flex-wrap items-center gap-2 mb-4">
+              <span class="exp-badge">
+                <span class="status-dot" style="width:0.35rem;height:0.35rem;animation:none" aria-hidden="true"></span>
+                Internship · completed
+              </span>
+              <span class="font-mono text-[0.65rem] text-ink-faint">Safaricom PLC</span>
+            </div>
+            <h3 class="font-display text-xl sm:text-2xl font-semibold tracking-tight">NOC Engineering Intern</h3>
+            <p class="mt-1 font-mono text-xs text-ink-mute">Network Operations Centre · multi-SOC rotation</p>
+            <p class="mt-5 text-ink-mute leading-relaxed text-[0.95rem]">
+              Rotated through five Security / Operations Centres supporting Kenya’s largest mobile network and M-Pesa fintech stack. Day-to-day meant reading live signals, escalating incidents, and understanding how IP, radio, transmission, digital services, and core domains depend on each other when something breaks.
+            </p>
+            <ul class="mt-6 space-y-3 text-sm text-ink-mute">
+              <li class="flex gap-3">
+                <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-forest shrink-0" aria-hidden="true"></span>
+                <span><strong class="text-ink font-medium">IP SOC</strong> — routing, connectivity, backbone health</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-forest shrink-0" aria-hidden="true"></span>
+                <span><strong class="text-ink font-medium">Transmission SOC</strong> — microwave / fiber capacity paths</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-forest shrink-0" aria-hidden="true"></span>
+                <span><strong class="text-ink font-medium">RAN SOC</strong> — radio access, site-level performance</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-forest shrink-0" aria-hidden="true"></span>
+                <span><strong class="text-ink font-medium">Digital Services SOC</strong> — customer-facing digital platforms</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold shrink-0" aria-hidden="true"></span>
+                <span><strong class="text-ink font-medium">Core SOC</strong> — core network + exposure to live M-Pesa infrastructure</span>
+              </li>
+            </ul>
+            <p class="mt-6 why-callout pl-4 py-3 pr-3 rounded-r-md text-sm text-ink-mute leading-relaxed">
+              <span class="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-gold block mb-1.5">What stuck</span>
+              Watching money and messages move on real rails taught me to design automations for failure modes first — retries, handshakes, and partial success — not just happy-path demos.
+            </p>
+          </div>
+
+          <!-- Animated SOC console -->
+          <div class="lg:col-span-7 reveal" style="transition-delay: 100ms">
+            <div class="term-panel has-scan" id="soc-console">
+              <div class="term-chrome">
+                <span class="term-dot live"></span>
+                <span class="term-dot warn"></span>
+                <span class="term-dot"></span>
+                <span class="ml-2 font-mono text-[0.62rem] text-ink-faint tracking-wide">noc · safaricom · rotation map</span>
+                <span class="ml-auto font-mono text-[0.6rem] text-forest-glow hidden sm:inline" id="soc-active-label">IP SOC · monitoring</span>
+              </div>
+              <div class="activity-strip" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <div class="px-4 sm:px-6 pb-2 pt-1">
+                <div class="soc-orbit" id="soc-orbit" role="img" aria-label="Animated map of five Safaricom SOCs around a NOC hub: IP, Transmission, RAN, Digital Services, and Core">
+                  <div class="soc-orbit-ring" aria-hidden="true"></div>
+                  <div class="soc-orbit-ring soc-orbit-ring-2" aria-hidden="true"></div>
+                  <div class="soc-beam is-on" id="soc-beam" aria-hidden="true" style="transform: rotate(0deg)"></div>
+
+                  <div class="soc-hub">
+                    <span class="font-mono text-[0.55rem] text-forest-glow tracking-wider uppercase">NOC</span>
+                    <span class="font-display text-[0.7rem] font-semibold leading-tight mt-0.5 text-ink">Intern</span>
+                    <span class="font-mono text-[0.5rem] text-ink-faint mt-0.5">live map</span>
+                  </div>
+
+                  <!-- Beam defaults pointing down; angles are CSS rotate (clockwise) from center -->
+                  <div class="soc-node is-active" data-soc="ip" data-label="IP SOC · monitoring" data-angle="180">
+                    <span class="soc-dot" aria-hidden="true"></span>
+                    <span class="font-mono text-[0.58rem] text-ink leading-none">IP</span>
+                    <span class="font-mono text-[0.48rem] text-ink-faint mt-0.5 leading-none">SOC</span>
+                  </div>
+                  <div class="soc-node" data-soc="tx" data-label="Transmission SOC · capacity" data-angle="255">
+                    <span class="soc-dot" aria-hidden="true"></span>
+                    <span class="font-mono text-[0.58rem] text-ink leading-none">TX</span>
+                    <span class="font-mono text-[0.48rem] text-ink-faint mt-0.5 leading-none">SOC</span>
+                  </div>
+                  <div class="soc-node" data-soc="ran" data-label="RAN SOC · radio access" data-angle="325">
+                    <span class="soc-dot" aria-hidden="true"></span>
+                    <span class="font-mono text-[0.58rem] text-ink leading-none">RAN</span>
+                    <span class="font-mono text-[0.48rem] text-ink-faint mt-0.5 leading-none">SOC</span>
+                  </div>
+                  <div class="soc-node" data-soc="digital" data-label="Digital Services SOC · platforms" data-angle="35">
+                    <span class="soc-dot" aria-hidden="true"></span>
+                    <span class="font-mono text-[0.55rem] text-ink leading-none">Digital</span>
+                    <span class="font-mono text-[0.48rem] text-ink-faint mt-0.5 leading-none">SOC</span>
+                  </div>
+                  <div class="soc-node" data-soc="core" data-label="Core SOC · M-Pesa exposure" data-angle="105">
+                    <span class="soc-dot" aria-hidden="true"></span>
+                    <span class="font-mono text-[0.58rem] text-ink leading-none">Core</span>
+                    <span class="font-mono text-[0.48rem] text-ink-faint mt-0.5 leading-none">SOC</span>
+                  </div>
+                </div>
+              </div>
+              <div class="border-t border-ink/5 px-4 sm:px-5 py-3">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-mono text-[0.6rem] text-ink-faint tracking-wide">ops feed · illustrative</span>
+                  <span class="font-mono text-[0.58rem] text-ink-faint">GMT+3</span>
+                </div>
+                <div class="ops-log" id="ops-log" aria-live="polite" aria-atomic="false">
+                  <!-- lines injected by JS -->
+                </div>
+              </div>
+            </div>
+            <p class="mt-3 font-mono text-[0.6rem] text-ink-faint text-center sm:text-left">
+              Decorative console — not live Safaricom telemetry. Encodes the rotation, not proprietary data.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ FEATURED PROJECTS ═══════════════ -->
+    <section id="projects" class="band band-stage py-20 sm:py-28" aria-labelledby="projects-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-14 sm:mb-16 reveal">
+          <div>
+            <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Featured systems</p>
+            <h2 id="projects-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Projects that move real data.</h2>
+            <p class="mt-2 text-sm text-ink-mute max-w-lg">Agentic automations, RAG retrieval, and API-wired flows — each with an interactive pipeline you can inspect.</p>
+          </div>
+          <p class="text-sm text-ink-mute max-w-xs sm:text-right font-mono text-[0.7rem] leading-relaxed">
+            Hover or focus a node → see the payload shape at that step.
+          </p>
+        </div>
+
+        <!-- ── Project 1: Appointment Scheduling ── -->
+        <article class="project-section mb-24 sm:mb-32 reveal" id="project-scheduling" aria-labelledby="proj-1-title">
+          <div class="project-grid grid lg:grid-cols-12 gap-8 lg:gap-10">
+            <div class="lg:col-span-5 flex flex-col">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="font-mono text-[0.65rem] text-forest tracking-wider">FEATURED</span>
+                <span class="h-px flex-1 max-w-[3rem]" style="background: var(--edge)" aria-hidden="true"></span>
+              </div>
+              <h3 id="proj-1-title" class="font-display text-xl sm:text-2xl font-semibold tracking-tight text-ink">
+                AI Agent Appointment Scheduling
+              </h3>
+              <p class="mt-3 text-ink-mute leading-relaxed text-[0.95rem]">
+                Chat-driven booking that parses intent, checks availability, writes the calendar event, logs the row, and emails confirmation — one flow, no manual glue.
+              </p>
+
+              <div class="why-callout mt-6 pl-4 py-3 pr-3 rounded-r-md">
+                <p class="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-gold mb-1.5">Why this way</p>
+                <p class="text-sm text-ink-mute leading-relaxed">
+                  The hard part wasn’t any single API — it was keeping Calendar, Sheets, and Gmail in sync so a mid-flow failure never left a booking half-confirmed.
+                </p>
+              </div>
+
+              <div class="mt-6 flex flex-wrap gap-1.5" aria-label="Technologies">
+                <span class="tech-tag">n8n</span>
+                <span class="tech-tag">Gemini 2.5 Flash</span>
+                <span class="tech-tag">Google Calendar API</span>
+                <span class="tech-tag">Google Sheets API</span>
+                <span class="tech-tag">Gmail API</span>
+              </div>
+
+              <div class="mt-6 flex flex-wrap items-center gap-3">
+                <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs text-forest hover:text-forest-glow transition-colors">
+                  View on GitHub ↗
+                </a>
+                <button type="button" class="code-toggle inline-flex items-center gap-1.5 font-mono text-xs text-ink-mute hover:text-ink border border-ink/10 hover:border-ink/25 rounded px-2.5 py-1.5 transition-colors" data-target="code-scheduling" aria-expanded="false">
+                  <span class="toggle-label">View code</span>
+                  <svg class="h-3 w-3 transition-transform toggle-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+              </div>
+
+              <!-- PLACEHOLDER — Ian: paste in a real snippet before you deploy -->
+              <div id="code-scheduling" class="code-panel hidden mt-4" hidden>
+                <pre class="code-block p-4 sm:p-5" tabindex="0"><code><span class="c-cm">// n8n-style agent step — intent parse (representative excerpt)</span>
+<span class="c-kw">const</span> system = <span class="c-str">`You extract booking fields as JSON.
+Return only: intent, date, time, name, notes.`</span>;
+
+<span class="c-kw">const</span> result = <span class="c-kw">await</span> gemini.<span class="c-fn">generate</span>({
+  model: <span class="c-str">"gemini-2.5-flash"</span>,
+  contents: [{ role: <span class="c-str">"user"</span>, parts: [{ text: userMessage }] }],
+  systemInstruction: system,
+  generationConfig: { responseMimeType: <span class="c-str">"application/json"</span> }
+});
+
+<span class="c-kw">const</span> booking = JSON.<span class="c-fn">parse</span>(result.text);
+<span class="c-cm">// → { intent, date, time, name, notes }</span>
+<span class="c-kw">if</span> (booking.intent !== <span class="c-str">"book_appointment"</span>) {
+  <span class="c-kw">return</span> { action: <span class="c-str">"clarify"</span>, fields: missing(booking) };
+}
+<span class="c-cm">// next nodes: Calendar → Sheets → Gmail (compensate on failure)</span></code></pre>
+                <p class="font-mono text-[0.6rem] text-ink-faint mt-2">[PLACEHOLDER — replace with a real excerpt from your repo before deploy]</p>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7">
+              <div class="term-panel has-scan">
+                <div class="term-chrome">
+                  <span class="term-dot live"></span>
+                  <span class="term-dot warn"></span>
+                  <span class="term-dot"></span>
+                  <span class="ml-2 font-mono text-[0.62rem] text-ink-faint tracking-wide">flow · appointment-agent · live</span>
+                </div>
+                <div class="activity-strip" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="p-3 sm:p-5 pt-1 relative">
+                  <div class="flow-diagram-wrap diagram-stage" data-diagram="scheduling" id="diagram-scheduling">
+                    <!-- Desktop / wide interactive SVG -->
+                    <svg viewBox="0 0 720 220" class="hidden sm:block" role="img" aria-label="Appointment scheduling flow: chat trigger to Gemini agent to Calendar, Sheets, and Gmail">
+                      <title>Appointment scheduling pipeline</title>
+                      <!-- Edges -->
+                      <g class="edge-group" data-from="s-chat" data-to="s-agent" style="--i:0">
+                        <path class="edge-path" d="M95 110 H175" />
+                        <path class="edge-pulse" d="M95 110 H175" />
+                      </g>
+                      <g class="edge-group" data-from="s-agent" data-to="s-cal" style="--i:1">
+                        <path class="edge-path" d="M265 110 H345" />
+                        <path class="edge-pulse delay-1" d="M265 110 H345" />
+                      </g>
+                      <g class="edge-group" data-from="s-cal" data-to="s-sheets" style="--i:2">
+                        <path class="edge-path" d="M435 110 H515" />
+                        <path class="edge-pulse delay-2" d="M435 110 H515" />
+                      </g>
+                      <g class="edge-group" data-from="s-sheets" data-to="s-gmail" style="--i:3">
+                        <path class="edge-path" d="M605 110 H685" />
+                        <path class="edge-pulse delay-3" d="M605 110 H685" />
+                      </g>
+
+                      <!-- Nodes -->
+                      <g class="flow-node" tabindex="0" role="button" data-node="s-chat" data-edges="s-chat>s-agent" style="--i:0"
+                        data-payload='{"trigger":"chat.message","channel":"web","text":"Book me Thu 2pm"}'>
+                        <circle class="node-ring" cx="70" cy="110" r="22" />
+                        <circle class="node-core" cx="70" cy="110" r="9" fill="#0F8B5C" />
+                        <text class="node-label" x="70" y="150" text-anchor="middle">Chat trigger</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="s-agent" data-edges="s-chat>s-agent,s-agent>s-cal" style="--i:1"
+                        data-payload='{"intent":"book_appointment","date":"2026-07-20","time":"14:00","name":null}'>
+                        <circle class="node-ring" cx="220" cy="110" r="22" />
+                        <circle class="node-core" cx="220" cy="110" r="9" fill="#E8A33D" />
+                        <text class="node-label" x="220" y="150" text-anchor="middle">Gemini 2.5 Flash</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="s-cal" data-edges="s-agent>s-cal,s-cal>s-sheets" style="--i:2"
+                        data-payload='{"action":"events.insert","calendarId":"primary","start":"2026-07-20T14:00:00+03:00","status":"confirmed"}'>
+                        <circle class="node-ring" cx="390" cy="110" r="22" />
+                        <circle class="node-core" cx="390" cy="110" r="9" fill="#0F8B5C" />
+                        <text class="node-label" x="390" y="150" text-anchor="middle">Google Calendar</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="s-sheets" data-edges="s-cal>s-sheets,s-sheets>s-gmail" style="--i:3"
+                        data-payload='{"action":"values.append","sheet":"Bookings","row":["2026-07-20","14:00","confirmed"]}'>
+                        <circle class="node-ring" cx="560" cy="110" r="22" />
+                        <circle class="node-core" cx="560" cy="110" r="9" fill="#0F8B5C" />
+                        <text class="node-label" x="560" y="150" text-anchor="middle">Google Sheets</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="s-gmail" data-edges="s-sheets>s-gmail" style="--i:4"
+                        data-payload='{"action":"messages.send","to":"client@…","subject":"Appointment confirmed","template":"booking_v2"}'>
+                        <circle class="node-ring" cx="700" cy="110" r="18" />
+                        <circle class="node-core" cx="700" cy="110" r="8" fill="#EDEAE2" />
+                        <text class="node-label" x="700" y="150" text-anchor="middle">Gmail</text>
+                      </g>
+                    </svg>
+
+                    <!-- Mobile stacked flow -->
+                    <svg viewBox="0 0 280 420" class="sm:hidden w-full" role="img" aria-label="Appointment scheduling flow (vertical)">
+                      <title>Appointment scheduling pipeline (mobile)</title>
+                      <g class="edge-group" data-from="s-chat" data-to="s-agent" style="--i:0">
+                        <path class="edge-path" d="M140 55 V95" />
+                        <path class="edge-pulse" d="M140 55 V95" />
+                      </g>
+                      <g class="edge-group" data-from="s-agent" data-to="s-cal" style="--i:1">
+                        <path class="edge-path" d="M140 135 V175" />
+                        <path class="edge-pulse delay-1" d="M140 135 V175" />
+                      </g>
+                      <g class="edge-group" data-from="s-cal" data-to="s-sheets" style="--i:2">
+                        <path class="edge-path" d="M140 215 V255" />
+                        <path class="edge-pulse delay-2" d="M140 215 V255" />
+                      </g>
+                      <g class="edge-group" data-from="s-sheets" data-to="s-gmail" style="--i:3">
+                        <path class="edge-path" d="M140 295 V335" />
+                        <path class="edge-pulse delay-3" d="M140 295 V335" />
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="s-chat" data-edges="s-chat>s-agent" style="--i:0"
+                        data-payload='{"trigger":"chat.message","channel":"web","text":"Book me Thu 2pm"}'>
+                        <circle class="node-ring" cx="140" cy="40" r="18" />
+                        <circle class="node-core" cx="140" cy="40" r="8" fill="#0F8B5C" />
+                        <text class="node-label" x="140" y="72" text-anchor="middle">Chat trigger</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="s-agent" data-edges="s-chat>s-agent,s-agent>s-cal" style="--i:1"
+                        data-payload='{"intent":"book_appointment","date":"2026-07-20","time":"14:00"}'>
+                        <circle class="node-ring" cx="140" cy="120" r="18" />
+                        <circle class="node-core" cx="140" cy="120" r="8" fill="#E8A33D" />
+                        <text class="node-label" x="140" y="152" text-anchor="middle">Gemini 2.5 Flash</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="s-cal" data-edges="s-agent>s-cal,s-cal>s-sheets" style="--i:2"
+                        data-payload='{"action":"events.insert","status":"confirmed"}'>
+                        <circle class="node-ring" cx="140" cy="200" r="18" />
+                        <circle class="node-core" cx="140" cy="200" r="8" fill="#0F8B5C" />
+                        <text class="node-label" x="140" y="232" text-anchor="middle">Google Calendar</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="s-sheets" data-edges="s-cal>s-sheets,s-sheets>s-gmail" style="--i:3"
+                        data-payload='{"action":"values.append","sheet":"Bookings"}'>
+                        <circle class="node-ring" cx="140" cy="280" r="18" />
+                        <circle class="node-core" cx="140" cy="280" r="8" fill="#0F8B5C" />
+                        <text class="node-label" x="140" y="312" text-anchor="middle">Google Sheets</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="s-gmail" data-edges="s-sheets>s-gmail" style="--i:4"
+                        data-payload='{"action":"messages.send","subject":"Appointment confirmed"}'>
+                        <circle class="node-ring" cx="140" cy="360" r="18" />
+                        <circle class="node-core" cx="140" cy="360" r="8" fill="#EDEAE2" />
+                        <text class="node-label" x="140" y="392" text-anchor="middle">Gmail</text>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── Project 2: WhatsApp Business Cloud ── -->
+        <article class="project-section mb-24 sm:mb-32 reveal" id="project-whatsapp" aria-labelledby="proj-2-title">
+          <div class="project-grid grid lg:grid-cols-12 gap-8 lg:gap-10">
+            <div class="lg:col-span-5 lg:order-2 flex flex-col">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="font-mono text-[0.65rem] text-forest tracking-wider">FEATURED</span>
+                <span class="h-px flex-1 max-w-[3rem]" style="background: var(--edge)" aria-hidden="true"></span>
+              </div>
+              <h3 id="proj-2-title" class="font-display text-xl sm:text-2xl font-semibold tracking-tight text-ink">
+                WhatsApp Business Cloud Integration
+              </h3>
+              <p class="mt-3 text-ink-mute leading-relaxed text-[0.95rem]">
+                Inbound webhook from Meta’s Cloud API, routed through response logic, and answered on the same conversation thread — the channel most people already have open.
+              </p>
+
+              <div class="why-callout mt-6 pl-4 py-3 pr-3 rounded-r-md">
+                <p class="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-gold mb-1.5">Why this way</p>
+                <p class="text-sm text-ink-mute leading-relaxed">
+                  Getting the webhook verification handshake right — matching Meta’s verify token and responding correctly to the challenge request — took more iterations than expected before messages started flowing reliably.
+                </p>
+              </div>
+
+              <div class="mt-6 flex flex-wrap gap-1.5" aria-label="Technologies">
+                <span class="tech-tag">n8n</span>
+                <span class="tech-tag">WhatsApp Business Cloud API</span>
+                <span class="tech-tag">Webhooks</span>
+              </div>
+
+              <div class="mt-6">
+                <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs text-forest hover:text-forest-glow transition-colors">
+                  View on GitHub ↗
+                </a>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7 lg:order-1">
+              <div class="term-panel has-scan">
+                <div class="term-chrome">
+                  <span class="term-dot live"></span>
+                  <span class="term-dot warn"></span>
+                  <span class="term-dot"></span>
+                  <span class="ml-2 font-mono text-[0.62rem] text-ink-faint tracking-wide">flow · whatsapp-cloud · webhook</span>
+                </div>
+                <div class="activity-strip" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="p-3 sm:p-5 pt-1 relative">
+                  <div class="flow-diagram-wrap diagram-stage" data-diagram="whatsapp" id="diagram-whatsapp">
+                    <svg viewBox="0 0 720 220" class="hidden sm:block" role="img" aria-label="WhatsApp flow: webhook to router to response logic to send-message">
+                      <title>WhatsApp Business Cloud pipeline</title>
+                      <g class="edge-group" data-from="w-hook" data-to="w-router" style="--i:0">
+                        <path class="edge-path" d="M120 110 H220" />
+                        <path class="edge-pulse" d="M120 110 H220" />
+                      </g>
+                      <g class="edge-group" data-from="w-router" data-to="w-logic" style="--i:1">
+                        <path class="edge-path" d="M320 110 H420" />
+                        <path class="edge-pulse delay-1" d="M320 110 H420" />
+                      </g>
+                      <g class="edge-group" data-from="w-logic" data-to="w-send" style="--i:2">
+                        <path class="edge-path" d="M520 110 H620" />
+                        <path class="edge-pulse delay-2" d="M520 110 H620" />
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="w-hook" data-edges="w-hook>w-router" style="--i:0"
+                        data-payload='{"hub.mode":"subscribe","hub.verify_token":"***","hub.challenge":"1752…"}'>
+                        <circle class="node-ring" cx="90" cy="110" r="22" />
+                        <circle class="node-core" cx="90" cy="110" r="9" fill="#0F8B5C" />
+                        <text class="node-label" x="90" y="150" text-anchor="middle">Cloud API webhook</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="w-router" data-edges="w-hook>w-router,w-router>w-logic" style="--i:1"
+                        data-payload='{"from":"2547…","type":"text","message_id":"wamid.…","text":"Hours today?"}'>
+                        <circle class="node-ring" cx="270" cy="110" r="22" />
+                        <circle class="node-core" cx="270" cy="110" r="9" fill="#E8A33D" />
+                        <text class="node-label" x="270" y="150" text-anchor="middle">Message router</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="w-logic" data-edges="w-router>w-logic,w-logic>w-send" style="--i:2"
+                        data-payload='{"route":"faq.hours","reply_type":"text","body":"Open 8am–6pm EAT"}'>
+                        <circle class="node-ring" cx="470" cy="110" r="22" />
+                        <circle class="node-core" cx="470" cy="110" r="9" fill="#0F8B5C" />
+                        <text class="node-label" x="470" y="150" text-anchor="middle">Response logic</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="w-send" data-edges="w-logic>w-send" style="--i:3"
+                        data-payload='{"messaging_product":"whatsapp","to":"2547…","type":"text","text":{"body":"…"}}'>
+                        <circle class="node-ring" cx="650" cy="110" r="22" />
+                        <circle class="node-core" cx="650" cy="110" r="9" fill="#EDEAE2" />
+                        <text class="node-label" x="650" y="150" text-anchor="middle">Send-message reply</text>
+                      </g>
+                    </svg>
+
+                    <svg viewBox="0 0 280 360" class="sm:hidden w-full" role="img" aria-label="WhatsApp flow (vertical)">
+                      <title>WhatsApp pipeline (mobile)</title>
+                      <g class="edge-group" style="--i:0"><path class="edge-path" d="M140 55 V95"/><path class="edge-pulse" d="M140 55 V95"/></g>
+                      <g class="edge-group" style="--i:1"><path class="edge-path" d="M140 135 V175"/><path class="edge-pulse delay-1" d="M140 135 V175"/></g>
+                      <g class="edge-group" style="--i:2"><path class="edge-path" d="M140 215 V255"/><path class="edge-pulse delay-2" d="M140 215 V255"/></g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="w-hook" data-edges="w-hook>w-router" style="--i:0"
+                        data-payload='{"hub.mode":"subscribe","hub.verify_token":"***","hub.challenge":"1752…"}'>
+                        <circle class="node-ring" cx="140" cy="40" r="18"/><circle class="node-core" cx="140" cy="40" r="8" fill="#0F8B5C"/>
+                        <text class="node-label" x="140" y="72" text-anchor="middle">Cloud API webhook</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="w-router" data-edges="w-hook>w-router,w-router>w-logic" style="--i:1"
+                        data-payload='{"from":"2547…","type":"text","text":"Hours today?"}'>
+                        <circle class="node-ring" cx="140" cy="120" r="18"/><circle class="node-core" cx="140" cy="120" r="8" fill="#E8A33D"/>
+                        <text class="node-label" x="140" y="152" text-anchor="middle">Message router</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="w-logic" data-edges="w-router>w-logic,w-logic>w-send" style="--i:2"
+                        data-payload='{"route":"faq.hours","reply_type":"text"}'>
+                        <circle class="node-ring" cx="140" cy="200" r="18"/><circle class="node-core" cx="140" cy="200" r="8" fill="#0F8B5C"/>
+                        <text class="node-label" x="140" y="232" text-anchor="middle">Response logic</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="w-send" data-edges="w-logic>w-send" style="--i:3"
+                        data-payload='{"messaging_product":"whatsapp","to":"2547…","type":"text"}'>
+                        <circle class="node-ring" cx="140" cy="280" r="18"/><circle class="node-core" cx="140" cy="280" r="8" fill="#EDEAE2"/>
+                        <text class="node-label" x="140" y="312" text-anchor="middle">Send-message reply</text>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── Project 3: Multi-Agent Research ── -->
+        <article class="project-section mb-20 sm:mb-28 reveal" id="project-research" aria-labelledby="proj-3-title">
+          <div class="project-grid grid lg:grid-cols-12 gap-8 lg:gap-10">
+            <div class="lg:col-span-5 flex flex-col">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="font-mono text-[0.65rem] text-forest tracking-wider">FEATURED</span>
+                <span class="h-px flex-1 max-w-[3rem]" style="background: var(--edge)" aria-hidden="true"></span>
+              </div>
+              <h3 id="proj-3-title" class="font-display text-xl sm:text-2xl font-semibold tracking-tight text-ink">
+                Multi-Agent Research Pipeline
+              </h3>
+              <p class="mt-3 text-ink-mute leading-relaxed text-[0.95rem]">
+                A LangGraph pipeline that plans a research query, fans out to specialized agents in parallel, then synthesizes a single report — graph state decides who runs next.
+              </p>
+
+              <div class="why-callout mt-6 pl-4 py-3 pr-3 rounded-r-md">
+                <p class="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-gold mb-1.5">Why this way</p>
+                <p class="text-sm text-ink-mute leading-relaxed">
+                  The hard part wasn’t building the agents — it was conditional routing on graph state without dead ends or infinite loops.
+                </p>
+              </div>
+
+              <div class="mt-6 flex flex-wrap gap-1.5" aria-label="Technologies">
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">LangGraph</span>
+                <span class="tech-tag">Multi-agent orchestration</span>
+              </div>
+
+              <div class="mt-6">
+                <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs text-forest hover:text-forest-glow transition-colors">
+                  View on GitHub ↗
+                </a>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7">
+              <div class="term-panel has-scan">
+                <div class="term-chrome">
+                  <span class="term-dot live"></span>
+                  <span class="term-dot warn"></span>
+                  <span class="term-dot"></span>
+                  <span class="ml-2 font-mono text-[0.62rem] text-ink-faint tracking-wide">graph · research-pipeline · langgraph</span>
+                </div>
+                <div class="activity-strip" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="p-3 sm:p-5 pt-1 relative">
+                  <div class="flow-diagram-wrap diagram-stage" data-diagram="research" id="diagram-research">
+                    <svg viewBox="0 0 720 260" class="hidden sm:block" role="img" aria-label="Research pipeline: query to planner to parallel agents to synthesis to report">
+                      <title>Multi-agent research graph</title>
+                      <!-- Edges -->
+                      <g class="edge-group" data-from="r-query" data-to="r-plan" style="--i:0">
+                        <path class="edge-path" d="M90 130 H170" />
+                        <path class="edge-pulse" d="M90 130 H170" />
+                      </g>
+                      <g class="edge-group" data-from="r-plan" data-to="r-a1" style="--i:1">
+                        <path class="edge-path" d="M250 130 C300 130 310 55 360 55" />
+                        <path class="edge-pulse delay-1" d="M250 130 C300 130 310 55 360 55" />
+                      </g>
+                      <g class="edge-group" data-from="r-plan" data-to="r-a2" style="--i:1">
+                        <path class="edge-path" d="M250 130 H360" />
+                        <path class="edge-pulse" d="M250 130 H360" />
+                      </g>
+                      <g class="edge-group" data-from="r-plan" data-to="r-a3" style="--i:1">
+                        <path class="edge-path" d="M250 130 C300 130 310 205 360 205" />
+                        <path class="edge-pulse delay-2" d="M250 130 C300 130 310 205 360 205" />
+                      </g>
+                      <g class="edge-group" data-from="r-a1" data-to="r-syn" style="--i:2">
+                        <path class="edge-path" d="M420 55 C470 55 490 130 530 130" />
+                        <path class="edge-pulse delay-1" d="M420 55 C470 55 490 130 530 130" />
+                      </g>
+                      <g class="edge-group" data-from="r-a2" data-to="r-syn" style="--i:2">
+                        <path class="edge-path" d="M420 130 H530" />
+                        <path class="edge-pulse delay-2" d="M420 130 H530" />
+                      </g>
+                      <g class="edge-group" data-from="r-a3" data-to="r-syn" style="--i:2">
+                        <path class="edge-path" d="M420 205 C470 205 490 130 530 130" />
+                        <path class="edge-pulse delay-3" d="M420 205 C470 205 490 130 530 130" />
+                      </g>
+                      <g class="edge-group" data-from="r-syn" data-to="r-out" style="--i:3">
+                        <path class="edge-path" d="M590 130 H660" />
+                        <path class="edge-pulse" d="M590 130 H660" />
+                      </g>
+
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-query" data-edges="r-query>r-plan" style="--i:0"
+                        data-payload='{"query":"Compare STK Push vs card rails for SME checkout","locale":"KE"}'>
+                        <circle class="node-ring" cx="60" cy="130" r="20" />
+                        <circle class="node-core" cx="60" cy="130" r="8" fill="#0F8B5C" />
+                        <text class="node-label" x="60" y="168" text-anchor="middle">Query input</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-plan" data-edges="r-query>r-plan,r-plan>r-a1,r-plan>r-a2,r-plan>r-a3" style="--i:1"
+                        data-payload='{"next":["web","docs","local"],"budget_steps":3,"stop_on":"sufficient_coverage"}'>
+                        <circle class="node-ring" cx="210" cy="130" r="22" />
+                        <circle class="node-core" cx="210" cy="130" r="9" fill="#E8A33D" />
+                        <text class="node-label" x="210" y="168" text-anchor="middle">Planner / router</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-a1" data-edges="r-plan>r-a1,r-a1>r-syn" style="--i:2"
+                        data-payload='{"agent":"web_research","findings":2,"confidence":0.74}'>
+                        <circle class="node-ring" cx="390" cy="55" r="18" />
+                        <circle class="node-core" cx="390" cy="55" r="7" fill="#0F8B5C" />
+                        <text class="node-label" x="390" y="90" text-anchor="middle">Research A</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-a2" data-edges="r-plan>r-a2,r-a2>r-syn" style="--i:2"
+                        data-payload='{"agent":"docs_research","findings":3,"confidence":0.81}'>
+                        <circle class="node-ring" cx="390" cy="130" r="18" />
+                        <circle class="node-core" cx="390" cy="130" r="7" fill="#0F8B5C" />
+                        <text class="node-label" x="390" y="165" text-anchor="middle">Research B</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-a3" data-edges="r-plan>r-a3,r-a3>r-syn" style="--i:2"
+                        data-payload='{"agent":"local_context","findings":1,"confidence":0.69}'>
+                        <circle class="node-ring" cx="390" cy="205" r="18" />
+                        <circle class="node-core" cx="390" cy="205" r="7" fill="#0F8B5C" />
+                        <text class="node-label" x="390" y="240" text-anchor="middle">Research C</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-syn" data-edges="r-a1>r-syn,r-a2>r-syn,r-a3>r-syn,r-syn>r-out" style="--i:3"
+                        data-payload='{"merged":6,"conflicts":1,"outline":["summary","tradeoffs","rec"]}'>
+                        <circle class="node-ring" cx="560" cy="130" r="20" />
+                        <circle class="node-core" cx="560" cy="130" r="8" fill="#E8A33D" />
+                        <text class="node-label" x="560" y="168" text-anchor="middle">Synthesis</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-out" data-edges="r-syn>r-out" style="--i:4"
+                        data-payload='{"format":"markdown","sections":4,"status":"final_report"}'>
+                        <circle class="node-ring" cx="680" cy="130" r="18" />
+                        <circle class="node-core" cx="680" cy="130" r="8" fill="#EDEAE2" />
+                        <text class="node-label" x="680" y="168" text-anchor="middle">Report</text>
+                      </g>
+                    </svg>
+
+                    <svg viewBox="0 0 280 480" class="sm:hidden w-full" role="img" aria-label="Research pipeline (vertical)">
+                      <title>Research graph (mobile)</title>
+                      <g class="edge-group" style="--i:0"><path class="edge-path" d="M140 50 V85"/><path class="edge-pulse" d="M140 50 V85"/></g>
+                      <g class="edge-group" style="--i:1"><path class="edge-path" d="M140 125 V160"/><path class="edge-pulse delay-1" d="M140 125 V160"/></g>
+                      <g class="edge-group" style="--i:2"><path class="edge-path" d="M140 200 V235"/><path class="edge-pulse delay-2" d="M140 200 V235"/></g>
+                      <g class="edge-group" style="--i:3"><path class="edge-path" d="M140 275 V310"/><path class="edge-pulse delay-1" d="M140 275 V310"/></g>
+                      <g class="edge-group" style="--i:4"><path class="edge-path" d="M140 350 V385"/><path class="edge-pulse delay-3" d="M140 350 V385"/></g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-query" data-edges="r-query>r-plan" style="--i:0"
+                        data-payload='{"query":"Compare STK Push vs card rails…"}'>
+                        <circle class="node-ring" cx="140" cy="35" r="16"/><circle class="node-core" cx="140" cy="35" r="7" fill="#0F8B5C"/>
+                        <text class="node-label" x="140" y="64" text-anchor="middle">Query input</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-plan" data-edges="r-query>r-plan,r-plan>r-a1" style="--i:1"
+                        data-payload='{"next":["web","docs","local"],"budget_steps":3}'>
+                        <circle class="node-ring" cx="140" cy="110" r="16"/><circle class="node-core" cx="140" cy="110" r="7" fill="#E8A33D"/>
+                        <text class="node-label" x="140" y="139" text-anchor="middle">Planner / router</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-a2" data-edges="r-plan>r-a2" style="--i:2"
+                        data-payload='{"agent":"parallel_research","fan_out":3}'>
+                        <circle class="node-ring" cx="140" cy="185" r="16"/><circle class="node-core" cx="140" cy="185" r="7" fill="#0F8B5C"/>
+                        <text class="node-label" x="140" y="214" text-anchor="middle">Parallel agents</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-syn" data-edges="r-a2>r-syn" style="--i:3"
+                        data-payload='{"merged":6,"outline":["summary","tradeoffs","rec"]}'>
+                        <circle class="node-ring" cx="140" cy="260" r="16"/><circle class="node-core" cx="140" cy="260" r="7" fill="#E8A33D"/>
+                        <text class="node-label" x="140" y="289" text-anchor="middle">Synthesis</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="r-out" data-edges="r-syn>r-out" style="--i:4"
+                        data-payload='{"format":"markdown","status":"final_report"}'>
+                        <circle class="node-ring" cx="140" cy="335" r="16"/><circle class="node-core" cx="140" cy="335" r="7" fill="#EDEAE2"/>
+                        <text class="node-label" x="140" y="364" text-anchor="middle">Final report</text>
+                      </g>
+                      <text class="node-label" x="140" y="420" text-anchor="middle" style="fill:#6B675E;font-size:9px">parallel fan-out simplified on mobile</text>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── Project 4: RAG Chatbot ── -->
+        <article class="project-section mb-24 sm:mb-32 reveal" id="project-rag" aria-labelledby="proj-4-title">
+          <div class="project-grid grid lg:grid-cols-12 gap-8 lg:gap-10">
+            <div class="lg:col-span-5 lg:order-2 flex flex-col">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="font-mono text-[0.65rem] text-forest tracking-wider">FEATURED</span>
+                <span class="h-px flex-1 max-w-[3rem]" style="background: var(--edge)" aria-hidden="true"></span>
+              </div>
+              <h3 id="proj-4-title" class="font-display text-xl sm:text-2xl font-semibold tracking-tight text-ink">
+                RAG Chatbot
+              </h3>
+              <p class="mt-3 text-ink-mute leading-relaxed text-[0.95rem]">
+                A retrieval-augmented chatbot that answers from your documents — chunk, embed into <strong class="text-ink font-medium">ChromaDB</strong>, retrieve top-k context, then generate a grounded reply instead of free-wheeling from the model alone.
+              </p>
+
+              <div class="why-callout mt-6 pl-4 py-3 pr-3 rounded-r-md">
+                <p class="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-gold mb-1.5">Why this way</p>
+                <p class="text-sm text-ink-mute leading-relaxed">
+                  Pure LLM chat invents details when it doesn’t know. RAG forces every answer through ChromaDB-retrieved chunks first — the hard part was balancing chunk size against recall so answers stayed specific without missing the right passage.
+                </p>
+              </div>
+
+              <div class="mt-6 flex flex-wrap gap-1.5" aria-label="Technologies">
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">RAG</span>
+                <span class="tech-tag">ChromaDB</span>
+                <span class="tech-tag">Embeddings</span>
+                <span class="tech-tag">LLM</span>
+              </div>
+
+              <div class="mt-6 flex flex-wrap items-center gap-3">
+                <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-mono text-xs text-forest hover:text-forest-glow transition-colors">
+                  View on GitHub ↗
+                </a>
+                <button type="button" class="code-toggle inline-flex items-center gap-1.5 font-mono text-xs text-ink-mute hover:text-ink border border-ink/10 hover:border-ink/25 rounded px-2.5 py-1.5 transition-colors" data-target="code-rag" aria-expanded="false">
+                  <span class="toggle-label">View code</span>
+                  <svg class="h-3 w-3 transition-transform toggle-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+              </div>
+
+              <div id="code-rag" class="code-panel hidden mt-4" hidden>
+                <pre class="code-block p-4 sm:p-5" tabindex="0"><code><span class="c-cm"># RAG retrieve → generate (ChromaDB) — representative excerpt</span>
+<span class="c-kw">import</span> chromadb
+<span class="c-kw">from</span> chromadb.utils <span class="c-kw">import</span> embedding_functions
+
+client = chromadb.<span class="c-fn">PersistentClient</span>(path=<span class="c-str">"./chroma_db"</span>)
+embed_fn = embedding_functions.<span class="c-fn">DefaultEmbeddingFunction</span>()
+collection = client.<span class="c-fn">get_or_create_collection</span>(
+    name=<span class="c-str">"docs"</span>,
+    embedding_function=embed_fn,
+)
+
+<span class="c-kw">def</span> <span class="c-fn">answer</span>(query: <span class="c-str">str</span>, k: <span class="c-str">int</span> = <span class="c-num">4</span>) -> <span class="c-str">str</span>:
+    hits = collection.<span class="c-fn">query</span>(query_texts=[query], n_results=k)
+    chunks = hits[<span class="c-str">"documents"</span>][<span class="c-num">0</span>]
+    context = <span class="c-str">"\n\n"</span>.<span class="c-fn">join</span>(chunks)
+
+    prompt = (
+        <span class="c-str">"Answer using ONLY the context below. "</span>
+        <span class="c-str">"If the context is insufficient, say you don't know.\n\n"</span>
+        <span class="c-str">f"Context:\n{context}\n\nQuestion: {query}"</span>
+    )
+    <span class="c-kw">return</span> llm.<span class="c-fn">generate</span>(prompt)  <span class="c-cm"># grounded reply, not free-form guesswork</span></code></pre>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7 lg:order-1">
+              <div class="term-panel has-scan">
+                <div class="term-chrome">
+                  <span class="term-dot live"></span>
+                  <span class="term-dot warn"></span>
+                  <span class="term-dot"></span>
+                  <span class="ml-2 font-mono text-[0.62rem] text-ink-faint tracking-wide">pipeline · rag-chatbot · chromadb → generate</span>
+                </div>
+                <div class="activity-strip" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="p-3 sm:p-5 pt-1 relative">
+                  <div class="flow-diagram-wrap diagram-stage" data-diagram="rag" id="diagram-rag">
+                    <svg viewBox="0 0 720 240" class="hidden sm:block" role="img" aria-label="RAG chatbot flow: query, embed, retrieve, context, LLM, answer">
+                      <title>RAG chatbot pipeline</title>
+                      <!-- Ingest path (docs) -->
+                      <g class="edge-group" data-from="rag-docs" data-to="rag-store" style="--i:0">
+                        <path class="edge-path" d="M90 55 H360" />
+                        <path class="edge-pulse delay-2" d="M90 55 H360" />
+                      </g>
+                      <g class="edge-group" data-from="rag-store" data-to="rag-retrieve" style="--i:1">
+                        <path class="edge-path" d="M400 70 V120" />
+                        <path class="edge-pulse delay-3" d="M400 70 V120" />
+                      </g>
+                      <!-- Query path -->
+                      <g class="edge-group" data-from="rag-query" data-to="rag-embed" style="--i:0">
+                        <path class="edge-path" d="M90 170 H175" />
+                        <path class="edge-pulse" d="M90 170 H175" />
+                      </g>
+                      <g class="edge-group" data-from="rag-embed" data-to="rag-retrieve" style="--i:1">
+                        <path class="edge-path" d="M255 170 H340" />
+                        <path class="edge-pulse delay-1" d="M255 170 H340" />
+                      </g>
+                      <g class="edge-group" data-from="rag-retrieve" data-to="rag-ctx" style="--i:2">
+                        <path class="edge-path" d="M460 155 H520" />
+                        <path class="edge-pulse delay-2" d="M460 155 H520" />
+                      </g>
+                      <g class="edge-group" data-from="rag-ctx" data-to="rag-llm" style="--i:3">
+                        <path class="edge-path" d="M580 155 H630" />
+                        <path class="edge-pulse delay-1" d="M580 155 H630" />
+                      </g>
+                      <g class="edge-group" data-from="rag-llm" data-to="rag-out" style="--i:4">
+                        <path class="edge-path" d="M680 140 V100" />
+                        <path class="edge-pulse delay-3" d="M680 140 V100" />
+                      </g>
+
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-docs" data-edges="rag-docs>rag-store" style="--i:0"
+                        data-payload='{"source":"docs/*.pdf","step":"chunk","chunk_size":800,"overlap":120}'>
+                        <circle class="node-ring" cx="60" cy="55" r="18" />
+                        <circle class="node-core" cx="60" cy="55" r="8" fill="#9B978C" />
+                        <text class="node-label" x="60" y="90" text-anchor="middle">Docs · chunk</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-store" data-edges="rag-docs>rag-store,rag-store>rag-retrieve" style="--i:1"
+                        data-payload='{"store":"chromadb","collection":"docs","path":"./chroma_db","metric":"cosine","status":"indexed"}'>
+                        <circle class="node-ring" cx="400" cy="55" r="20" />
+                        <circle class="node-core" cx="400" cy="55" r="8" fill="#0F8B5C" />
+                        <text class="node-label" x="400" y="90" text-anchor="middle">ChromaDB</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-query" data-edges="rag-query>rag-embed" style="--i:0"
+                        data-payload='{"role":"user","text":"What is the refund policy for prepaid?","session_id":"s_184"}'>
+                        <circle class="node-ring" cx="60" cy="170" r="18" />
+                        <circle class="node-core" cx="60" cy="170" r="8" fill="#0F8B5C" />
+                        <text class="node-label" x="60" y="205" text-anchor="middle">User query</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-embed" data-edges="rag-query>rag-embed,rag-embed>rag-retrieve" style="--i:1"
+                        data-payload='{"step":"embed_query","model":"text-embedding","vector_dim":768}'>
+                        <circle class="node-ring" cx="215" cy="170" r="18" />
+                        <circle class="node-core" cx="215" cy="170" r="8" fill="#E8A33D" />
+                        <text class="node-label" x="215" y="205" text-anchor="middle">Embed query</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-retrieve" data-edges="rag-embed>rag-retrieve,rag-store>rag-retrieve,rag-retrieve>rag-ctx" style="--i:2"
+                        data-payload='{"api":"collection.query","n_results":4,"distances":[0.16,0.21,0.24,0.29]}'>
+                        <circle class="node-ring" cx="400" cy="155" r="22" />
+                        <circle class="node-core" cx="400" cy="155" r="9" fill="#E8A33D" />
+                        <text class="node-label" x="400" y="198" text-anchor="middle">Retrieve top-k</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-ctx" data-edges="rag-retrieve>rag-ctx,rag-ctx>rag-llm" style="--i:3"
+                        data-payload='{"context_tokens":1200,"chunks":4,"grounding":true}'>
+                        <circle class="node-ring" cx="550" cy="155" r="18" />
+                        <circle class="node-core" cx="550" cy="155" r="8" fill="#0F8B5C" />
+                        <text class="node-label" x="550" y="198" text-anchor="middle">Context pack</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-llm" data-edges="rag-ctx>rag-llm,rag-llm>rag-out" style="--i:4"
+                        data-payload='{"prompt":"answer_using_context_only","temperature":0.2,"cite_chunks":true}'>
+                        <circle class="node-ring" cx="680" cy="155" r="18" />
+                        <circle class="node-core" cx="680" cy="155" r="8" fill="#0F8B5C" />
+                        <text class="node-label" x="680" y="198" text-anchor="middle">LLM</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-out" data-edges="rag-llm>rag-out" style="--i:5"
+                        data-payload='{"answer":"Refunds within 14 days if…","citations":["policy.md#§3"],"grounded":true}'>
+                        <circle class="node-ring" cx="680" cy="70" r="16" />
+                        <circle class="node-core" cx="680" cy="70" r="7" fill="#EDEAE2" />
+                        <text class="node-label" x="680" y="48" text-anchor="middle">Grounded answer</text>
+                      </g>
+                    </svg>
+
+                    <svg viewBox="0 0 280 460" class="sm:hidden w-full" role="img" aria-label="RAG chatbot flow (vertical)">
+                      <title>RAG pipeline (mobile)</title>
+                      <g class="edge-group" style="--i:0"><path class="edge-path" d="M140 50 V85"/><path class="edge-pulse" d="M140 50 V85"/></g>
+                      <g class="edge-group" style="--i:1"><path class="edge-path" d="M140 125 V160"/><path class="edge-pulse delay-1" d="M140 125 V160"/></g>
+                      <g class="edge-group" style="--i:2"><path class="edge-path" d="M140 200 V235"/><path class="edge-pulse delay-2" d="M140 200 V235"/></g>
+                      <g class="edge-group" style="--i:3"><path class="edge-path" d="M140 275 V310"/><path class="edge-pulse delay-1" d="M140 275 V310"/></g>
+                      <g class="edge-group" style="--i:4"><path class="edge-path" d="M140 350 V385"/><path class="edge-pulse delay-3" d="M140 350 V385"/></g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-query" data-edges="rag-query>rag-embed" style="--i:0"
+                        data-payload='{"role":"user","text":"What is the refund policy?"}'>
+                        <circle class="node-ring" cx="140" cy="35" r="16"/><circle class="node-core" cx="140" cy="35" r="7" fill="#0F8B5C"/>
+                        <text class="node-label" x="140" y="64" text-anchor="middle">User query</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-embed" data-edges="rag-query>rag-embed" style="--i:1"
+                        data-payload='{"step":"embed_query","vector_dim":768}'>
+                        <circle class="node-ring" cx="140" cy="110" r="16"/><circle class="node-core" cx="140" cy="110" r="7" fill="#E8A33D"/>
+                        <text class="node-label" x="140" y="139" text-anchor="middle">Embed + retrieve</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-retrieve" data-edges="" style="--i:2"
+                        data-payload='{"store":"chromadb","api":"collection.query","n_results":4}'>
+                        <circle class="node-ring" cx="140" cy="185" r="16"/><circle class="node-core" cx="140" cy="185" r="7" fill="#0F8B5C"/>
+                        <text class="node-label" x="140" y="214" text-anchor="middle">ChromaDB</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-ctx" data-edges="" style="--i:3"
+                        data-payload='{"context_tokens":1200,"grounding":true}'>
+                        <circle class="node-ring" cx="140" cy="260" r="16"/><circle class="node-core" cx="140" cy="260" r="7" fill="#E8A33D"/>
+                        <text class="node-label" x="140" y="289" text-anchor="middle">Context pack</text>
+                      </g>
+                      <g class="flow-node" tabindex="0" role="button" data-node="rag-out" data-edges="" style="--i:4"
+                        data-payload='{"answer":"…","citations":["policy.md#§3"],"grounded":true}'>
+                        <circle class="node-ring" cx="140" cy="335" r="16"/><circle class="node-core" cx="140" cy="335" r="7" fill="#EDEAE2"/>
+                        <text class="node-label" x="140" y="364" text-anchor="middle">Grounded answer</text>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── More builds ── -->
+        <div class="reveal" id="more-builds">
+          <div class="flex items-baseline justify-between gap-4 mb-8">
+            <div>
+              <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-ink-faint mb-2">More builds</p>
+              <h3 class="font-display text-lg sm:text-xl font-semibold tracking-tight">Fintech, agri, and computer vision</h3>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            <!-- KilimoOrbit -->
+            <article class="term-panel has-scan group hover:border-forest/30 transition-colors">
+              <div class="term-chrome">
+                <span class="term-dot live"></span>
+                <span class="term-dot"></span>
+                <span class="term-dot"></span>
+                <span class="ml-2 font-mono text-[0.6rem] text-ink-faint">agri · gemini</span>
+              </div>
+              <div class="activity-strip" aria-hidden="true" style="height:0.65rem;padding-bottom:0.35rem">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <div class="p-5 pt-2">
+                <h4 class="font-display font-semibold text-base tracking-tight group-hover:text-forest-glow transition-colors">KilimoOrbit Sentinel</h4>
+                <p class="mt-2 text-sm text-ink-mute leading-relaxed">
+                  Real-time agri-logistics and climate advisory for Kenyan smallholder farmers, powered by Gemini 2.5 Flash.
+                </p>
+                <div class="mini-flow" aria-hidden="true">
+                  <span class="mf-node"></span><span class="mf-edge"></span>
+                  <span class="mf-node"></span><span class="mf-edge"></span>
+                  <span class="mf-node"></span>
+                  <span class="ml-1">sensor → model → advisory</span>
+                </div>
+                <p class="mt-3 font-mono text-[0.65rem] text-ink-faint leading-relaxed border-t border-ink/5 pt-3">
+                  Pivoted to Gemini 2.5 Flash via the @google/genai SDK after free-tier limits on a heavier model.
+                </p>
+                <div class="mt-4 flex flex-wrap gap-1.5">
+                  <span class="tech-tag">Gemini 2.5 Flash</span>
+                  <span class="tech-tag">@google/genai</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- M-Pesa Wallet -->
+            <article class="term-panel has-scan group hover:border-forest/30 transition-colors">
+              <div class="term-chrome">
+                <span class="term-dot live"></span>
+                <span class="term-dot"></span>
+                <span class="term-dot"></span>
+                <span class="ml-2 font-mono text-[0.6rem] text-ink-faint">fintech · m-pesa</span>
+              </div>
+              <div class="activity-strip" aria-hidden="true" style="height:0.65rem;padding-bottom:0.35rem">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <div class="p-5 pt-2">
+                <h4 class="font-display font-semibold text-base tracking-tight group-hover:text-forest-glow transition-colors">M-Pesa STK Push Mini Wallet</h4>
+                <p class="mt-2 text-sm text-ink-mute leading-relaxed">
+                  Payment API with atomic transactions, idempotency keys, and a React dashboard — Node.js + MongoDB.
+                </p>
+                <div class="mini-flow" aria-hidden="true">
+                  <span class="mf-node"></span><span class="mf-edge"></span>
+                  <span class="mf-node"></span><span class="mf-edge"></span>
+                  <span class="mf-node"></span>
+                  <span class="ml-1">STK → callback → ledger</span>
+                </div>
+                <p class="mt-3 font-mono text-[0.65rem] text-ink-faint leading-relaxed border-t border-ink/5 pt-3">
+                  Transactions are idempotent and atomic, so a retried callback can never double-charge someone.
+                </p>
+                <div class="mt-4 flex flex-wrap gap-1.5">
+                  <span class="tech-tag">Node.js</span>
+                  <span class="tech-tag">MongoDB</span>
+                  <span class="tech-tag">React</span>
+                  <span class="tech-tag">M-Pesa STK</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Crop Disease -->
+            <article class="term-panel has-scan group hover:border-forest/30 transition-colors sm:col-span-2 lg:col-span-1">
+              <div class="term-chrome">
+                <span class="term-dot live"></span>
+                <span class="term-dot"></span>
+                <span class="term-dot"></span>
+                <span class="ml-2 font-mono text-[0.6rem] text-ink-faint">cv · mobilenet</span>
+              </div>
+              <div class="activity-strip" aria-hidden="true" style="height:0.65rem;padding-bottom:0.35rem">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <div class="p-5 pt-2">
+                <h4 class="font-display font-semibold text-base tracking-tight group-hover:text-forest-glow transition-colors">Crop Disease Detection</h4>
+                <p class="mt-2 text-sm text-ink-mute leading-relaxed">
+                  38-class multi-crop classifier on PlantVillage — MobileNetV2 backbone for practical inference cost.
+                </p>
+                <div class="mini-flow" aria-hidden="true">
+                  <span class="mf-node"></span><span class="mf-edge"></span>
+                  <span class="mf-node"></span><span class="mf-edge"></span>
+                  <span class="mf-node"></span>
+                  <span class="ml-1">image → CNN → class</span>
+                </div>
+                <p class="mt-3 font-mono text-[0.65rem] text-ink-faint leading-relaxed border-t border-ink/5 pt-3">
+                  Chose MobileNetV2 over a heavier CNN so the model stays usable where compute and bandwidth are limited.
+                </p>
+                <div class="mt-4 flex flex-wrap gap-1.5">
+                  <span class="tech-tag">MobileNetV2</span>
+                  <span class="tech-tag">PlantVillage</span>
+                  <span class="tech-tag">38 classes</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ SKILLS ═══════════════ -->
+    <section id="skills" class="band band-skills py-20 sm:py-28" aria-labelledby="skills-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+        <div class="mb-12 reveal">
+          <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Stack</p>
+          <h2 id="skills-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Skills, grouped by how I use them.</h2>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 reveal">
+          <div class="term-panel">
+            <div class="term-chrome">
+              <span class="term-dot live"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">~/skills/agentic-ai</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-semibold text-sm mb-3">Agentic AI &amp; Orchestration</h3>
+              <ul class="flex flex-wrap gap-1.5">
+                <li><span class="tech-tag">n8n</span></li>
+                <li><span class="tech-tag">LangGraph</span></li>
+                <li><span class="tech-tag">LangChain</span></li>
+                <li><span class="tech-tag">RAG</span></li>
+                <li><span class="tech-tag">ChromaDB</span></li>
+                <li><span class="tech-tag">Embeddings</span></li>
+                <li><span class="tech-tag">Claude API</span></li>
+                <li><span class="tech-tag">Gemini API</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="term-panel">
+            <div class="term-chrome">
+              <span class="term-dot live"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">~/skills/backend</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-semibold text-sm mb-3">Languages &amp; Backend</h3>
+              <ul class="flex flex-wrap gap-1.5">
+                <li><span class="tech-tag">Python</span></li>
+                <li><span class="tech-tag">Node.js / JavaScript</span></li>
+                <li><span class="tech-tag">MongoDB</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="term-panel">
+            <div class="term-chrome">
+              <span class="term-dot live"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">~/skills/frontend</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-semibold text-sm mb-3">Frontend</h3>
+              <ul class="flex flex-wrap gap-1.5">
+                <li><span class="tech-tag">React</span></li>
+                <li><span class="tech-tag">Tailwind CSS</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="term-panel">
+            <div class="term-chrome">
+              <span class="term-dot warn"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">~/skills/cloud</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-semibold text-sm mb-3">Cloud</h3>
+              <ul class="flex flex-wrap gap-1.5">
+                <li><span class="tech-tag">AWS <span class="text-gold/80">(AI Practitioner in progress)</span></span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="term-panel sm:col-span-2">
+            <div class="term-chrome">
+              <span class="term-dot live"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">~/skills/networking</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-semibold text-sm mb-3">Networking &amp; Systems</h3>
+              <ul class="flex flex-wrap gap-1.5">
+                <li><span class="tech-tag">CCNA</span></li>
+                <li><span class="tech-tag">JNCIA</span></li>
+                <li><span class="tech-tag">NOC / SOC · Safaricom</span></li>
+                <li><span class="tech-tag">IP · Transmission · RAN · Core</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ CERTIFICATIONS ═══════════════ -->
+    <section id="certifications" class="band band-certs py-20 sm:py-28" aria-labelledby="certs-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+        <div class="mb-12 reveal">
+          <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Credentials</p>
+          <h2 id="certs-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Certifications</h2>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 reveal">
+          <div class="cert-badge p-5">
+            <div class="flex items-start justify-between gap-2 mb-4">
+              <div class="h-10 w-10 rounded-md bg-forest/15 border border-forest/30 flex items-center justify-center" aria-hidden="true">
+                <svg class="h-5 w-5 text-forest-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <span class="font-mono text-[0.6rem] text-forest tracking-wider uppercase">Done</span>
+            </div>
+            <h3 class="font-display font-semibold text-sm">CCNA</h3>
+            <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">Cisco · completed</p>
+          </div>
+
+          <div class="cert-badge p-5">
+            <div class="flex items-start justify-between gap-2 mb-4">
+              <div class="h-10 w-10 rounded-md bg-forest/15 border border-forest/30 flex items-center justify-center" aria-hidden="true">
+                <svg class="h-5 w-5 text-forest-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <span class="font-mono text-[0.6rem] text-forest tracking-wider uppercase">Done</span>
+            </div>
+            <h3 class="font-display font-semibold text-sm">JNCIA</h3>
+            <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">Juniper · completed</p>
+          </div>
+
+          <div class="cert-badge p-5">
+            <div class="flex items-start justify-between gap-2 mb-4">
+              <div class="h-10 w-10 rounded-md bg-forest/15 border border-forest/30 flex items-center justify-center" aria-hidden="true">
+                <svg class="h-5 w-5 text-forest-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <span class="font-mono text-[0.6rem] text-forest tracking-wider uppercase">Done</span>
+            </div>
+            <h3 class="font-display font-semibold text-sm">ITIL Foundation</h3>
+            <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">Service management · completed</p>
+          </div>
+
+          <div class="cert-badge p-5">
+            <div class="flex items-start justify-between gap-2 mb-4">
+              <div class="h-10 w-10 rounded-md bg-forest/15 border border-forest/30 flex items-center justify-center" aria-hidden="true">
+                <svg class="h-5 w-5 text-forest-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.636 50.636 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+              </div>
+              <span class="font-mono text-[0.6rem] text-forest tracking-wider uppercase">Done</span>
+            </div>
+            <h3 class="font-display font-semibold text-sm">UDARA Project Certification</h3>
+            <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">Project credential · completed</p>
+          </div>
+
+          <div class="cert-badge in-progress p-5">
+            <div class="flex items-start justify-between gap-2 mb-4">
+              <div class="h-10 w-10 rounded-md bg-gold/10 border border-gold/30 flex items-center justify-center" aria-hidden="true">
+                <svg class="h-5 w-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <span class="font-mono text-[0.6rem] text-gold tracking-wider uppercase">In progress</span>
+            </div>
+            <h3 class="font-display font-semibold text-sm">AWS Certified AI Practitioner</h3>
+            <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">AIF-C01 · finishing</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ CONTACT / FOOTER ═══════════════ -->
+    <footer id="contact" class="band band-contact pt-20 sm:pt-24 pb-10" aria-labelledby="contact-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+        <!-- Closing CTA strip -->
+        <div class="reveal mb-16 sm:mb-20 max-w-2xl">
+          <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Contact</p>
+          <h2 id="contact-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight mb-4">
+            Building something that needs agents that actually ship?
+          </h2>
+          <p class="text-ink-mute leading-relaxed mb-6">
+            Open to roles in AI, automation, and fintech engineering. Reach me by email, phone, or LinkedIn.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href="mailto:ondiekiian0@gmail.com" class="inline-flex items-center gap-2 rounded-md bg-forest px-5 py-2.5 text-sm font-medium text-ink hover:bg-forest-glow transition-colors">
+              ondiekiian0@gmail.com
+            </a>
+            <a href="tel:+254793007266" class="contact-phone inline-flex items-center gap-2 rounded-md border border-ink/15 bg-surface/50 backdrop-blur-sm px-5 py-2.5 text-sm font-medium text-ink hover:border-forest/40 transition-colors">
+              +254 793 007 266
+            </a>
+            <a href="https://www.linkedin.com/in/ian-ondieki/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-md border border-ink/15 px-5 py-2.5 text-sm font-medium text-ink hover:border-forest/40 transition-colors">
+              LinkedIn ↗
+            </a>
+            <!-- PLACEHOLDER: résumé href -->
+            <a href="#" class="inline-flex items-center gap-2 rounded-md border border-ink/10 px-5 py-2.5 text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/25 transition-colors" aria-label="Download résumé (add your PDF link)">
+              Résumé <span class="font-mono text-[0.65rem]">↓</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Footer grid — three columns, tight -->
+        <div class="border-t border-ink/5 pt-10">
+          <div class="grid sm:grid-cols-3 gap-8 sm:gap-6 mb-10">
+            <!-- Left -->
+            <div>
+              <p class="font-display font-semibold tracking-tight text-ink">Ian Ondieki</p>
+              <p class="mt-1.5 font-mono text-xs text-ink-mute">Nairobi, Kenya (GMT+3)</p>
+              <a href="tel:+254793007266" class="contact-phone mt-1.5 inline-block font-mono text-xs text-ink-mute hover:text-forest-glow transition-colors">+254 793 007 266</a>
+              <p class="mt-3 flex items-center gap-2 font-mono text-[0.65rem] text-ink-faint">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span>systems: nominal</span>
+              </p>
+            </div>
+
+            <!-- Middle -->
+            <nav class="flex sm:justify-center flex-wrap gap-5 sm:gap-6 text-sm" aria-label="Footer">
+              <a href="#experience" class="text-ink-mute hover:text-ink transition-colors">Experience</a>
+              <a href="#projects" class="text-ink-mute hover:text-ink transition-colors">Projects</a>
+              <a href="#skills" class="text-ink-mute hover:text-ink transition-colors">Skills</a>
+              <a href="#certifications" class="text-ink-mute hover:text-ink transition-colors">Certs</a>
+            </nav>
+
+            <!-- Right -->
+            <div class="flex sm:justify-end flex-wrap gap-4 font-mono text-xs">
+              <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="text-ink-mute hover:text-forest-glow transition-colors">GitHub ↗</a>
+              <a href="https://www.linkedin.com/in/ian-ondieki/" target="_blank" rel="noopener noreferrer" class="text-ink-mute hover:text-forest-glow transition-colors">LinkedIn ↗</a>
+              <a href="mailto:ondiekiian0@gmail.com" class="text-ink-mute hover:text-forest-glow transition-colors">Email</a>
+              <a href="tel:+254793007266" class="text-ink-mute hover:text-forest-glow transition-colors">Phone</a>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-6 border-t border-ink/5">
+            <p class="font-mono text-[0.65rem] text-ink-faint">
+              Currently: finishing AWS Certified AI Practitioner (AIF-C01)
+            </p>
+            <p class="font-mono text-[0.65rem] text-ink-faint">
+              © <span id="year">2026</span> Ian Ondieki
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Global payload tooltip (positioned by JS) -->
+  <div id="payload-tip" class="payload-tip" role="tooltip" aria-hidden="true"></div>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════
+       INTERACTIVITY
+       - Sticky nav + active section
+       - Mobile menu
+       - Diagram build-on-scroll
+       - Node hover / focus → payload tooltip + edge highlight
+       - Code toggle
+       - prefers-reduced-motion respected via CSS primarily
+       Tweak node-graph logic in bindDiagramNodes() / formatPayload()
+       ═══════════════════════════════════════════════════════════ */
+
+    (function () {
+      'use strict';
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Year
+      const yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+      // ── Nav scroll state ──
+      const nav = document.getElementById('site-nav');
+      const onScrollNav = () => {
+        if (!nav) return;
+        nav.classList.toggle('scrolled', window.scrollY > 12);
+      };
+      window.addEventListener('scroll', onScrollNav, { passive: true });
+      onScrollNav();
+
+      // ── Mobile menu ──
+      const menuToggle = document.getElementById('menu-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const iconOpen = document.getElementById('menu-icon-open');
+      const iconClose = document.getElementById('menu-icon-close');
+
+      function setMenu(open) {
+        if (!mobileMenu || !menuToggle) return;
+        mobileMenu.classList.toggle('open', open);
+        menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        if (iconOpen && iconClose) {
+          iconOpen.classList.toggle('hidden', open);
+          iconClose.classList.toggle('hidden', !open);
+        }
+      }
+
+      menuToggle?.addEventListener('click', () => {
+        setMenu(menuToggle.getAttribute('aria-expanded') !== 'true');
+      });
+
+      mobileMenu?.querySelectorAll('a').forEach((a) => {
+        a.addEventListener('click', () => setMenu(false));
+      });
+
+      // ── Active section highlighting ──
+      const sectionIds = ['experience', 'projects', 'skills', 'certifications', 'contact'];
+      const navLinks = document.querySelectorAll('.nav-link[data-section]');
+
+      function updateActiveNav() {
+        const y = window.scrollY + 120;
+        let current = '';
+        for (const id of sectionIds) {
+          const el = document.getElementById(id);
+          if (el && el.offsetTop <= y) current = id;
+        }
+        navLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('data-section') === current);
+        });
+      }
+      window.addEventListener('scroll', updateActiveNav, { passive: true });
+      updateActiveNav();
+
+      // ── Terminal panels: scanline when in view ──
+      const scanPanels = document.querySelectorAll('.term-panel.has-scan');
+      if ('IntersectionObserver' in window) {
+        const scanObs = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              e.target.classList.toggle('is-inview', e.isIntersecting);
+            });
+          },
+          { threshold: 0.15 }
+        );
+        scanPanels.forEach((p) => scanObs.observe(p));
+      } else {
+        scanPanels.forEach((p) => p.classList.add('is-inview'));
+      }
+
+      // ── Safaricom SOC orbit rotation + ops log ──
+      const socNodes = Array.from(document.querySelectorAll('.soc-node'));
+      const socBeam = document.getElementById('soc-beam');
+      const socLabel = document.getElementById('soc-active-label');
+      const opsLog = document.getElementById('ops-log');
+
+      const opsTemplates = {
+        ip: [
+          { lvl: 'ok', msg: 'IP · BGP peer session established · AS path stable' },
+          { lvl: 'ok', msg: 'IP · interface utilization sampled · within threshold' },
+          { lvl: 'warn', msg: 'IP · elevated latency on backbone segment · watching' },
+          { lvl: 'ok', msg: 'IP · traceroute complete · no blackhole detected' },
+        ],
+        tx: [
+          { lvl: 'ok', msg: 'TX · microwave link SNR nominal · path clear' },
+          { lvl: 'ok', msg: 'TX · fiber span loss within design budget' },
+          { lvl: 'warn', msg: 'TX · capacity near peak on ring segment · noted' },
+          { lvl: 'ok', msg: 'TX · protection switch ready · no active failover' },
+        ],
+        ran: [
+          { lvl: 'ok', msg: 'RAN · site KPI poll complete · accessibility OK' },
+          { lvl: 'warn', msg: 'RAN · elevated drop rate on cluster · investigate' },
+          { lvl: 'ok', msg: 'RAN · handovers successful · neighbor list stable' },
+          { lvl: 'ok', msg: 'RAN · RF alarm cleared · cell back to service' },
+        ],
+        digital: [
+          { lvl: 'ok', msg: 'DIG · digital service health check · 200 OK' },
+          { lvl: 'ok', msg: 'DIG · API gateway latency within SLO' },
+          { lvl: 'warn', msg: 'DIG · error budget burn elevated · monitoring' },
+          { lvl: 'ok', msg: 'DIG · release window closed · platforms stable' },
+        ],
+        core: [
+          { lvl: 'ok', msg: 'CORE · signalling load nominal · MSC/VLR OK' },
+          { lvl: 'ok', msg: 'CORE · M-Pesa rail path observed · no incident' },
+          { lvl: 'warn', msg: 'CORE · transient timeout on dependent hop · retry OK' },
+          { lvl: 'ok', msg: 'CORE · session continuity check · pass' },
+        ],
+      };
+
+      function tsNow() {
+        const d = new Date();
+        return d.toTimeString().slice(0, 8);
+      }
+
+      function pushLog(socKey) {
+        if (!opsLog) return;
+        const pool = opsTemplates[socKey] || opsTemplates.ip;
+        const item = pool[Math.floor(Math.random() * pool.length)];
+        const line = document.createElement('div');
+        line.className = 'log-line is-fresh';
+        const cls = item.lvl === 'warn' ? 'log-warn' : 'log-ok';
+        line.innerHTML =
+          `<span class="log-ts">${tsNow()}</span>  <span class="${cls}">${item.lvl === 'warn' ? 'WARN' : 'OK  '}</span>  ${item.msg}`;
+        opsLog.insertBefore(line, opsLog.firstChild);
+        while (opsLog.children.length > 6) {
+          opsLog.removeChild(opsLog.lastChild);
+        }
+        // fade older lines
+        Array.from(opsLog.children).forEach((el, i) => {
+          if (i === 0) el.classList.add('is-fresh');
+          else el.classList.remove('is-fresh');
+        });
+      }
+
+      function activateSoc(index) {
+        if (!socNodes.length) return;
+        const node = socNodes[index % socNodes.length];
+        socNodes.forEach((n) => {
+          n.classList.remove('is-active', 'is-alert');
+        });
+        node.classList.add('is-active');
+        if (node.getAttribute('data-soc') === 'core') node.classList.add('is-alert');
+
+        const angle = parseFloat(node.getAttribute('data-angle') || '0', 10);
+        if (socBeam) {
+          socBeam.style.transform = `rotate(${angle}deg)`;
+          socBeam.classList.add('is-on');
+        }
+        if (socLabel) {
+          socLabel.textContent = node.getAttribute('data-label') || 'SOC · monitoring';
+        }
+        pushLog(node.getAttribute('data-soc') || 'ip');
+      }
+
+      // Seed log + start rotation
+      if (socNodes.length) {
+        activateSoc(0);
+        // seed a few historical lines
+        ['ip', 'tx', 'ran'].forEach((k, i) => {
+          setTimeout(() => {
+            const pool = opsTemplates[k];
+            const item = pool[0];
+            if (!opsLog) return;
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            line.innerHTML = `<span class="log-ts">--:--:--</span>  <span class="log-ok">OK  </span>  ${item.msg}`;
+            opsLog.appendChild(line);
+          }, i * 40);
+        });
+
+        if (!reduceMotion) {
+          let socIdx = 0;
+          setInterval(() => {
+            socIdx = (socIdx + 1) % socNodes.length;
+            activateSoc(socIdx);
+          }, 2800);
+        }
+
+        // Click / keyboard focus on a SOC node
+        socNodes.forEach((node, i) => {
+          node.setAttribute('tabindex', '0');
+          node.setAttribute('role', 'button');
+          const pick = () => activateSoc(i);
+          node.addEventListener('click', pick);
+          node.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              pick();
+            }
+          });
+        });
+      }
+
+      // Scroll-fade / diagram build-in removed — content is always painted.
+      // Signature motion kept: edge pulses, SOC orbit, mesh, activity strips.
+
+      // ── Payload tooltip ──
+      const tip = document.getElementById('payload-tip');
+
+      function formatPayload(raw) {
+        let obj;
+        try {
+          obj = JSON.parse(raw);
+        } catch {
+          return escapeHtml(raw);
+        }
+        const lines = Object.entries(obj).map(([k, v]) => {
+          const key = `<span class="tip-key">${escapeHtml(k)}</span>`;
+          let val;
+          if (typeof v === 'string') val = `<span class="tip-str">"${escapeHtml(v)}"</span>`;
+          else if (typeof v === 'number') val = `<span class="tip-num">${v}</span>`;
+          else if (v === null) val = `<span class="tip-muted">null</span>`;
+          else if (Array.isArray(v)) val = `<span class="tip-str">${escapeHtml(JSON.stringify(v))}</span>`;
+          else val = `<span class="tip-str">${escapeHtml(JSON.stringify(v))}</span>`;
+          return `  ${key}: ${val}`;
+        });
+        return `{\n${lines.join(',\n')}\n}`;
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function showTip(node, clientX, clientY) {
+        if (!tip) return;
+        const payload = node.getAttribute('data-payload');
+        if (!payload) return;
+        tip.innerHTML = formatPayload(payload);
+        tip.classList.add('is-visible');
+        tip.setAttribute('aria-hidden', 'false');
+
+        const pad = 12;
+        const rect = tip.getBoundingClientRect();
+        let left = clientX + 16;
+        let top = clientY + 16;
+        if (left + rect.width > window.innerWidth - pad) left = clientX - rect.width - 16;
+        if (top + rect.height > window.innerHeight - pad) top = clientY - rect.height - 12;
+        if (left < pad) left = pad;
+        if (top < pad) top = pad;
+        tip.style.left = `${left}px`;
+        tip.style.top = `${top}px`;
+      }
+
+      function positionTipNearNode(node) {
+        const r = node.getBoundingClientRect();
+        showTip(node, r.right, r.top + r.height / 2);
+      }
+
+      function hideTip() {
+        if (!tip) return;
+        tip.classList.remove('is-visible');
+        tip.setAttribute('aria-hidden', 'true');
+      }
+
+      function lightEdges(stage, edgeKeys) {
+        const keys = (edgeKeys || '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+        stage.querySelectorAll('.edge-group').forEach((g) => {
+          const from = g.getAttribute('data-from');
+          const to = g.getAttribute('data-to');
+          const id = from && to ? `${from}>${to}` : '';
+          g.classList.toggle('is-lit', keys.includes(id));
+        });
+      }
+
+      function clearEdges(stage) {
+        stage.querySelectorAll('.edge-group').forEach((g) => g.classList.remove('is-lit'));
+        stage.querySelectorAll('.flow-node').forEach((n) => n.classList.remove('is-active'));
+      }
+
+      function bindDiagramNodes(stage) {
+        // Bind only visible SVG nodes (desktop or mobile)
+        const nodes = stage.querySelectorAll('.flow-node');
+        nodes.forEach((node) => {
+          const activate = (e) => {
+            const svg = node.closest('svg');
+            if (!svg) return;
+            clearEdges(stage);
+            node.classList.add('is-active');
+            lightEdges(stage, node.getAttribute('data-edges'));
+            if (e && e.type === 'mousemove') {
+              showTip(node, e.clientX, e.clientY);
+            } else if (e && e.clientX != null) {
+              showTip(node, e.clientX, e.clientY);
+            } else {
+              positionTipNearNode(node);
+            }
+          };
+
+          node.addEventListener('mouseenter', activate);
+          node.addEventListener('mousemove', (e) => {
+            if (node.classList.contains('is-active') || true) {
+              showTip(node, e.clientX, e.clientY);
+              lightEdges(stage, node.getAttribute('data-edges'));
+              node.classList.add('is-active');
+            }
+          });
+          node.addEventListener('mouseleave', () => {
+            clearEdges(stage);
+            hideTip();
+          });
+          node.addEventListener('focus', () => activate());
+          node.addEventListener('blur', () => {
+            clearEdges(stage);
+            hideTip();
+          });
+          node.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              activate();
+            }
+            if (e.key === 'Escape') {
+              clearEdges(stage);
+              hideTip();
+              node.blur();
+            }
+          });
+        });
+      }
+
+      diagrams.forEach(bindDiagramNodes);
+
+      // Hide tip on scroll / resize
+      window.addEventListener('scroll', hideTip, { passive: true });
+      window.addEventListener('resize', hideTip, { passive: true });
+
+      // ── Code toggle ──
+      document.querySelectorAll('.code-toggle').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-target');
+          const panel = id ? document.getElementById(id) : null;
+          if (!panel) return;
+          const open = panel.hasAttribute('hidden');
+          if (open) {
+            panel.removeAttribute('hidden');
+            panel.classList.remove('hidden');
+          } else {
+            panel.setAttribute('hidden', '');
+            panel.classList.add('hidden');
+          }
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          const label = btn.querySelector('.toggle-label');
+          if (label) label.textContent = open ? 'Hide code' : 'View code';
+          const chev = btn.querySelector('.toggle-chevron');
+          if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
