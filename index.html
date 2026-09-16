@@ -25,6 +25,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
+  <script>
+    /* Runs before paint: no flash of the wrong theme. Saved choice wins, else the
+       operating system preference. */
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+      } catch (e) { /* private mode: stay on the default day theme */ }
+    })();
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     /* ─── PALETTE & TYPE TOKENS (tweak here) ─── */
@@ -37,25 +48,33 @@
                Tailwind emit a second `.text-base` rule that sets colour instead,
                and it wins on order — every `text-base` element renders #0C1018
                on a #0C1018 page. The --base CSS variable below is unaffected. */
-            surface: '#161D2A',
-            'surface-2': '#1E2736',
+            /* Every colour resolves through a CSS variable, so switching
+               data-theme="dark" repaints the utilities too. The <alpha-value>
+               placeholder keeps modifiers like text-ink/60 working. */
+            surface: 'rgb(var(--surface-rgb) / <alpha-value>)',
+            'surface-2': 'rgb(var(--surface-2-rgb) / <alpha-value>)',
+            panel: {
+              DEFAULT: 'rgb(var(--panel-rgb) / <alpha-value>)',
+              deep: 'rgb(var(--panel-deep-rgb) / <alpha-value>)',
+            },
             forest: {
-              DEFAULT: '#0F8B5C',
-              dim: '#0A6B47',
-              glow: '#14A870',
+              DEFAULT: 'rgb(var(--forest-rgb) / <alpha-value>)',
+              dim: 'rgb(var(--forest-dim-rgb) / <alpha-value>)',
+              glow: 'rgb(var(--forest-glow-rgb) / <alpha-value>)',
             },
             gold: {
-              DEFAULT: '#E8A33D',
-              dim: '#C4882E',
+              DEFAULT: 'rgb(var(--gold-rgb) / <alpha-value>)',
+              dim: 'rgb(var(--gold-dim-rgb) / <alpha-value>)',
             },
             rust: {
-              DEFAULT: '#B8492E',
-              dim: '#8F3722',
+              DEFAULT: 'rgb(var(--rust-rgb) / <alpha-value>)',
+              dim: 'rgb(var(--rust-dim-rgb) / <alpha-value>)',
             },
             ink: {
-              DEFAULT: '#F2EFE6',
-              mute: '#B0ABA0',
-              faint: '#7A766C',
+              DEFAULT: 'rgb(var(--ink-rgb) / <alpha-value>)',
+              mute: 'rgb(var(--ink-mute-rgb) / <alpha-value>)',
+              faint: 'rgb(var(--ink-faint-rgb) / <alpha-value>)',
+              'on-dark': 'rgb(var(--ink-on-dark-rgb) / <alpha-value>)',
             },
           },
           fontFamily: {
@@ -67,7 +86,7 @@
             content: '72rem',
           },
           boxShadow: {
-            glow: '0 0 40px -8px rgba(15, 139, 92, 0.35)',
+            glow: '0 0 40px -8px rgba(26, 82, 176, 0.35)',
             panel: '0 1px 0 0 rgba(237, 234, 226, 0.04) inset',
           },
           animation: {
@@ -96,19 +115,44 @@
        ═══════════════════════════════════════════ */
 
     :root {
-      --base: #0C1018;
-      --base-mid: #10151F;
-      --surface: #161D2A;
-      --surface-2: #1E2736;
-      --forest: #0F8B5C;
-      --forest-glow: #14A870;
-      --gold: #E8A33D;
-      --rust: #B8492E;
-      --ink: #F2EFE6;
-      --ink-mute: #B0ABA0;
-      --ink-faint: #7A766C;
-      --edge: rgba(237, 234, 226, 0.075);
-      --edge-strong: rgba(15, 139, 92, 0.45);
+      /* LIGHT THEME. The page is light; console panels stay dark navy and carry
+         their own light text (see the .on-dark block). `forest` keeps its name
+         because ~120 utility classes reference it, but it is now the brand blue. */
+      --base: #F4F7FB;
+      --base-mid: #EDF2F9;
+      --surface: #FFFFFF;
+      --surface-2: #E8EEF7;
+      --panel: #0C1E3E;
+      --panel-2: #0A1830;
+      --forest: #1A52B0;
+      --forest-glow: #2F7BE8;
+      --gold: #D9821F;
+      --rust: #C0432B;
+      --ink: #0B1B3C;
+      --ink-mute: #4A5D7E;
+      --ink-faint: #64748F;
+      --ink-on-dark: #EEF3FA;
+      --ink-on-dark-mute: #A8BBD6;
+      --status: #12A47E;
+      --edge: rgba(11, 27, 60, 0.10);
+      --edge-strong: rgba(26, 82, 176, 0.35);
+      /* Same colours as space-separated RGB, so Tailwind utilities can use them
+         with opacity modifiers (text-ink/60, border-ink/5, ...). */
+      --ink-rgb: 11 27 60;
+      --ink-mute-rgb: 74 93 126;
+      --ink-faint-rgb: 100 116 143;
+      --ink-on-dark-rgb: 238 243 250;
+      --forest-rgb: 26 82 176;
+      --forest-dim-rgb: 18 60 130;
+      --forest-glow-rgb: 47 123 232;
+      --gold-rgb: 217 130 31;
+      --gold-dim-rgb: 176 104 20;
+      --rust-rgb: 192 67 43;
+      --rust-dim-rgb: 154 52 33;
+      --surface-rgb: 255 255 255;
+      --surface-2-rgb: 232 238 247;
+      --panel-rgb: 12 30 62;
+      --panel-deep-rgb: 10 24 48;
     }
 
     html {
@@ -151,7 +195,7 @@
       height: min(42vw, 400px);
       top: -12%;
       right: -6%;
-      background: radial-gradient(circle, rgba(15, 139, 92, 0.35) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(26, 82, 176, 0.30) 0%, transparent 70%);
       animation: mesh-drift-a 26s ease-in-out infinite alternate;
     }
     .site-ambient .mesh-b {
@@ -159,7 +203,7 @@
       height: min(36vw, 340px);
       bottom: 8%;
       left: -8%;
-      background: radial-gradient(circle, rgba(232, 163, 61, 0.18) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(217, 130, 31, 0.20) 0%, transparent 70%);
       animation: mesh-drift-b 32s ease-in-out infinite alternate;
     }
     .site-ambient .mesh-c {
@@ -187,7 +231,7 @@
       /* Lighter global vignette — sections own their edges */
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 90% 80% at 50% 30%, transparent 40%, rgba(8, 10, 14, 0.25) 100%);
+      background: radial-gradient(ellipse 90% 80% at 50% 30%, transparent 45%, rgba(11, 27, 60, 0.05) 100%);
     }
 
     main {
@@ -205,6 +249,16 @@
       position: relative;
       isolation: isolate;
     }
+
+    /* Anchor jumps must clear the fixed nav (h-14 = 56px, sm:h-16 = 64px), or every
+       section heading lands underneath it. Covers the top nav, the mobile menu,
+       the footer links and the Cmd-K palette in one rule. */
+    section[id],
+    footer[id] { scroll-margin-top: 4.5rem; }
+    @media (min-width: 640px) {
+      section[id],
+      footer[id] { scroll-margin-top: 5.5rem; }
+    }
     /* Soft seam between bands */
     .band::before {
       content: '';
@@ -218,9 +272,9 @@
       background: linear-gradient(
         90deg,
         transparent 0%,
-        rgba(15, 139, 92, 0.22) 20%,
-        rgba(237, 234, 226, 0.1) 50%,
-        rgba(232, 163, 61, 0.12) 80%,
+        rgba(26, 82, 176, 0.20) 20%,
+        rgba(11, 27, 60, 0.10) 50%,
+        rgba(217, 130, 31, 0.14) 80%,
         transparent 100%
       );
       opacity: 0.85;
@@ -237,24 +291,24 @@
     /* HERO — deepest, cinematic, graph-friendly */
     .band-hero {
       background:
-        radial-gradient(ellipse 90% 70% at 70% 30%, rgba(15, 139, 92, 0.1) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 10% 90%, rgba(232, 163, 61, 0.05) 0%, transparent 50%),
-        linear-gradient(165deg, #0E1520 0%, #0A0E15 48%, #080C12 100%);
+        radial-gradient(ellipse 90% 70% at 72% 28%, rgba(26, 82, 176, 0.09) 0%, transparent 58%),
+        radial-gradient(ellipse 50% 40% at 8% 92%, rgba(217, 130, 31, 0.06) 0%, transparent 55%),
+        linear-gradient(168deg, #FFFFFF 0%, #F4F8FD 52%, #EDF2F9 100%);
     }
 
     /* ABOUT — quiet lift, readable essay band */
     .band-about {
       background:
-        radial-gradient(ellipse 70% 50% at 20% 0%, rgba(30, 40, 56, 0.55) 0%, transparent 60%),
-        linear-gradient(180deg, #121820 0%, #10161F 100%);
+        radial-gradient(ellipse 70% 50% at 20% 0%, rgba(26, 82, 176, 0.05) 0%, transparent 60%),
+        linear-gradient(180deg, #F8FBFF 0%, #F1F6FC 100%);
     }
 
     /* EXPERIENCE — cooler console plate (ops feel) */
     .band-console {
       background:
-        radial-gradient(ellipse 60% 45% at 85% 20%, rgba(15, 139, 92, 0.09) 0%, transparent 55%),
-        radial-gradient(ellipse 40% 30% at 10% 80%, rgba(20, 50, 70, 0.25) 0%, transparent 50%),
-        linear-gradient(180deg, #0A1018 0%, #0C131C 45%, #0A0F16 100%);
+        radial-gradient(ellipse 60% 45% at 85% 20%, rgba(26, 82, 176, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 10% 80%, rgba(18, 164, 126, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #EEF3FA 0%, #F5F9FD 45%, #EDF2F9 100%);
     }
     .band-console::after {
       content: '';
@@ -278,31 +332,31 @@
     /* PROJECTS — stage: slightly elevated, forest wash at top */
     .band-stage {
       background:
-        radial-gradient(ellipse 100% 55% at 50% -5%, rgba(15, 139, 92, 0.11) 0%, transparent 52%),
-        radial-gradient(ellipse 40% 30% at 100% 60%, rgba(232, 163, 61, 0.04) 0%, transparent 50%),
-        linear-gradient(180deg, #131B28 0%, #101722 40%, #0E1520 100%);
+        radial-gradient(ellipse 100% 55% at 50% -5%, rgba(26, 82, 176, 0.08) 0%, transparent 52%),
+        radial-gradient(ellipse 40% 30% at 100% 60%, rgba(217, 130, 31, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #FFFFFF 0%, #F6FAFE 40%, #F0F5FB 100%);
     }
 
     /* SKILLS — mid surface, crisp terminal cards */
     .band-skills {
       background:
-        radial-gradient(ellipse 50% 40% at 0% 50%, rgba(15, 139, 92, 0.06) 0%, transparent 55%),
-        linear-gradient(180deg, #0F151F 0%, #121A26 100%);
+        radial-gradient(ellipse 50% 40% at 0% 50%, rgba(26, 82, 176, 0.06) 0%, transparent 55%),
+        linear-gradient(180deg, #F1F6FC 0%, #F8FBFF 100%);
     }
 
     /* CERTS — warmer lift (gold whisper) for credential moment */
     .band-certs {
       background:
-        radial-gradient(ellipse 55% 45% at 75% 30%, rgba(232, 163, 61, 0.07) 0%, transparent 55%),
-        radial-gradient(ellipse 40% 35% at 15% 80%, rgba(15, 139, 92, 0.05) 0%, transparent 50%),
-        linear-gradient(180deg, #141C2A 0%, #111822 100%);
+        radial-gradient(ellipse 55% 45% at 75% 30%, rgba(217, 130, 31, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 35% at 15% 80%, rgba(26, 82, 176, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #FFFFFF 0%, #F2F7FD 100%);
     }
 
     /* CONTACT — close deep, quiet focus on CTAs */
     .band-contact {
       background:
-        radial-gradient(ellipse 70% 50% at 30% 0%, rgba(15, 139, 92, 0.08) 0%, transparent 50%),
-        linear-gradient(180deg, #0C121A 0%, #090D13 55%, #070A0F 100%);
+        radial-gradient(ellipse 70% 50% at 30% 0%, rgba(26, 82, 176, 0.07) 0%, transparent 50%),
+        linear-gradient(180deg, #EEF3FA 0%, #E7EFF8 55%, #E2EBF6 100%);
     }
 
     /* Standalone hairlines become optional; bands own seams */
@@ -311,7 +365,7 @@
     }
 
     ::selection {
-      background: rgba(15, 139, 92, 0.35);
+      background: rgba(26, 82, 176, 0.35);
       color: var(--ink);
     }
 
@@ -341,13 +395,13 @@
     .site-nav {
       backdrop-filter: blur(16px) saturate(1.2);
       -webkit-backdrop-filter: blur(16px) saturate(1.2);
-      background: rgba(12, 16, 24, 0.72);
+      background: rgba(255, 255, 255, 0.78);
       border-bottom: 1px solid var(--edge);
       transition: border-color 0.3s ease, background 0.3s ease;
     }
     .site-nav.scrolled {
-      border-bottom-color: rgba(15, 139, 92, 0.18);
-      background: rgba(12, 16, 24, 0.88);
+      border-bottom-color: rgba(26, 82, 176, 0.18);
+      background: rgba(255, 255, 255, 0.92);
     }
 
     .nav-link {
@@ -368,6 +422,205 @@
       height: 2px;
       background: var(--forest);
       border-radius: 1px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       NIGHT MODE
+       Day is the default. Night re-points the same tokens and repaints the
+       handful of surfaces whose colours are literal rather than token-driven.
+       The brand blue brightens for dark backgrounds (contrast), everything
+       else follows the tokens automatically.
+       ═══════════════════════════════════════════════════════════ */
+    :root[data-theme="dark"] {
+      --base: #0B1220;
+      --base-mid: #0E1626;
+      --surface: #131D2F;
+      --surface-2: #1B2739;
+      --panel: #0C1E3E;
+      --panel-2: #0A1830;
+      --forest: #3B82F6;
+      --forest-glow: #60A5FA;
+      --gold: #E8A33D;
+      --rust: #E06A4E;
+      --ink: #E9EFF8;
+      --ink-mute: #A3B6D0;
+      --ink-faint: #7A8CA8;
+      --ink-on-dark: #E9EFF8;
+      --ink-on-dark-mute: #A3B6D0;
+      --status: #2DD4A7;
+      --edge: rgba(233, 239, 248, 0.10);
+      --edge-strong: rgba(59, 130, 246, 0.45);
+      --ink-rgb: 233 239 248;
+      --ink-mute-rgb: 163 182 208;
+      --ink-faint-rgb: 122 140 168;
+      --ink-on-dark-rgb: 233 239 248;
+      --forest-rgb: 59 130 246;
+      --forest-dim-rgb: 37 99 196;
+      --forest-glow-rgb: 96 165 250;
+      --gold-rgb: 232 163 61;
+      --gold-dim-rgb: 196 136 46;
+      --rust-rgb: 224 106 78;
+      --rust-dim-rgb: 180 80 58;
+      --surface-rgb: 19 29 47;
+      --surface-2-rgb: 27 39 57;
+      --panel-rgb: 12 30 62;
+      --panel-deep-rgb: 10 24 48;
+    }
+
+    /* Surfaces whose colours are literal, so they cannot follow the tokens */
+    [data-theme="dark"] .site-nav { background: rgba(11, 18, 32, 0.78); }
+    [data-theme="dark"] .site-nav.scrolled { background: rgba(11, 18, 32, 0.92); border-bottom-color: rgba(59, 130, 246, 0.2); }
+    [data-theme="dark"] .site-ambient .vignette {
+      background: radial-gradient(ellipse 90% 80% at 50% 30%, transparent 45%, rgba(4, 8, 16, 0.5) 100%);
+    }
+    [data-theme="dark"] .hero-scrim {
+      background:
+        linear-gradient(105deg, rgba(8, 13, 24, 0.94) 0%, rgba(8, 13, 24, 0.8) 30%, rgba(8, 13, 24, 0.22) 52%, transparent 70%),
+        linear-gradient(180deg, rgba(8, 13, 24, 0.5) 0%, transparent 26%, transparent 68%, rgba(6, 10, 20, 0.9) 100%);
+    }
+    [data-theme="dark"] .band-hero {
+      background:
+        radial-gradient(ellipse 90% 70% at 72% 28%, rgba(59, 130, 246, 0.12) 0%, transparent 58%),
+        radial-gradient(ellipse 50% 40% at 8% 92%, rgba(232, 163, 61, 0.07) 0%, transparent 55%),
+        linear-gradient(168deg, #0E1726 0%, #0B1220 52%, #080E1A 100%);
+    }
+    [data-theme="dark"] .band-about { background: linear-gradient(180deg, #101A2B 0%, #0D1524 100%); }
+    [data-theme="dark"] .band-noc {
+      background:
+        radial-gradient(ellipse 65% 45% at 15% 5%, rgba(77, 163, 199, 0.10) 0%, transparent 55%),
+        linear-gradient(180deg, #0A1220 0%, #0D1728 40%, #0A1220 100%);
+    }
+    [data-theme="dark"] .band-console { background: linear-gradient(180deg, #0A1220 0%, #0C1524 45%, #0A1120 100%); }
+    [data-theme="dark"] .band-stage { background: linear-gradient(180deg, #121C2E 0%, #0F1828 40%, #0D1523 100%); }
+    [data-theme="dark"] .band-skills { background: linear-gradient(180deg, #0E1726 0%, #121C2E 100%); }
+    [data-theme="dark"] .band-certs { background: linear-gradient(180deg, #131D30 0%, #101927 100%); }
+    [data-theme="dark"] .band-contact { background: linear-gradient(180deg, #0B1322 0%, #080F1C 55%, #060C17 100%); }
+    [data-theme="dark"] .hero-kpi { background: rgba(19, 29, 47, 0.6); box-shadow: none; }
+    [data-theme="dark"] .kpi-tile { background: linear-gradient(170deg, rgba(24, 36, 56, 0.85) 0%, rgba(16, 25, 40, 0.9) 100%); box-shadow: none; }
+    [data-theme="dark"] .lifecycle-step { background: rgba(19, 29, 47, 0.7); }
+    [data-theme="dark"] .cert-badge,
+    [data-theme="dark"] .band-certs .cert-badge { background: rgba(19, 29, 47, 0.96); box-shadow: 0 10px 28px -18px rgba(0, 0, 0, 0.6); }
+    [data-theme="dark"] .reel-btn { background: rgba(24, 35, 54, 0.85); }
+    [data-theme="dark"] .cmdk-panel { background: #121C2E; box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.9); }
+    [data-theme="dark"] .cmdk-overlay { background: rgba(4, 8, 16, 0.72); }
+    [data-theme="dark"] .rail { background: rgba(19, 29, 47, 0.72); }
+    [data-theme="dark"] .portrait-frame {
+      background: linear-gradient(170deg, #16223A 0%, #0D1524 100%);
+      border-color: rgba(233, 239, 248, 0.10);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 28px 64px -36px rgba(0, 0, 0, 0.8);
+    }
+    [data-theme="dark"] .portrait-img { filter: saturate(0.8) contrast(1.05) brightness(0.9); }
+
+    /* ── Nav controls: search and the day/night switch ── */
+    .search-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      height: 2.25rem;
+      padding: 0 0.7rem;
+      border-radius: 0.55rem;
+      border: 1px solid var(--edge);
+      background: var(--surface);
+      color: var(--ink-mute);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .search-btn:hover {
+      color: var(--ink);
+      border-color: var(--edge-strong);
+    }
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 2.25rem;
+      width: 2.25rem;
+      border-radius: 0.55rem;
+      border: 1px solid var(--edge);
+      background: var(--surface);
+      color: var(--ink-mute);
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .icon-btn:hover { color: var(--ink); border-color: var(--edge-strong); }
+    /* One icon per mode; the other is removed from the accessibility tree too. */
+    .icon-sun { display: none; }
+    [data-theme="dark"] .icon-sun { display: block; }
+    [data-theme="dark"] .icon-moon { display: none; }
+
+    /* ── Telemetry gutter ──
+       A fixed rail of section ticks living in the empty space beside the 72rem
+       content column. Because it is position:fixed it costs the layout nothing —
+       no band, max-width or centring changes. Ticks at rest; the label opens on
+       hover/focus; the active tick stays open. Desktop only: below 1280px there
+       is no gutter to put it in, and the nav crumb covers that case instead. */
+    .rail {
+      position: fixed;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 40;              /* above bands, below nav (50) and cmdk (90) */
+      display: none;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.5rem 0.45rem;
+      border-radius: 0.9rem;
+      border: 1px solid var(--edge);
+      background: rgba(255, 255, 255, 0.72);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+    .rail-item {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.3rem 0.32rem;
+      border-radius: 0.45rem;
+      text-decoration: none;
+    }
+    .rail-tick {
+      flex: none;
+      width: 1.35rem;
+      height: 2px;
+      border-radius: 1px;
+      background: var(--ink-faint);
+      opacity: 0.5;
+      transition: background 0.25s ease, opacity 0.25s ease, width 0.25s ease;
+    }
+    .rail-item:hover .rail-tick,
+    .rail-item:focus-visible .rail-tick { opacity: 0.9; }
+    .rail-item[aria-current="true"] .rail-tick {
+      width: 1.9rem;
+      opacity: 1;
+      background: var(--forest);
+    }
+    /* The label stays in the DOM so screen readers can name the link; it is only
+       collapsed visually. Never display:none here. */
+    .rail-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      white-space: nowrap;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-width 0.25s ease, opacity 0.2s ease, color 0.2s ease;
+    }
+    .rail:hover .rail-label,
+    .rail:focus-within .rail-label { max-width: 8rem; opacity: 1; }
+    .rail-item[aria-current="true"] .rail-label {
+      max-width: 8rem;
+      opacity: 1;
+      color: var(--ink);
+    }
+    @media (min-width: 1280px) and (min-height: 600px) {
+      .rail { display: flex; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .rail-tick, .rail-label { transition: none; }
     }
 
     /* ── Hero ambient node canvas ──
@@ -401,24 +654,22 @@
       pointer-events: none;
       /* Matches band-hero depth — keeps type crisp without a flat box */
       background:
-        linear-gradient(105deg, rgba(10, 14, 21, 0.94) 0%, rgba(10, 14, 21, 0.8) 30%, rgba(10, 14, 21, 0.22) 52%, transparent 70%),
-        linear-gradient(180deg, rgba(10, 14, 21, 0.5) 0%, transparent 26%, transparent 68%, rgba(8, 12, 18, 0.9) 100%);
+        linear-gradient(105deg, rgba(255, 255, 255, 0.95) 0%, rgba(252, 253, 255, 0.85) 30%, rgba(248, 251, 255, 0.28) 52%, transparent 70%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, transparent 26%, transparent 68%, rgba(237, 242, 249, 0.85) 100%);
     }
     .hero-copy {
       position: relative;
-      /* Soft local glow behind type — improves perceived contrast without a box */
-      text-shadow: 0 1px 24px rgba(12, 16, 24, 0.65);
+      /* No text-shadow: the glow existed to lift type off a dark page. On a light
+         page it prints a grey smudge behind every glyph, including the 10px mono. */
     }
     .hero-copy h1 {
-      text-shadow:
-        0 0 40px rgba(12, 16, 24, 0.9),
-        0 2px 28px rgba(12, 16, 24, 0.75);
+      text-shadow: none;
     }
 
     /* ── Signal pulse along edges (signature motion) ── */
     .edge-path {
       fill: none;
-      stroke: rgba(15, 139, 92, 0.22);
+      stroke: rgba(26, 82, 176, 0.22);
       stroke-width: 1.5;
     }
     .edge-pulse {
@@ -433,7 +684,7 @@
     }
     @media (min-width: 1024px) {
       .edge-pulse {
-        filter: drop-shadow(0 0 3px rgba(20, 168, 112, 0.45));
+        filter: drop-shadow(0 0 3px rgba(47, 123, 232, 0.45));
       }
     }
     .edge-pulse.delay-1 { animation-delay: 0.8s; }
@@ -453,7 +704,7 @@
     .flow-node:hover .node-core,
     .flow-node:focus-visible .node-core,
     .flow-node.is-active .node-core {
-      filter: drop-shadow(0 0 8px rgba(20, 168, 112, 0.7));
+      filter: drop-shadow(0 0 8px rgba(47, 123, 232, 0.7));
     }
     .flow-node:hover .node-ring,
     .flow-node:focus-visible .node-ring,
@@ -485,7 +736,7 @@
 
     /* Highlight connected edges on node hover */
     .edge-group.is-lit .edge-path {
-      stroke: rgba(15, 139, 92, 0.55);
+      stroke: rgba(26, 82, 176, 0.55);
     }
     .edge-group.is-lit .edge-pulse {
       opacity: 1;
@@ -507,7 +758,7 @@
       max-width: min(20rem, calc(100vw - 2rem));
       padding: 0.65rem 0.8rem;
       background: #0C1018;
-      border: 1px solid rgba(15, 139, 92, 0.4);
+      border: 1px solid rgba(26, 82, 176, 0.4);
       border-radius: 0.4rem;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(237, 234, 226, 0.04);
       font-family: 'JetBrains Mono', monospace;
@@ -550,7 +801,7 @@
     /* On cooler console band, panels sit slightly cooler */
     .band-console .term-panel {
       background: rgba(14, 20, 30, 0.96);
-      border-color: rgba(15, 139, 92, 0.14);
+      border-color: rgba(26, 82, 176, 0.14);
     }
     /* On stage (projects), panels lift warmer */
     .band-stage .term-panel {
@@ -570,7 +821,7 @@
       border-radius: 999px;
       background: var(--ink-faint, #6B675E);
     }
-    .term-dot.live { background: var(--forest); box-shadow: 0 0 6px rgba(15, 139, 92, 0.6); }
+    .term-dot.live { background: var(--forest); box-shadow: 0 0 6px rgba(26, 82, 176, 0.6); }
     .term-dot.warn { background: var(--gold); }
     .term-dot.alert { background: var(--rust); }
 
@@ -580,16 +831,16 @@
       font-size: 0.68rem;
       letter-spacing: 0.02em;
       color: var(--ink-mute);
-      background: rgba(15, 139, 92, 0.08);
-      border: 1px solid rgba(15, 139, 92, 0.22);
+      background: rgba(26, 82, 176, 0.08);
+      border: 1px solid rgba(26, 82, 176, 0.22);
       border-radius: 0.25rem;
       padding: 0.2rem 0.5rem;
       transition: border-color 0.2s, color 0.2s, background 0.2s;
     }
     .tech-tag:hover {
       color: var(--ink);
-      border-color: rgba(15, 139, 92, 0.5);
-      background: rgba(15, 139, 92, 0.14);
+      border-color: rgba(26, 82, 176, 0.5);
+      background: rgba(26, 82, 176, 0.14);
     }
 
     /* Why callout */
@@ -618,17 +869,17 @@
 
     /* Cert badge */
     .cert-badge {
-      background: rgba(18, 25, 38, 0.96);
-      border: 1px solid rgba(237, 234, 226, 0.09);
+      background: #FFFFFF;
+      border: 1px solid var(--edge);
       border-radius: 0.5rem;
       transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
     }
     .band-certs .cert-badge {
-      background: rgba(16, 22, 34, 0.94);
-      box-shadow: 0 10px 28px -18px rgba(0, 0, 0, 0.45);
+      background: #FFFFFF;
+      box-shadow: 0 10px 28px -18px rgba(11, 27, 60, 0.22);
     }
     .cert-badge:hover {
-      border-color: rgba(15, 139, 92, 0.4);
+      border-color: rgba(26, 82, 176, 0.4);
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     }
@@ -648,6 +899,23 @@
       contain-intrinsic-size: auto 720px;
     }
 
+    /* Same treatment for the tall bands. While a band is off-screen the browser
+       skips its layout, paint AND its infinite CSS animations, so scrolling only
+       pays for what is actually on screen. `auto` in contain-intrinsic-size means
+       the real height is remembered after the first render, so the scrollbar and
+       anchor links stay put. The hero, the about band and the reel are excluded:
+       the first two are on screen immediately, and the reel measures its own
+       scenes in JS, which needs them rendered. */
+    .band-noc,
+    .band-console,
+    .band-skills,
+    .band-certs {
+      /* content-visibility removed: it makes in-page anchors (#noc, #projects,
+         #contact) land in blank space, because the browser scrolls using the
+         ESTIMATED height of skipped sections. Navigation beats a micro-optimisation. */
+      content-visibility: visible;
+    }
+
     /* Mobile nav */
     .mobile-menu {
       max-height: 0;
@@ -659,18 +927,19 @@
     }
 
     /* Status dot in footer */
+    /* Status indicators stay teal: blue is the brand accent, teal means "healthy". */
     .status-dot {
       width: 0.45rem;
       height: 0.45rem;
       border-radius: 999px;
-      background: var(--forest);
-      box-shadow: 0 0 0 0 rgba(15, 139, 92, 0.5);
+      background: var(--status);
+      box-shadow: 0 0 0 0 rgba(18, 164, 126, 0.5);
       animation: status-ping 2.5s ease-out infinite;
     }
     @keyframes status-ping {
-      0% { box-shadow: 0 0 0 0 rgba(15, 139, 92, 0.45); }
-      70% { box-shadow: 0 0 0 8px rgba(15, 139, 92, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(15, 139, 92, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(18, 164, 126, 0.45); }
+      70% { box-shadow: 0 0 0 8px rgba(18, 164, 126, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(26, 82, 176, 0); }
     }
 
     /* Horizontal flow → vertical stack on small screens */
@@ -724,7 +993,7 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(27, 34, 48, 0.45) 0%, transparent 70%);
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(26, 82, 176, 0.05) 0%, transparent 70%);
       opacity: 0.9;
     }
     .section-band > * {
@@ -740,7 +1009,7 @@
     /* Gradient hairline */
     .hairline {
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(15, 139, 92, 0.35), transparent);
+      background: linear-gradient(90deg, transparent, rgba(26, 82, 176, 0.35), transparent);
     }
 
     /* ── Experience: SOC orbit console ── */
@@ -756,7 +1025,7 @@
     .soc-orbit-ring {
       position: absolute;
       inset: 12%;
-      border: 1px dashed rgba(15, 139, 92, 0.22);
+      border: 1px dashed rgba(26, 82, 176, 0.22);
       border-radius: 50%;
       animation: soc-spin 48s linear infinite;
     }
@@ -779,8 +1048,8 @@
       height: 5.5rem;
       border-radius: 50%;
       background: radial-gradient(circle at 35% 30%, #243044, #1B2230 55%, #141a26);
-      border: 1px solid rgba(15, 139, 92, 0.45);
-      box-shadow: 0 0 32px rgba(15, 139, 92, 0.18), inset 0 1px 0 rgba(237, 234, 226, 0.06);
+      border: 1px solid rgba(26, 82, 176, 0.45);
+      box-shadow: 0 0 32px rgba(26, 82, 176, 0.18), inset 0 1px 0 rgba(237, 234, 226, 0.06);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -814,14 +1083,14 @@
       transition: background 0.3s, box-shadow 0.3s;
     }
     .soc-node.is-active {
-      border-color: rgba(15, 139, 92, 0.65);
-      background: rgba(15, 139, 92, 0.1);
-      box-shadow: 0 0 24px rgba(15, 139, 92, 0.28);
+      border-color: rgba(26, 82, 176, 0.65);
+      background: rgba(26, 82, 176, 0.1);
+      box-shadow: 0 0 24px rgba(26, 82, 176, 0.28);
       transform: scale(1.06);
     }
     .soc-node.is-active .soc-dot {
       background: var(--forest-glow);
-      box-shadow: 0 0 8px rgba(20, 168, 112, 0.7);
+      box-shadow: 0 0 8px rgba(47, 123, 232, 0.7);
     }
     .soc-node.is-alert {
       border-color: rgba(232, 163, 61, 0.55);
@@ -844,7 +1113,7 @@
       height: 34%;
       margin-left: -1px;
       transform-origin: 50% 0;
-      background: linear-gradient(to bottom, rgba(15, 139, 92, 0.55), transparent);
+      background: linear-gradient(to bottom, rgba(26, 82, 176, 0.55), transparent);
       opacity: 0;
       pointer-events: none;
       z-index: 1;
@@ -900,7 +1169,7 @@
       background: linear-gradient(
         to bottom,
         transparent,
-        rgba(15, 139, 92, 0.04),
+        rgba(26, 82, 176, 0.04),
         transparent
       );
       pointer-events: none;
@@ -926,7 +1195,7 @@
       flex: 1;
       max-width: 6px;
       border-radius: 1px 1px 0 0;
-      background: rgba(15, 139, 92, 0.35);
+      background: rgba(26, 82, 176, 0.35);
       height: 30%;
       animation: activity-bar 1.4s ease-in-out infinite;
     }
@@ -957,8 +1226,8 @@
       width: 0.45rem;
       height: 0.45rem;
       border-radius: 50%;
-      background: rgba(15, 139, 92, 0.5);
-      box-shadow: 0 0 0 0 rgba(15, 139, 92, 0.4);
+      background: rgba(26, 82, 176, 0.5);
+      box-shadow: 0 0 0 0 rgba(26, 82, 176, 0.4);
       animation: mf-pulse 2.2s ease-out infinite;
     }
     .mini-flow .mf-node:nth-child(3) { animation-delay: 0.35s; background: rgba(232, 163, 61, 0.6); }
@@ -966,7 +1235,7 @@
     .mini-flow .mf-edge {
       width: 1.1rem;
       height: 1px;
-      background: linear-gradient(90deg, rgba(15, 139, 92, 0.15), rgba(15, 139, 92, 0.5), rgba(15, 139, 92, 0.15));
+      background: linear-gradient(90deg, rgba(26, 82, 176, 0.15), rgba(26, 82, 176, 0.5), rgba(26, 82, 176, 0.15));
       position: relative;
       overflow: hidden;
     }
@@ -981,9 +1250,9 @@
       animation: mf-travel 1.8s linear infinite;
     }
     @keyframes mf-pulse {
-      0% { box-shadow: 0 0 0 0 rgba(15, 139, 92, 0.45); }
-      70% { box-shadow: 0 0 0 6px rgba(15, 139, 92, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(15, 139, 92, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(26, 82, 176, 0.45); }
+      70% { box-shadow: 0 0 0 6px rgba(26, 82, 176, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(26, 82, 176, 0); }
     }
     @keyframes mf-travel {
       to { left: 120%; }
@@ -996,8 +1265,8 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.65rem;
       color: var(--ink-mute);
-      background: rgba(15, 139, 92, 0.08);
-      border: 1px solid rgba(15, 139, 92, 0.25);
+      background: rgba(26, 82, 176, 0.08);
+      border: 1px solid rgba(26, 82, 176, 0.25);
       border-radius: 999px;
       padding: 0.3rem 0.7rem;
     }
@@ -1065,8 +1334,8 @@
       /* Rounded rather than fully pill-shaped: the label wraps to two lines on
          narrow screens and a 999px radius looks wrong once it does. */
       border-radius: 0.85rem;
-      border: 1px solid rgba(15, 139, 92, 0.32);
-      background: rgba(15, 139, 92, 0.09);
+      border: 1px solid rgba(26, 82, 176, 0.32);
+      background: rgba(26, 82, 176, 0.09);
       font-family: 'JetBrains Mono', ui-monospace, monospace;
       font-size: 0.62rem;
       line-height: 1.55;
@@ -1080,26 +1349,25 @@
     .portrait-wrap {
       position: relative;
       width: 100%;
-      max-width: 23rem;
+      max-width: 21rem;
       margin-inline: auto;
     }
     @media (min-width: 1024px) {
-      .portrait-wrap { max-width: 26rem; margin-inline: 0 0 0 auto; }
+      .portrait-wrap { max-width: 23rem; margin-inline: 0 0 0 auto; }
     }
 
     .portrait-frame {
       position: relative;
       aspect-ratio: 4 / 5;
-      border-radius: 1rem;
+      border-radius: 1.4rem;
       overflow: hidden;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% 15%, rgba(15, 139, 92, 0.18) 0%, transparent 65%),
-        linear-gradient(170deg, #182131 0%, #10161F 60%, #0B1018 100%);
-      border: 1px solid rgba(237, 234, 226, 0.09);
+      /* Faint, near-page border + a soft diffuse shadow: the photo is contained
+         and modern, not a faded cut-out and not a heavy dark panel. */
+      background: linear-gradient(170deg, #FFFFFF 0%, #EDF2F9 100%);
+      border: 1px solid rgba(11, 27, 60, 0.07);
       box-shadow:
-        0 24px 70px -30px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(15, 139, 92, 0.1),
-        0 0 60px -22px rgba(15, 139, 92, 0.42);
+        0 1px 2px rgba(11, 27, 60, 0.04),
+        0 28px 64px -36px rgba(11, 27, 60, 0.38);
     }
 
     .portrait-img {
@@ -1108,21 +1376,24 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: 50% 22%;
-      /* Grade the photo into the page palette instead of letting it sit on top */
-      filter: saturate(0.88) contrast(1.06) brightness(0.98);
+      object-position: 50% 30%;
+      /* Gently graded to the page palette, still a photograph. */
+      filter: saturate(0.9) contrast(1.04) brightness(1.01);
+      /* Cinematic entrance, then a slow breath. Only opacity and transform are
+         animated, so it runs on the compositor and costs nothing per frame. */
+      animation:
+        portrait-dissolve 2.4s ease-out both,
+        portrait-breathe 9s ease-in-out 2.4s infinite alternate;
+      /* Only the very bottom softens, so the plate ends in the page rather than
+         on a hard line. No side or top fade — that read as a magazine cut-out. */
+      -webkit-mask-image: linear-gradient(180deg, #000 82%, rgba(0, 0, 0, 0.55) 100%);
+              mask-image: linear-gradient(180deg, #000 82%, rgba(0, 0, 0, 0.55) 100%);
     }
     /* Duotone-ish wash so the portrait belongs to the same world as the graphs */
-    .portrait-frame::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        linear-gradient(180deg, rgba(10, 14, 21, 0) 42%, rgba(9, 13, 19, 0.82) 100%),
-        radial-gradient(ellipse 70% 55% at 50% 30%, rgba(15, 139, 92, 0.1) 0%, transparent 70%);
-      mix-blend-mode: normal;
-    }
+    /* The frame's wash is gone with the frame itself — the mask on .portrait-img
+       does all the blending now. Keeping it drew a faint horizontal edge where
+       the gradient stopped, which is exactly the "stacked card" look we removed. */
+    .portrait-frame::after { display: none; }
 
     /* Fallback shown until assets/ian-portrait.jpg exists */
     .portrait-fallback {
@@ -1149,7 +1420,7 @@
       font-weight: 600;
       letter-spacing: 0.02em;
       color: var(--ink);
-      background: linear-gradient(150deg, rgba(15, 139, 92, 0.3), rgba(232, 163, 61, 0.14));
+      background: linear-gradient(150deg, rgba(26, 82, 176, 0.3), rgba(232, 163, 61, 0.14));
       border: 1px solid rgba(237, 234, 226, 0.14);
     }
 
@@ -1161,11 +1432,11 @@
       pointer-events: none;
       background: conic-gradient(
         from 0deg,
-        rgba(15, 139, 92, 0) 0deg,
-        rgba(15, 139, 92, 0) 210deg,
-        rgba(20, 168, 112, 0.75) 300deg,
+        rgba(26, 82, 176, 0) 0deg,
+        rgba(26, 82, 176, 0) 210deg,
+        rgba(47, 123, 232, 0.75) 300deg,
         rgba(232, 163, 61, 0.55) 340deg,
-        rgba(15, 139, 92, 0) 360deg
+        rgba(26, 82, 176, 0) 360deg
       );
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -1184,7 +1455,7 @@
       position: absolute;
       width: 1.6rem;
       height: 1.6rem;
-      border: 1.5px solid rgba(20, 168, 112, 0.55);
+      border: 1.5px solid rgba(47, 123, 232, 0.55);
       pointer-events: none;
       z-index: 3;
     }
@@ -1192,6 +1463,14 @@
     .portrait-bracket.tr { top: 0.6rem; right: 0.6rem; border-left: 0; border-bottom: 0; border-top-right-radius: 0.35rem; }
     .portrait-bracket.bl { bottom: 0.6rem; left: 0.6rem; border-right: 0; border-top: 0; border-bottom-left-radius: 0.35rem; }
     .portrait-bracket.br { bottom: 0.6rem; right: 0.6rem; border-left: 0; border-top: 0; border-bottom-right-radius: 0.35rem; }
+
+    /* Card furniture retired with the frame: the ring, corner brackets, scan sweep
+       and floating chips all belonged to a panel that no longer exists. The KPI
+       strip below the headline already carries these numbers. */
+    .portrait-ring,
+    .portrait-bracket,
+    .portrait-scan,
+    .telemetry-chip { display: none !important; }
 
     /* Slow scanline sweep over the frame */
     .portrait-scan {
@@ -1209,7 +1488,7 @@
       right: 0;
       height: 32%;
       top: -32%;
-      background: linear-gradient(180deg, transparent, rgba(20, 168, 112, 0.09) 55%, transparent);
+      background: linear-gradient(180deg, transparent, rgba(47, 123, 232, 0.09) 55%, transparent);
       animation: portrait-sweep 6.5s ease-in-out infinite;
     }
     @keyframes portrait-sweep {
@@ -1219,18 +1498,34 @@
       100% { top: 102%; opacity: 0; }
     }
 
+    /* Slow film dissolve: the photo fades up once on load, then drifts gently
+       between bright and dim forever (16s each way, so a 32s round trip). */
+    @keyframes portrait-dissolve {
+      from { opacity: 0; transform: scale(1.06); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes portrait-breathe {
+      from { opacity: 1; transform: scale(1); }
+      to   { opacity: 0.93; transform: scale(1.04); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .portrait-img {
+        animation: none !important;
+        opacity: 1;
+        transform: none;
+      }
+    }
+
     /* Caption bar pinned inside the frame */
     .portrait-caption {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 3;
-      padding: 0.9rem 1rem;
+      /* Sits in normal flow under the plate — inside the frame it was clipped by
+         the frame's own overflow:hidden. */
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       gap: 0.75rem;
+      margin-top: 0.85rem;
+      padding: 0 0.15rem;
     }
 
     /* Floating telemetry chips around the portrait */
@@ -1288,17 +1583,50 @@
     .hero-kpi {
       padding: 0.6rem 0.75rem;
       border-radius: 0.5rem;
-      border: 1px solid rgba(237, 234, 226, 0.07);
-      background: rgba(22, 29, 42, 0.5);
+      border: 1px solid var(--edge);
+      background: rgba(255, 255, 255, 0.72);
       backdrop-filter: blur(6px);
+      box-shadow: 0 1px 2px rgba(11, 27, 60, 0.04);
     }
+
+    /* ── Panels that stay dark on the light page ──
+       The console cards (terminal panels, the portrait card and its chips) keep the
+       NOC look, so anything inside them needs light ink. These selectors are more
+       specific than Tailwind's .text-ink utilities, so they win without !important. */
+    .term-panel,
+    .telemetry-chip,
+    .code-block,
+    .payload-tip,
+    .reel-stage,
+    .reel-caption,
+    .soc-hub {
+      color: var(--ink-on-dark);
+    }
+    .term-panel .text-ink,
+    .telemetry-chip .text-ink,
+    .code-block .text-ink,
+    .payload-tip .text-ink,
+    .reel-stage .text-ink,
+    .reel-caption .text-ink { color: var(--ink-on-dark); }
+    .term-panel .text-ink-mute,
+    .telemetry-chip .text-ink-mute,
+    .code-block .text-ink-mute,
+    .payload-tip .text-ink-mute,
+    .reel-stage .text-ink-mute,
+    .reel-caption .text-ink-mute { color: var(--ink-on-dark-mute); }
+    .term-panel .text-ink-faint,
+    .telemetry-chip .text-ink-faint,
+    .code-block .text-ink-faint,
+    .payload-tip .text-ink-faint,
+    .reel-stage .text-ink-faint,
+    .reel-caption .text-ink-faint { color: #8CA2C2; }
 
     /* ═══════════ NOC BAND ═══════════ */
     .band-noc {
       background:
-        radial-gradient(ellipse 65% 45% at 15% 5%, rgba(77, 163, 199, 0.07) 0%, transparent 55%),
-        radial-gradient(ellipse 55% 40% at 90% 70%, rgba(15, 139, 92, 0.08) 0%, transparent 55%),
-        linear-gradient(180deg, #0A0F17 0%, #0D141E 40%, #0A1018 100%);
+        radial-gradient(ellipse 65% 45% at 15% 5%, rgba(77, 163, 199, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 40% at 90% 70%, rgba(26, 82, 176, 0.07) 0%, transparent 55%),
+        linear-gradient(180deg, #F7FAFE 0%, #EEF4FB 40%, #F4F8FD 100%);
     }
     .band-noc::after {
       content: '';
@@ -1320,15 +1648,16 @@
     .kpi-tile {
       position: relative;
       border-radius: 0.7rem;
-      border: 1px solid rgba(237, 234, 226, 0.08);
-      background: linear-gradient(170deg, rgba(24, 32, 46, 0.85) 0%, rgba(16, 22, 31, 0.9) 100%);
+      border: 1px solid var(--edge);
+      background: linear-gradient(170deg, #FFFFFF 0%, #F6FAFE 100%);
+      box-shadow: 0 1px 2px rgba(11, 27, 60, 0.04);
       padding: 0.95rem 1rem 0.7rem;
       overflow: hidden;
       transition: border-color 0.25s ease, transform 0.25s ease;
     }
     .kpi-tile:hover,
     .kpi-tile:focus-within {
-      border-color: rgba(15, 139, 92, 0.38);
+      border-color: rgba(26, 82, 176, 0.38);
       transform: translateY(-2px);
     }
     .kpi-tile.is-breach { border-color: rgba(184, 73, 46, 0.45); }
@@ -1367,7 +1696,7 @@
       border-radius: 0.25rem;
       white-space: nowrap;
     }
-    .kpi-delta.up   { color: var(--forest-glow); background: rgba(15, 139, 92, 0.13); }
+    .kpi-delta.up   { color: var(--status); background: rgba(18, 164, 126, 0.13); }
     .kpi-delta.down { color: var(--gold);        background: rgba(232, 163, 61, 0.12); }
     .kpi-delta.flat { color: var(--ink-faint);   background: rgba(237, 234, 226, 0.06); }
     .kpi-spark {
@@ -1463,14 +1792,14 @@
     .lifecycle-step {
       position: relative;
       border-radius: 0.6rem;
-      border: 1px solid rgba(237, 234, 226, 0.08);
-      background: rgba(18, 25, 36, 0.7);
+      border: 1px solid var(--edge);
+      background: rgba(255, 255, 255, 0.82);
       padding: 0.8rem 0.85rem;
       transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease;
     }
     .lifecycle-step.is-live {
-      border-color: rgba(20, 168, 112, 0.5);
-      background: rgba(15, 139, 92, 0.1);
+      border-color: rgba(47, 123, 232, 0.5);
+      background: rgba(26, 82, 176, 0.1);
       transform: translateY(-3px);
     }
     .lifecycle-step .ls-index {
@@ -1661,8 +1990,8 @@
       min-width: 2.25rem;
       padding: 0 0.7rem;
       border-radius: 0.45rem;
-      border: 1px solid rgba(237, 234, 226, 0.12);
-      background: rgba(22, 29, 42, 0.8);
+      border: 1px solid var(--edge);
+      background: rgba(255, 255, 255, 0.9);
       color: var(--ink-mute);
       font-family: 'JetBrains Mono', ui-monospace, monospace;
       font-size: 0.62rem;
@@ -1671,13 +2000,13 @@
     }
     .reel-btn:hover, .reel-btn:focus-visible {
       color: var(--ink);
-      border-color: rgba(15, 139, 92, 0.45);
-      background: rgba(15, 139, 92, 0.12);
+      border-color: rgba(26, 82, 176, 0.45);
+      background: rgba(26, 82, 176, 0.12);
     }
     .reel-btn.is-on {
       color: var(--forest-glow);
-      border-color: rgba(20, 168, 112, 0.5);
-      background: rgba(15, 139, 92, 0.14);
+      border-color: rgba(47, 123, 232, 0.5);
+      background: rgba(26, 82, 176, 0.14);
     }
     .reel-chapters { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .reel-dot {
@@ -1756,7 +2085,7 @@
       align-items: flex-start;
       justify-content: center;
       padding: 12vh 1rem 1rem;
-      background: rgba(6, 9, 13, 0.72);
+      background: rgba(11, 27, 60, 0.32);
       backdrop-filter: blur(6px);
     }
     .cmdk-overlay.is-open { display: flex; }
@@ -1765,9 +2094,9 @@
       max-width: 34rem;
       border-radius: 0.8rem;
       overflow: hidden;
-      background: #121A26;
-      border: 1px solid rgba(237, 234, 226, 0.12);
-      box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.95);
+      background: #FFFFFF;
+      border: 1px solid var(--edge);
+      box-shadow: 0 40px 100px -30px rgba(11, 27, 60, 0.45);
       animation: cmdk-in 0.18s ease-out both;
     }
     @keyframes cmdk-in {
@@ -1798,7 +2127,7 @@
       font-size: 0.875rem;
       transition: background 0.12s ease, color 0.12s ease;
     }
-    .cmdk-item[aria-selected='true'] { background: rgba(15, 139, 92, 0.16); color: var(--ink); }
+    .cmdk-item[aria-selected='true'] { background: rgba(26, 82, 176, 0.16); color: var(--ink); }
     .cmdk-item .ck-hint {
       margin-left: auto;
       font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -1880,6 +2209,11 @@
           Ian Ondieki
         </a>
 
+        <!-- Live section name: the sense of place on screens too narrow for the rail. -->
+        <span class="hidden min-[420px]:flex lg:hidden items-center gap-1.5 font-mono text-[0.6rem] tracking-[0.16em] uppercase text-ink-faint mr-auto truncate" aria-hidden="true">
+          <span class="opacity-40">/</span><span id="nav-crumb"></span>
+        </span>
+
         <nav class="hidden md:flex items-center gap-5 lg:gap-6 text-sm font-medium" aria-label="Primary">
           <a href="#noc" class="nav-link" data-section="noc">NOC Ops</a>
           <a href="#experience" class="nav-link" data-section="experience">Experience</a>
@@ -1887,12 +2221,26 @@
           <a href="#projects" class="nav-link" data-section="projects">Projects</a>
           <a href="#skills" class="nav-link" data-section="skills">Skills</a>
           <a href="#contact" class="nav-link" data-section="contact">Contact</a>
-          <span class="w-px h-4 bg-ink/10" aria-hidden="true"></span>
-          <button type="button" id="cmdk-open" class="nav-link font-mono text-[0.65rem] tracking-wide inline-flex items-center gap-1.5" aria-label="Open command menu">
-            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z"/></svg>
-            <span class="kbd">⌘K</span>
-          </button>
         </nav>
+
+        <div class="flex items-center gap-2">
+          <!-- Search: a labelled control, not a bare glyph, so it is actually findable -->
+          <button type="button" id="cmdk-open" class="search-btn" aria-label="Search this site">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z"/></svg>
+            <span class="hidden sm:inline">Search</span>
+            <span class="kbd hidden lg:inline">⌘K</span>
+          </button>
+
+          <!-- Day / night -->
+          <button type="button" id="theme-toggle" class="icon-btn" aria-label="Switch to night mode" aria-pressed="false" title="Switch theme">
+            <svg class="icon-moon h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" />
+            </svg>
+            <svg class="icon-sun h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path stroke-linecap="round" d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" />
+            </svg>
+          </button>
 
         <button type="button" id="menu-toggle" class="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-md border border-ink/10 text-ink-mute hover:text-ink hover:border-forest/40 transition-colors" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
           <svg class="h-5 w-5" id="menu-icon-open" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
@@ -1902,6 +2250,7 @@
             <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
           </svg>
         </button>
+        </div>
       </div>
 
       <div id="mobile-menu" class="mobile-menu md:hidden border-t border-ink/5">
@@ -1921,6 +2270,20 @@
       </div>
     </div>
   </header>
+
+  <!-- Section rail: a persistent sense of place beside the content column.
+       Desktop only (>=1280px); the nav crumb covers narrower screens. -->
+  <nav class="rail" aria-label="Sections">
+      <a class="rail-item" href="#top" data-section="top"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Intro</span></a>
+      <a class="rail-item" href="#about" data-section="about"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">About</span></a>
+      <a class="rail-item" href="#noc" data-section="noc"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">NOC Ops</span></a>
+      <a class="rail-item" href="#experience" data-section="experience"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Experience</span></a>
+      <a class="rail-item" href="#reel" data-section="reel"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Ops Reel</span></a>
+      <a class="rail-item" href="#projects" data-section="projects"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Projects</span></a>
+      <a class="rail-item" href="#skills" data-section="skills"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Skills</span></a>
+      <a class="rail-item" href="#certifications" data-section="certifications"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Certs</span></a>
+      <a class="rail-item" href="#contact" data-section="contact"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Contact</span></a>
+  </nav>
 
   <main id="main">
     <!-- ═══════════════ HERO ═══════════════ -->
@@ -1952,14 +2315,14 @@
             <path class="edge-path" d="M80 420 C160 500 280 560 420 580" />
             <path class="edge-pulse delay-2" d="M80 420 C160 500 280 560 420 580" />
           </g>
-          <circle cx="80" cy="420" r="4" fill="#0F8B5C" opacity="0.55" />
+          <circle cx="80" cy="420" r="4" fill="#1A52B0" opacity="0.55" />
           <circle cx="380" cy="200" r="5" fill="#E8A33D" opacity="0.45" />
-          <circle cx="700" cy="340" r="4.5" fill="#0F8B5C" opacity="0.55" />
+          <circle cx="700" cy="340" r="4.5" fill="#1A52B0" opacity="0.55" />
           <circle cx="1000" cy="180" r="3.5" fill="#EDEAE2" opacity="0.28" />
-          <circle cx="620" cy="520" r="4" fill="#0F8B5C" opacity="0.4" />
+          <circle cx="620" cy="520" r="4" fill="#1A52B0" opacity="0.4" />
           <circle cx="1040" cy="480" r="3.5" fill="#E8A33D" opacity="0.35" />
           <circle cx="420" cy="580" r="3" fill="#EDEAE2" opacity="0.2" />
-          <circle cx="920" cy="300" r="2.5" fill="#0F8B5C" opacity="0.35" />
+          <circle cx="920" cy="300" r="2.5" fill="#1A52B0" opacity="0.35" />
           <circle cx="240" cy="300" r="2.5" fill="#9B978C" opacity="0.3" />
         </svg>
       </div>
@@ -1993,7 +2356,7 @@
             -->
             <h1 id="hero-heading" class="font-display text-[2.15rem] sm:text-5xl lg:text-[3.3rem] font-semibold leading-[1.1] tracking-tight text-ink">
               Eyes on the network.<br class="hidden sm:block" />
-              Hands on the <span class="text-transparent bg-clip-text bg-gradient-to-r from-forest-glow via-[#3DBF8C] to-gold">automation</span>.
+              Hands on the <span class="text-transparent bg-clip-text bg-gradient-to-r from-forest via-forest-glow to-forest-glow">automation</span>.
             </h1>
 
             <p class="mt-6 text-base sm:text-lg text-ink-mute leading-relaxed max-w-xl">
@@ -2019,24 +2382,24 @@
             <!-- Credibility strip — four facts, no fluff -->
             <div class="hero-kpi-strip mt-9 max-w-xl">
               <div class="hero-kpi">
-                <p class="font-mono text-[0.52rem] tracking-[0.13em] uppercase text-ink-faint">SOC domains</p>
-                <p class="font-mono text-lg font-semibold text-ink mt-0.5 leading-none">5</p>
-                <p class="font-mono text-[0.52rem] text-ink-faint mt-1">IP · TX · RAN · DIG · Core</p>
+                <p class="font-mono text-[0.62rem] tracking-[0.13em] uppercase text-ink-faint">SOC domains</p>
+                <p class="font-mono text-xl sm:text-2xl font-semibold text-ink mt-0.5 leading-none">5</p>
+                <p class="font-mono text-[0.62rem] text-ink-faint mt-1">IP · TX · RAN · DIG · Core</p>
               </div>
               <div class="hero-kpi">
-                <p class="font-mono text-[0.52rem] tracking-[0.13em] uppercase text-ink-faint">Coverage model</p>
-                <p class="font-mono text-lg font-semibold text-ink mt-0.5 leading-none">24×7</p>
-                <p class="font-mono text-[0.52rem] text-ink-faint mt-1">Shift rotation</p>
+                <p class="font-mono text-[0.62rem] tracking-[0.13em] uppercase text-ink-faint">Coverage model</p>
+                <p class="font-mono text-xl sm:text-2xl font-semibold text-ink mt-0.5 leading-none">24×7</p>
+                <p class="font-mono text-[0.62rem] text-ink-faint mt-1">Shift rotation</p>
               </div>
               <div class="hero-kpi">
-                <p class="font-mono text-[0.52rem] tracking-[0.13em] uppercase text-ink-faint">Certified</p>
-                <p class="font-mono text-lg font-semibold text-forest-glow mt-0.5 leading-none">3</p>
-                <p class="font-mono text-[0.52rem] text-ink-faint mt-1">CCNA · JNCIA · ITIL</p>
+                <p class="font-mono text-[0.62rem] tracking-[0.13em] uppercase text-ink-faint">Certified</p>
+                <p class="font-mono text-xl sm:text-2xl font-semibold text-forest-glow mt-0.5 leading-none">3</p>
+                <p class="font-mono text-[0.62rem] text-ink-faint mt-1">CCNA · JNCIA · ITIL</p>
               </div>
               <div class="hero-kpi">
-                <p class="font-mono text-[0.52rem] tracking-[0.13em] uppercase text-ink-faint">Operating model</p>
-                <p class="font-mono text-lg font-semibold text-gold mt-0.5 leading-none">SLA</p>
-                <p class="font-mono text-[0.52rem] text-ink-faint mt-1">Detect → resolve → RCA</p>
+                <p class="font-mono text-[0.62rem] tracking-[0.13em] uppercase text-ink-faint">Operating model</p>
+                <p class="font-mono text-xl sm:text-2xl font-semibold text-gold mt-0.5 leading-none">SLA</p>
+                <p class="font-mono text-[0.62rem] text-ink-faint mt-1">Detect → resolve → RCA</p>
               </div>
             </div>
 
@@ -2057,8 +2420,6 @@
           -->
           <div class="lg:col-span-5 mt-4 lg:mt-0">
             <div class="portrait-wrap" id="portrait-wrap">
-              <span class="portrait-ring" aria-hidden="true"></span>
-
               <div class="portrait-frame">
                 <img
                   class="portrait-img"
@@ -2069,26 +2430,20 @@
 
                 <div class="portrait-fallback" aria-hidden="true">
                   <span class="portrait-monogram">IO</span>
-                  <p class="font-mono text-[0.58rem] text-ink-faint leading-relaxed max-w-[15rem]">
-                    Add your photo at<br /><span class="text-forest-glow">assets/ian-portrait.jpg</span>
+                  <p class="font-mono text-[0.62rem] text-ink-faint leading-relaxed max-w-[15rem]">
+                    Add your photo at<br /><span class="text-forest">assets/ian-portrait.jpg</span>
                   </p>
                 </div>
+              </div>
 
-                <span class="portrait-bracket tl" aria-hidden="true"></span>
-                <span class="portrait-bracket tr" aria-hidden="true"></span>
-                <span class="portrait-bracket bl" aria-hidden="true"></span>
-                <span class="portrait-bracket br" aria-hidden="true"></span>
-                <span class="portrait-scan" aria-hidden="true"></span>
-
-                <div class="portrait-caption">
-                  <div>
-                    <p class="font-display text-[0.95rem] font-semibold text-ink leading-tight">Ian Ondieki</p>
-                    <p class="font-mono text-[0.58rem] text-ink-mute mt-0.5">NOC / Service Operations · Nairobi</p>
-                  </div>
-                  <p class="font-mono text-[0.55rem] text-forest-glow flex items-center gap-1.5 shrink-0">
-                    <span class="status-dot" aria-hidden="true"></span> on shift
-                  </p>
+              <div class="portrait-caption">
+                <div>
+                  <p class="font-display text-[0.95rem] font-semibold text-ink leading-tight">Ian Ondieki</p>
+                  <p class="font-mono text-[0.62rem] text-ink-mute mt-0.5">NOC / Service Operations &middot; Nairobi</p>
                 </div>
+                <p class="font-mono text-[0.62rem] text-ink-mute flex items-center gap-1.5 shrink-0">
+                  <span class="status-dot" aria-hidden="true"></span> on shift
+                </p>
               </div>
 
               <!-- Telemetry chips — values animate in JS, these are the static fallbacks -->
@@ -2118,7 +2473,7 @@
         <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
           <div class="lg:col-span-4 reveal">
             <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">About</p>
-            <h2 id="about-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Built where systems stay up.</h2>
+            <h2 id="about-heading" class="font-display text-3xl sm:text-4xl font-semibold tracking-tight">Built where systems stay up.</h2>
             <p class="mt-4 font-mono text-[0.62rem] text-ink-faint leading-relaxed">
               Operations first. Automation second.<br />Both in the same head.
             </p>
@@ -2158,7 +2513,7 @@
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12 sm:mb-14">
           <div class="max-w-2xl">
             <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Service Operations</p>
-            <h2 id="noc-heading" class="font-display text-2xl sm:text-3xl lg:text-[2.35rem] font-semibold tracking-tight leading-tight">
+            <h2 id="noc-heading" class="font-display text-3xl sm:text-4xl lg:text-[2.35rem] font-semibold tracking-tight leading-tight">
               The floor I was trained on — <span class="text-forest-glow">rebuilt here</span>.
             </h2>
             <p class="mt-4 text-ink-mute leading-relaxed">
@@ -2305,7 +2660,7 @@
                   <span class="budget-tick" style="left: 50%" aria-hidden="true"></span>
                   <span class="budget-tick" style="left: 75%" aria-hidden="true"></span>
                 </div>
-                <p class="mt-2.5 font-mono text-[0.55rem] text-ink-faint leading-relaxed">
+                <p class="mt-2.5 font-mono text-[0.62rem] text-ink-faint leading-relaxed">
                   Burn rate <span class="text-gold" id="burn-rate">0.8×</span> — at this pace the budget
                   lasts the full window. Above 1.0× I freeze change and escalate.
                 </p>
@@ -2457,7 +2812,7 @@
                   </tr>
                 </tbody>
               </table>
-              <p class="mt-4 font-mono text-[0.55rem] text-ink-faint leading-relaxed">
+              <p class="mt-4 font-mono text-[0.62rem] text-ink-faint leading-relaxed">
                 Industry-standard targets shown for discussion. Every operator tunes these — the point is
                 that they are written down before the alarm, not argued about during it.
               </p>
@@ -2538,7 +2893,7 @@
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12 sm:mb-14 reveal">
           <div>
             <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Experience</p>
-            <h2 id="experience-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Where I learned systems under load.</h2>
+            <h2 id="experience-heading" class="font-display text-3xl sm:text-4xl font-semibold tracking-tight">Where I learned systems under load.</h2>
           </div>
           <p class="text-sm text-ink-mute max-w-xs sm:text-right font-mono text-[0.7rem] leading-relaxed">
             Live rotation through Safaricom’s SOCs — watch the beam cycle.
@@ -2600,7 +2955,7 @@
               <span class="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-gold block mb-1.5">What stuck</span>
               Watching money and messages move on real rails taught me to design for failure modes first — retries, handshakes, and partial success — not just happy-path demos. It also taught me that the hardest part of an NSOC shift is not reading a dashboard; it is deciding, quickly and defensibly, what deserves to wake someone up.
             </p>
-            <p class="mt-4 why-callout pl-4 py-3 pr-3 rounded-r-md text-sm text-ink-mute leading-relaxed" style="border-left-color: rgba(15, 139, 92, 0.5)">
+            <p class="mt-4 why-callout pl-4 py-3 pr-3 rounded-r-md text-sm text-ink-mute leading-relaxed" style="border-left-color: rgba(26, 82, 176, 0.5)">
               <span class="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-forest-glow block mb-1.5">Why this maps to an NSOC role</span>
               Multi-domain rotation means I can hold a service view rather than a single-technology view — when a customer-facing platform degrades, I already know to ask whether it is transport, radio, core or the application, and who owns each answer.
             </p>
@@ -2627,7 +2982,7 @@
                   <div class="soc-beam is-on" id="soc-beam" aria-hidden="true" style="transform: rotate(0deg)"></div>
 
                   <div class="soc-hub">
-                    <span class="font-mono text-[0.55rem] text-forest-glow tracking-wider uppercase">NOC</span>
+                    <span class="font-mono text-[0.62rem] text-forest-glow tracking-wider uppercase">NOC</span>
                     <span class="font-display text-[0.7rem] font-semibold leading-tight mt-0.5 text-ink">Intern</span>
                     <span class="font-mono text-[0.5rem] text-ink-faint mt-0.5">live map</span>
                   </div>
@@ -2650,7 +3005,7 @@
                   </div>
                   <div class="soc-node" data-soc="digital" data-label="Digital Services SOC · platforms" data-angle="35">
                     <span class="soc-dot" aria-hidden="true"></span>
-                    <span class="font-mono text-[0.55rem] text-ink leading-none">Digital</span>
+                    <span class="font-mono text-[0.62rem] text-ink leading-none">Digital</span>
                     <span class="font-mono text-[0.48rem] text-ink-faint mt-0.5 leading-none">SOC</span>
                   </div>
                   <div class="soc-node" data-soc="core" data-label="Core SOC · M-Pesa exposure" data-angle="105">
@@ -2696,7 +3051,7 @@
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-10">
           <div class="max-w-2xl">
             <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Ops reel</p>
-            <h2 id="reel-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">
+            <h2 id="reel-heading" class="font-display text-3xl sm:text-4xl font-semibold tracking-tight">
               Four minutes of the job, in four scenes.
             </h2>
             <p class="mt-3 text-ink-mute leading-relaxed">
@@ -2744,7 +3099,7 @@
                   <rect width="640" height="360" fill="url(#rg-grid)" />
 
                   <!-- topology edges -->
-                  <g stroke="#0F8B5C" stroke-opacity="0.32" stroke-width="1.5" fill="none">
+                  <g stroke="#1A52B0" stroke-opacity="0.32" stroke-width="1.5" fill="none">
                     <path d="M62 148 L146 84" /><path d="M146 84 L242 140" />
                     <path d="M62 148 L138 212" /><path d="M138 212 L242 140" />
                     <path d="M242 140 L322 88" />
@@ -2754,10 +3109,10 @@
 
                   <!-- healthy nodes -->
                   <g>
-                    <circle cx="62" cy="148" r="7" fill="#0F8B5C" fill-opacity="0.85" />
-                    <circle cx="146" cy="84" r="6" fill="#0F8B5C" fill-opacity="0.7" />
-                    <circle cx="138" cy="212" r="6" fill="#0F8B5C" fill-opacity="0.7" />
-                    <circle cx="242" cy="140" r="8" fill="#0F8B5C" fill-opacity="0.85" />
+                    <circle cx="62" cy="148" r="7" fill="#1A52B0" fill-opacity="0.85" />
+                    <circle cx="146" cy="84" r="6" fill="#1A52B0" fill-opacity="0.7" />
+                    <circle cx="138" cy="212" r="6" fill="#1A52B0" fill-opacity="0.7" />
+                    <circle cx="242" cy="140" r="8" fill="#1A52B0" fill-opacity="0.85" />
                   </g>
                   <!-- alarming node -->
                   <g class="clip-blink">
@@ -2784,12 +3139,12 @@
 
                     <text x="12" y="70" fill="#B0ABA0" font-family="JetBrains Mono, monospace" font-size="8">scope · 1 ring · 4 sites · no outage</text>
                     <text x="12" y="88" fill="#B0ABA0" font-family="JetBrains Mono, monospace" font-size="8">owner · shift eng · acked 00:02:41</text>
-                    <text x="12" y="106" fill="#0F8B5C" font-family="JetBrains Mono, monospace" font-size="8">→ escalated · transmission domain</text>
+                    <text x="12" y="106" fill="#1A52B0" font-family="JetBrains Mono, monospace" font-size="8">→ escalated · transmission domain</text>
                   </g>
 
                   <!-- sweeping radar line -->
                   <g class="clip-sweep">
-                    <rect x="0" y="0" width="2" height="360" fill="#14A870" fill-opacity="0.28" />
+                    <rect x="0" y="0" width="2" height="360" fill="#2F7BE8" fill-opacity="0.28" />
                   </g>
                 </svg>
               </div>
@@ -2807,7 +3162,7 @@
                   <g transform="translate(32, 62)">
                     <rect width="176" height="40" rx="6" fill="#0E141D" stroke="#EDEAE2" stroke-opacity="0.08" />
                     <text x="12" y="16" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="8">AVAILABILITY</text>
-                    <text x="12" y="32" fill="#0F8B5C" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600">99.98%</text>
+                    <text x="12" y="32" fill="#1A52B0" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600">99.98%</text>
                   </g>
                   <g transform="translate(232, 62)">
                     <rect width="176" height="40" rx="6" fill="#0E141D" stroke="#EDEAE2" stroke-opacity="0.08" />
@@ -2831,13 +3186,13 @@
 
                   <!-- three series, stacked as a NOC strip chart -->
                   <path class="clip-trace" d="M32 175 L101 165 L170 170 L239 150 L308 158 L377 138 L446 148 L515 128 L584 134"
-                        stroke="#0F8B5C" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round" />
+                        stroke="#1A52B0" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round" />
                   <path class="clip-trace" style="animation-delay: .35s" d="M32 205 L101 200 L170 210 L239 195 L308 203 L377 188 L446 198 L515 184 L584 190"
                         stroke="#4DA3C7" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round" />
                   <path class="clip-trace" style="animation-delay: .7s" d="M32 228 L101 224 L170 231 L239 219 L308 226 L377 216 L446 223 L515 211 L584 218"
                         stroke="#E8A33D" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round" />
 
-                  <g class="clip-sweep"><rect x="0" y="120" width="1.5" height="122" fill="#14A870" fill-opacity="0.35" /></g>
+                  <g class="clip-sweep"><rect x="0" y="120" width="1.5" height="122" fill="#2F7BE8" fill-opacity="0.35" /></g>
                 </svg>
               </div>
 
@@ -2853,7 +3208,7 @@
                   <!-- gauge -->
                   <g transform="translate(108, 152)">
                     <circle r="52" fill="none" stroke="#EDEAE2" stroke-opacity="0.08" stroke-width="10" />
-                    <circle r="52" fill="none" stroke="#0F8B5C" stroke-width="10" stroke-linecap="round"
+                    <circle r="52" fill="none" stroke="#1A52B0" stroke-width="10" stroke-linecap="round"
                             stroke-dasharray="326.7" stroke-dashoffset="33" transform="rotate(-90)" />
                     <text y="-2" fill="#F2EFE6" font-family="JetBrains Mono, monospace" font-size="17" font-weight="600" text-anchor="middle">99.98%</text>
                     <text y="16" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">ACHIEVED</text>
@@ -2864,15 +3219,15 @@
                   <g transform="translate(220, 88)">
                     <text y="-10" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="9">BUDGET REMAINING</text>
                     <rect width="388" height="14" rx="7" fill="#EDEAE2" fill-opacity="0.07" />
-                    <rect width="248" height="14" rx="7" fill="#0F8B5C" />
+                    <rect width="248" height="14" rx="7" fill="#1A52B0" />
                     <rect x="232" width="16" height="14" fill="#E8A33D" fill-opacity="0.85" />
                     <text x="0" y="32" fill="#E8A33D" font-family="JetBrains Mono, monospace" font-size="9">64% left · burning at 0.8×</text>
                   </g>
 
                   <!-- decision rule -->
                   <g transform="translate(220, 138)">
-                    <rect width="388" height="38" rx="6" fill="#0F8B5C" fill-opacity="0.08" stroke="#0F8B5C" stroke-opacity="0.28" />
-                    <text x="14" y="16" fill="#0F8B5C" font-family="JetBrains Mono, monospace" font-size="8">DECISION RULE</text>
+                    <rect width="388" height="38" rx="6" fill="#1A52B0" fill-opacity="0.08" stroke="#1A52B0" stroke-opacity="0.28" />
+                    <text x="14" y="16" fill="#1A52B0" font-family="JetBrains Mono, monospace" font-size="8">DECISION RULE</text>
                     <text x="14" y="30" fill="#B0ABA0" font-family="JetBrains Mono, monospace" font-size="8.5">burn &lt; 1.0× → change window open · ≥ 1.0× → freeze &amp; escalate</text>
                   </g>
 
@@ -2880,20 +3235,20 @@
                   <g transform="translate(220, 196)">
                     <text y="-6" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="9">DAILY CONSUMPTION</text>
                     <g class="clip-rise">
-                      <rect x="0"   y="20" width="13" height="24" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="21"  y="28" width="13" height="16" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="42"  y="10" width="13" height="34" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="63"  y="32" width="13" height="12" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="0"   y="20" width="13" height="24" rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="21"  y="28" width="13" height="16" rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="42"  y="10" width="13" height="34" rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="63"  y="32" width="13" height="12" rx="2" fill="#1A52B0" fill-opacity="0.55" />
                       <rect x="84"  y="4"  width="13" height="40" rx="2" fill="#E8A33D" fill-opacity="0.8" />
-                      <rect x="105" y="24" width="13" height="20" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="126" y="34" width="13" height="10" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="147" y="16" width="13" height="28" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="168" y="36" width="13" height="8"  rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="189" y="26" width="13" height="18" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="210" y="14" width="13" height="30" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="231" y="34" width="13" height="10" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="252" y="22" width="13" height="22" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
-                      <rect x="273" y="30" width="13" height="14" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="105" y="24" width="13" height="20" rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="126" y="34" width="13" height="10" rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="147" y="16" width="13" height="28" rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="168" y="36" width="13" height="8"  rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="189" y="26" width="13" height="18" rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="210" y="14" width="13" height="30" rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="231" y="34" width="13" height="10" rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="252" y="22" width="13" height="22" rx="2" fill="#1A52B0" fill-opacity="0.55" />
+                      <rect x="273" y="30" width="13" height="14" rx="2" fill="#1A52B0" fill-opacity="0.55" />
                     </g>
                     <line x1="0" y1="44" x2="300" y2="44" stroke="#EDEAE2" stroke-opacity="0.12" />
                     <text x="318" y="42" fill="#E8A33D" font-family="JetBrains Mono, monospace" font-size="8">worst day</text>
@@ -2916,12 +3271,12 @@
                     <text x="14" y="20" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="8">PAYLOAD</text>
                     <text x="14" y="38" fill="#B0ABA0" font-family="JetBrains Mono, monospace" font-size="8.5">{ "site": "TX-RING-07", "sev": "P2",</text>
                     <text x="14" y="54" fill="#B0ABA0" font-family="JetBrains Mono, monospace" font-size="8.5">&#160;&#160;"dupes": 14, "first_seen": "00:01:12",</text>
-                    <text x="14" y="70" fill="#0F8B5C" font-family="JetBrains Mono, monospace" font-size="8.5">&#160;&#160;"route": "transmission-domain" }</text>
+                    <text x="14" y="70" fill="#1A52B0" font-family="JetBrains Mono, monospace" font-size="8.5">&#160;&#160;"route": "transmission-domain" }</text>
                   </g>
 
                   <!-- pipeline rail -->
-                  <line x1="72" y1="190" x2="568" y2="190" stroke="#0F8B5C" stroke-opacity="0.25" stroke-width="1.5" />
-                  <path class="clip-trace" d="M72 190 L568 190" stroke="#14A870" stroke-width="2" fill="none" stroke-linecap="round" />
+                  <line x1="72" y1="190" x2="568" y2="190" stroke="#1A52B0" stroke-opacity="0.25" stroke-width="1.5" />
+                  <path class="clip-trace" d="M72 190 L568 190" stroke="#2F7BE8" stroke-width="2" fill="none" stroke-linecap="round" />
 
                   <g font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">
                     <g>
@@ -2931,8 +3286,8 @@
                       <text x="72" y="236" fill="#7A766C" font-size="7">SNMP trap</text>
                     </g>
                     <g>
-                      <circle cx="196" cy="190" r="15" fill="#0E141D" stroke="#0F8B5C" stroke-opacity="0.7" stroke-width="1.5" />
-                      <circle cx="196" cy="190" r="4" fill="#0F8B5C" />
+                      <circle cx="196" cy="190" r="15" fill="#0E141D" stroke="#1A52B0" stroke-opacity="0.7" stroke-width="1.5" />
+                      <circle cx="196" cy="190" r="4" fill="#1A52B0" />
                       <text x="196" y="224" fill="#F2EFE6">ENRICH</text>
                       <text x="196" y="236" fill="#7A766C" font-size="7">site + history</text>
                     </g>
@@ -2949,8 +3304,8 @@
                       <text x="444" y="236" fill="#7A766C" font-size="7">right team only</text>
                     </g>
                     <g>
-                      <circle cx="568" cy="190" r="15" fill="#0E141D" stroke="#0F8B5C" stroke-opacity="0.7" stroke-width="1.5" />
-                      <circle cx="568" cy="190" r="4" fill="#0F8B5C" />
+                      <circle cx="568" cy="190" r="15" fill="#0E141D" stroke="#1A52B0" stroke-opacity="0.7" stroke-width="1.5" />
+                      <circle cx="568" cy="190" r="4" fill="#1A52B0" />
                       <text x="568" y="224" fill="#F2EFE6">TICKET</text>
                       <text x="568" y="236" fill="#7A766C" font-size="7">context attached</text>
                     </g>
@@ -2958,8 +3313,8 @@
 
                   <!-- travelling payload — stops on the TICKET node -->
                   <g class="clip-travel">
-                    <circle cx="72" cy="190" r="5" fill="#14A870" />
-                    <circle cx="72" cy="190" r="11" fill="#14A870" fill-opacity="0.18" />
+                    <circle cx="72" cy="190" r="5" fill="#2F7BE8" />
+                    <circle cx="72" cy="190" r="11" fill="#2F7BE8" fill-opacity="0.18" />
                   </g>
                 </svg>
               </div>
@@ -2980,7 +3335,7 @@
 
             <div class="mt-4 flex items-center justify-between gap-4 flex-wrap">
               <div class="reel-chapters" id="reel-chapters" role="tablist" aria-label="Reel scenes"></div>
-              <p class="font-mono text-[0.55rem] text-ink-faint">
+              <p class="font-mono text-[0.62rem] text-ink-faint">
                 Scenes render as vector — no video download. Sound is synthesised in-browser.
               </p>
             </div>
@@ -3046,7 +3401,7 @@
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-14 sm:mb-16 reveal">
           <div>
             <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Featured systems</p>
-            <h2 id="projects-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Projects that move real data.</h2>
+            <h2 id="projects-heading" class="font-display text-3xl sm:text-4xl font-semibold tracking-tight">Projects that move real data.</h2>
             <p class="mt-2 text-sm text-ink-mute max-w-lg">Agentic automations, RAG retrieval, and API-wired flows — each with an interactive pipeline you can inspect.</p>
           </div>
           <p class="text-sm text-ink-mute max-w-xs sm:text-right font-mono text-[0.7rem] leading-relaxed">
@@ -3155,7 +3510,7 @@ Return only: intent, date, time, name, notes.`</span>;
                       <g class="flow-node" tabindex="0" role="button" data-node="s-chat" data-edges="s-chat>s-agent" style="--i:0"
                         data-payload='{"trigger":"chat.message","channel":"web","text":"Book me Thu 2pm"}'>
                         <circle class="node-ring" cx="70" cy="110" r="22" />
-                        <circle class="node-core" cx="70" cy="110" r="9" fill="#0F8B5C" />
+                        <circle class="node-core" cx="70" cy="110" r="9" fill="#1A52B0" />
                         <text class="node-label" x="70" y="150" text-anchor="middle">Chat trigger</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="s-agent" data-edges="s-chat>s-agent,s-agent>s-cal" style="--i:1"
@@ -3167,13 +3522,13 @@ Return only: intent, date, time, name, notes.`</span>;
                       <g class="flow-node" tabindex="0" role="button" data-node="s-cal" data-edges="s-agent>s-cal,s-cal>s-sheets" style="--i:2"
                         data-payload='{"action":"events.insert","calendarId":"primary","start":"2026-07-20T14:00:00+03:00","status":"confirmed"}'>
                         <circle class="node-ring" cx="390" cy="110" r="22" />
-                        <circle class="node-core" cx="390" cy="110" r="9" fill="#0F8B5C" />
+                        <circle class="node-core" cx="390" cy="110" r="9" fill="#1A52B0" />
                         <text class="node-label" x="390" y="150" text-anchor="middle">Google Calendar</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="s-sheets" data-edges="s-cal>s-sheets,s-sheets>s-gmail" style="--i:3"
                         data-payload='{"action":"values.append","sheet":"Bookings","row":["2026-07-20","14:00","confirmed"]}'>
                         <circle class="node-ring" cx="560" cy="110" r="22" />
-                        <circle class="node-core" cx="560" cy="110" r="9" fill="#0F8B5C" />
+                        <circle class="node-core" cx="560" cy="110" r="9" fill="#1A52B0" />
                         <text class="node-label" x="560" y="150" text-anchor="middle">Google Sheets</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="s-gmail" data-edges="s-sheets>s-gmail" style="--i:4"
@@ -3206,7 +3561,7 @@ Return only: intent, date, time, name, notes.`</span>;
                       <g class="flow-node" tabindex="0" role="button" data-node="s-chat" data-edges="s-chat>s-agent" style="--i:0"
                         data-payload='{"trigger":"chat.message","channel":"web","text":"Book me Thu 2pm"}'>
                         <circle class="node-ring" cx="140" cy="40" r="18" />
-                        <circle class="node-core" cx="140" cy="40" r="8" fill="#0F8B5C" />
+                        <circle class="node-core" cx="140" cy="40" r="8" fill="#1A52B0" />
                         <text class="node-label" x="140" y="72" text-anchor="middle">Chat trigger</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="s-agent" data-edges="s-chat>s-agent,s-agent>s-cal" style="--i:1"
@@ -3218,13 +3573,13 @@ Return only: intent, date, time, name, notes.`</span>;
                       <g class="flow-node" tabindex="0" role="button" data-node="s-cal" data-edges="s-agent>s-cal,s-cal>s-sheets" style="--i:2"
                         data-payload='{"action":"events.insert","status":"confirmed"}'>
                         <circle class="node-ring" cx="140" cy="200" r="18" />
-                        <circle class="node-core" cx="140" cy="200" r="8" fill="#0F8B5C" />
+                        <circle class="node-core" cx="140" cy="200" r="8" fill="#1A52B0" />
                         <text class="node-label" x="140" y="232" text-anchor="middle">Google Calendar</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="s-sheets" data-edges="s-cal>s-sheets,s-sheets>s-gmail" style="--i:3"
                         data-payload='{"action":"values.append","sheet":"Bookings"}'>
                         <circle class="node-ring" cx="140" cy="280" r="18" />
-                        <circle class="node-core" cx="140" cy="280" r="8" fill="#0F8B5C" />
+                        <circle class="node-core" cx="140" cy="280" r="8" fill="#1A52B0" />
                         <text class="node-label" x="140" y="312" text-anchor="middle">Google Sheets</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="s-gmail" data-edges="s-sheets>s-gmail" style="--i:4"
@@ -3306,7 +3661,7 @@ Return only: intent, date, time, name, notes.`</span>;
                       <g class="flow-node" tabindex="0" role="button" data-node="w-hook" data-edges="w-hook>w-router" style="--i:0"
                         data-payload='{"hub.mode":"subscribe","hub.verify_token":"***","hub.challenge":"1752…"}'>
                         <circle class="node-ring" cx="90" cy="110" r="22" />
-                        <circle class="node-core" cx="90" cy="110" r="9" fill="#0F8B5C" />
+                        <circle class="node-core" cx="90" cy="110" r="9" fill="#1A52B0" />
                         <text class="node-label" x="90" y="150" text-anchor="middle">Cloud API webhook</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="w-router" data-edges="w-hook>w-router,w-router>w-logic" style="--i:1"
@@ -3318,7 +3673,7 @@ Return only: intent, date, time, name, notes.`</span>;
                       <g class="flow-node" tabindex="0" role="button" data-node="w-logic" data-edges="w-router>w-logic,w-logic>w-send" style="--i:2"
                         data-payload='{"route":"faq.hours","reply_type":"text","body":"Open 8am–6pm EAT"}'>
                         <circle class="node-ring" cx="470" cy="110" r="22" />
-                        <circle class="node-core" cx="470" cy="110" r="9" fill="#0F8B5C" />
+                        <circle class="node-core" cx="470" cy="110" r="9" fill="#1A52B0" />
                         <text class="node-label" x="470" y="150" text-anchor="middle">Response logic</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="w-send" data-edges="w-logic>w-send" style="--i:3"
@@ -3336,7 +3691,7 @@ Return only: intent, date, time, name, notes.`</span>;
                       <g class="edge-group" style="--i:2"><path class="edge-path" d="M140 215 V255"/><path class="edge-pulse delay-2" d="M140 215 V255"/></g>
                       <g class="flow-node" tabindex="0" role="button" data-node="w-hook" data-edges="w-hook>w-router" style="--i:0"
                         data-payload='{"hub.mode":"subscribe","hub.verify_token":"***","hub.challenge":"1752…"}'>
-                        <circle class="node-ring" cx="140" cy="40" r="18"/><circle class="node-core" cx="140" cy="40" r="8" fill="#0F8B5C"/>
+                        <circle class="node-ring" cx="140" cy="40" r="18"/><circle class="node-core" cx="140" cy="40" r="8" fill="#1A52B0"/>
                         <text class="node-label" x="140" y="72" text-anchor="middle">Cloud API webhook</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="w-router" data-edges="w-hook>w-router,w-router>w-logic" style="--i:1"
@@ -3346,7 +3701,7 @@ Return only: intent, date, time, name, notes.`</span>;
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="w-logic" data-edges="w-router>w-logic,w-logic>w-send" style="--i:2"
                         data-payload='{"route":"faq.hours","reply_type":"text"}'>
-                        <circle class="node-ring" cx="140" cy="200" r="18"/><circle class="node-core" cx="140" cy="200" r="8" fill="#0F8B5C"/>
+                        <circle class="node-ring" cx="140" cy="200" r="18"/><circle class="node-core" cx="140" cy="200" r="8" fill="#1A52B0"/>
                         <text class="node-label" x="140" y="232" text-anchor="middle">Response logic</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="w-send" data-edges="w-logic>w-send" style="--i:3"
@@ -3449,7 +3804,7 @@ Return only: intent, date, time, name, notes.`</span>;
                       <g class="flow-node" tabindex="0" role="button" data-node="r-query" data-edges="r-query>r-plan" style="--i:0"
                         data-payload='{"query":"Compare STK Push vs card rails for SME checkout","locale":"KE"}'>
                         <circle class="node-ring" cx="60" cy="130" r="20" />
-                        <circle class="node-core" cx="60" cy="130" r="8" fill="#0F8B5C" />
+                        <circle class="node-core" cx="60" cy="130" r="8" fill="#1A52B0" />
                         <text class="node-label" x="60" y="168" text-anchor="middle">Query input</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="r-plan" data-edges="r-query>r-plan,r-plan>r-a1,r-plan>r-a2,r-plan>r-a3" style="--i:1"
@@ -3461,19 +3816,19 @@ Return only: intent, date, time, name, notes.`</span>;
                       <g class="flow-node" tabindex="0" role="button" data-node="r-a1" data-edges="r-plan>r-a1,r-a1>r-syn" style="--i:2"
                         data-payload='{"agent":"web_research","findings":2,"confidence":0.74}'>
                         <circle class="node-ring" cx="390" cy="55" r="18" />
-                        <circle class="node-core" cx="390" cy="55" r="7" fill="#0F8B5C" />
+                        <circle class="node-core" cx="390" cy="55" r="7" fill="#1A52B0" />
                         <text class="node-label" x="390" y="90" text-anchor="middle">Research A</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="r-a2" data-edges="r-plan>r-a2,r-a2>r-syn" style="--i:2"
                         data-payload='{"agent":"docs_research","findings":3,"confidence":0.81}'>
                         <circle class="node-ring" cx="390" cy="130" r="18" />
-                        <circle class="node-core" cx="390" cy="130" r="7" fill="#0F8B5C" />
+                        <circle class="node-core" cx="390" cy="130" r="7" fill="#1A52B0" />
                         <text class="node-label" x="390" y="165" text-anchor="middle">Research B</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="r-a3" data-edges="r-plan>r-a3,r-a3>r-syn" style="--i:2"
                         data-payload='{"agent":"local_context","findings":1,"confidence":0.69}'>
                         <circle class="node-ring" cx="390" cy="205" r="18" />
-                        <circle class="node-core" cx="390" cy="205" r="7" fill="#0F8B5C" />
+                        <circle class="node-core" cx="390" cy="205" r="7" fill="#1A52B0" />
                         <text class="node-label" x="390" y="240" text-anchor="middle">Research C</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="r-syn" data-edges="r-a1>r-syn,r-a2>r-syn,r-a3>r-syn,r-syn>r-out" style="--i:3"
@@ -3499,7 +3854,7 @@ Return only: intent, date, time, name, notes.`</span>;
                       <g class="edge-group" style="--i:4"><path class="edge-path" d="M140 350 V385"/><path class="edge-pulse delay-3" d="M140 350 V385"/></g>
                       <g class="flow-node" tabindex="0" role="button" data-node="r-query" data-edges="r-query>r-plan" style="--i:0"
                         data-payload='{"query":"Compare STK Push vs card rails…"}'>
-                        <circle class="node-ring" cx="140" cy="35" r="16"/><circle class="node-core" cx="140" cy="35" r="7" fill="#0F8B5C"/>
+                        <circle class="node-ring" cx="140" cy="35" r="16"/><circle class="node-core" cx="140" cy="35" r="7" fill="#1A52B0"/>
                         <text class="node-label" x="140" y="64" text-anchor="middle">Query input</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="r-plan" data-edges="r-query>r-plan,r-plan>r-a1" style="--i:1"
@@ -3509,7 +3864,7 @@ Return only: intent, date, time, name, notes.`</span>;
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="r-a2" data-edges="r-plan>r-a2" style="--i:2"
                         data-payload='{"agent":"parallel_research","fan_out":3}'>
-                        <circle class="node-ring" cx="140" cy="185" r="16"/><circle class="node-core" cx="140" cy="185" r="7" fill="#0F8B5C"/>
+                        <circle class="node-ring" cx="140" cy="185" r="16"/><circle class="node-core" cx="140" cy="185" r="7" fill="#1A52B0"/>
                         <text class="node-label" x="140" y="214" text-anchor="middle">Parallel agents</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="r-syn" data-edges="r-a2>r-syn" style="--i:3"
@@ -3652,13 +4007,13 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
                       <g class="flow-node" tabindex="0" role="button" data-node="rag-store" data-edges="rag-docs>rag-store,rag-store>rag-retrieve" style="--i:1"
                         data-payload='{"store":"chromadb","collection":"docs","path":"./chroma_db","metric":"cosine","status":"indexed"}'>
                         <circle class="node-ring" cx="400" cy="55" r="20" />
-                        <circle class="node-core" cx="400" cy="55" r="8" fill="#0F8B5C" />
+                        <circle class="node-core" cx="400" cy="55" r="8" fill="#1A52B0" />
                         <text class="node-label" x="400" y="90" text-anchor="middle">ChromaDB</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="rag-query" data-edges="rag-query>rag-embed" style="--i:0"
                         data-payload='{"role":"user","text":"What is the refund policy for prepaid?","session_id":"s_184"}'>
                         <circle class="node-ring" cx="60" cy="170" r="18" />
-                        <circle class="node-core" cx="60" cy="170" r="8" fill="#0F8B5C" />
+                        <circle class="node-core" cx="60" cy="170" r="8" fill="#1A52B0" />
                         <text class="node-label" x="60" y="205" text-anchor="middle">User query</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="rag-embed" data-edges="rag-query>rag-embed,rag-embed>rag-retrieve" style="--i:1"
@@ -3676,13 +4031,13 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
                       <g class="flow-node" tabindex="0" role="button" data-node="rag-ctx" data-edges="rag-retrieve>rag-ctx,rag-ctx>rag-llm" style="--i:3"
                         data-payload='{"context_tokens":1200,"chunks":4,"grounding":true}'>
                         <circle class="node-ring" cx="550" cy="155" r="18" />
-                        <circle class="node-core" cx="550" cy="155" r="8" fill="#0F8B5C" />
+                        <circle class="node-core" cx="550" cy="155" r="8" fill="#1A52B0" />
                         <text class="node-label" x="550" y="198" text-anchor="middle">Context pack</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="rag-llm" data-edges="rag-ctx>rag-llm,rag-llm>rag-out" style="--i:4"
                         data-payload='{"prompt":"answer_using_context_only","temperature":0.2,"cite_chunks":true}'>
                         <circle class="node-ring" cx="680" cy="155" r="18" />
-                        <circle class="node-core" cx="680" cy="155" r="8" fill="#0F8B5C" />
+                        <circle class="node-core" cx="680" cy="155" r="8" fill="#1A52B0" />
                         <text class="node-label" x="680" y="198" text-anchor="middle">LLM</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="rag-out" data-edges="rag-llm>rag-out" style="--i:5"
@@ -3702,7 +4057,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
                       <g class="edge-group" style="--i:4"><path class="edge-path" d="M140 350 V385"/><path class="edge-pulse delay-3" d="M140 350 V385"/></g>
                       <g class="flow-node" tabindex="0" role="button" data-node="rag-query" data-edges="rag-query>rag-embed" style="--i:0"
                         data-payload='{"role":"user","text":"What is the refund policy?"}'>
-                        <circle class="node-ring" cx="140" cy="35" r="16"/><circle class="node-core" cx="140" cy="35" r="7" fill="#0F8B5C"/>
+                        <circle class="node-ring" cx="140" cy="35" r="16"/><circle class="node-core" cx="140" cy="35" r="7" fill="#1A52B0"/>
                         <text class="node-label" x="140" y="64" text-anchor="middle">User query</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="rag-embed" data-edges="rag-query>rag-embed" style="--i:1"
@@ -3712,7 +4067,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="rag-retrieve" data-edges="" style="--i:2"
                         data-payload='{"store":"chromadb","api":"collection.query","n_results":4}'>
-                        <circle class="node-ring" cx="140" cy="185" r="16"/><circle class="node-core" cx="140" cy="185" r="7" fill="#0F8B5C"/>
+                        <circle class="node-ring" cx="140" cy="185" r="16"/><circle class="node-core" cx="140" cy="185" r="7" fill="#1A52B0"/>
                         <text class="node-label" x="140" y="214" text-anchor="middle">ChromaDB</text>
                       </g>
                       <g class="flow-node" tabindex="0" role="button" data-node="rag-ctx" data-edges="" style="--i:3"
@@ -3853,7 +4208,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
       <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
         <div class="mb-12 reveal">
           <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Stack</p>
-          <h2 id="skills-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Skills, grouped by how I use them.</h2>
+          <h2 id="skills-heading" class="font-display text-3xl sm:text-4xl font-semibold tracking-tight">Skills, grouped by how I use them.</h2>
           <p class="mt-2 text-sm text-ink-mute max-w-xl">Operations is the spine. Everything below it is what I reach for when a manual process deserves to be automated away.</p>
         </div>
 
@@ -3956,7 +4311,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
       <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
         <div class="mb-12 reveal">
           <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Credentials</p>
-          <h2 id="certs-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Certifications</h2>
+          <h2 id="certs-heading" class="font-display text-3xl sm:text-4xl font-semibold tracking-tight">Certifications</h2>
         </div>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 reveal">
@@ -4026,7 +4381,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
         <!-- Closing CTA strip -->
         <div class="reveal mb-16 sm:mb-20 max-w-2xl">
           <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Contact</p>
-          <h2 id="contact-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight mb-4">
+          <h2 id="contact-heading" class="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-4">
             Need someone who can hold a shift and automate it?
           </h2>
           <p class="avail-pill mb-5">
@@ -4086,10 +4441,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-6 border-t border-ink/5">
-            <p class="font-mono text-[0.65rem] text-ink-faint">
-              Currently: interviewing for NSOC roles · finishing AWS AI Practitioner (AIF-C01)
-            </p>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 pt-6 border-t border-ink/5">
             <p class="font-mono text-[0.65rem] text-ink-faint">
               © <span id="year">2026</span> Ian Ondieki
             </p>
@@ -4114,7 +4466,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
         <span class="kbd shrink-0">esc</span>
       </div>
       <div class="cmdk-list" id="cmdk-list" role="listbox" aria-label="Results"></div>
-      <div class="px-4 py-2.5 border-t border-ink/8 flex items-center gap-4 font-mono text-[0.55rem] text-ink-faint">
+      <div class="px-4 py-2.5 border-t border-ink/8 flex items-center gap-4 font-mono text-[0.62rem] text-ink-faint">
         <span><span class="kbd">↑</span> <span class="kbd">↓</span> navigate</span>
         <span><span class="kbd">↵</span> select</span>
         <span class="ml-auto">Ian Ondieki</span>
@@ -4148,12 +4500,35 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
 
       // ── Nav scroll state ──
       const nav = document.getElementById('site-nav');
+      let navTicking = false;
       const onScrollNav = () => {
-        if (!nav) return;
-        nav.classList.toggle('scrolled', window.scrollY > 12);
+        if (!nav || navTicking) return;
+        navTicking = true;                       // one class flip per frame, not per event
+        requestAnimationFrame(() => {
+          navTicking = false;
+          nav.classList.toggle('scrolled', window.scrollY > 12);
+        });
       };
       window.addEventListener('scroll', onScrollNav, { passive: true });
       onScrollNav();
+
+      // ── Day / night ──
+      const themeToggle = document.getElementById('theme-toggle');
+      function applyTheme(dark) {
+        document.documentElement.toggleAttribute('data-theme', false);
+        if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+        else document.documentElement.removeAttribute('data-theme');
+        if (themeToggle) {
+          themeToggle.setAttribute('aria-pressed', dark ? 'true' : 'false');
+          themeToggle.setAttribute('aria-label', dark ? 'Switch to day mode' : 'Switch to night mode');
+        }
+      }
+      applyTheme(document.documentElement.getAttribute('data-theme') === 'dark');
+      themeToggle?.addEventListener('click', () => {
+        const dark = document.documentElement.getAttribute('data-theme') !== 'dark';
+        applyTheme(dark);
+        try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) { /* ignore */ }
+      });
 
       // ── Mobile menu ──
       const menuToggle = document.getElementById('menu-toggle');
@@ -4181,22 +4556,60 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
       });
 
       // ── Active section highlighting ──
-      const sectionIds = ['noc', 'experience', 'reel', 'projects', 'skills', 'certifications', 'contact'];
+      const sectionIds = ['top', 'about', 'noc', 'experience', 'reel', 'projects', 'skills', 'certifications', 'contact'];
+      const railItems = document.querySelectorAll('.rail-item[data-section]');
+      const navCrumb = document.getElementById('nav-crumb');
       const navLinks = document.querySelectorAll('.nav-link[data-section]');
 
-      function updateActiveNav() {
-        const y = window.scrollY + 120;
-        let current = '';
-        for (const id of sectionIds) {
-          const el = document.getElementById(id);
-          if (el && el.offsetTop <= y) current = id;
-        }
+      function setActiveNav(current) {
         navLinks.forEach((link) => {
           link.classList.toggle('active', link.getAttribute('data-section') === current);
         });
+        let label = '';
+        railItems.forEach((item) => {
+          const on = item.getAttribute('data-section') === current;
+          item.setAttribute('aria-current', on ? 'true' : 'false');
+          if (on) label = item.querySelector('.rail-label').textContent;
+        });
+        if (navCrumb) navCrumb.textContent = current === 'top' ? '' : label;
       }
-      window.addEventListener('scroll', updateActiveNav, { passive: true });
-      updateActiveNav();
+
+      // Highlight the section under the nav WITHOUT measuring layout while scrolling.
+      // The observer only fires when a section crosses the band just below the nav bar;
+      // the previous version read offsetTop on every section on every scroll event, which
+      // forces a synchronous layout each time and is the main cause of scroll jank.
+      const sectionEls = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
+      if ('IntersectionObserver' in window && sectionEls.length) {
+        const onScreenIds = new Set();
+        const navObs = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) =>
+              e.isIntersecting ? onScreenIds.add(e.target.id) : onScreenIds.delete(e.target.id)
+            );
+            // lowest section in the band wins, matching the old offsetTop behaviour
+            setActiveNav(sectionIds.filter((id) => onScreenIds.has(id)).pop() || '');
+          },
+          { rootMargin: '-120px 0px -65% 0px', threshold: 0 }
+        );
+        sectionEls.forEach((el) => navObs.observe(el));
+      } else {
+        let navScrollTicking = false;
+        window.addEventListener(
+          'scroll',
+          () => {
+            if (navScrollTicking) return;
+            navScrollTicking = true;
+            requestAnimationFrame(() => {
+              navScrollTicking = false;
+              const y = window.scrollY + 120;
+              let current = '';
+              for (const el of sectionEls) if (el.offsetTop <= y) current = el.id;
+              setActiveNav(current);
+            });
+          },
+          { passive: true }
+        );
+      }
 
       // ── Terminal panels: scanline when in view ──
       const scanPanels = document.querySelectorAll('.term-panel.has-scan');
@@ -4523,7 +4936,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
       const $ = (sel, root) => (root || document).querySelector(sel);
       const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
 
-      const COLOURS = { forest: '#14A870', azure: '#4DA3C7', gold: '#E8A33D', rust: '#B8492E' };
+      const COLOURS = { forest: '#2F7BE8', azure: '#4DA3C7', gold: '#E8A33D', rust: '#B8492E' };
 
       /* Runs `fn` only while `el` is on screen — keeps idle tabs and
          off-screen panels from burning cycles on animation. */
