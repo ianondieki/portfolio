@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Ian Ondieki — Software Engineer & Agentic AI developer in Nairobi. Agentic automations, RAG chatbots, and systems wired into WhatsApp, Calendar, Gmail, Sheets, and payment rails. ex-Safaricom NOC." />
+  <meta name="description" content="Ian Ondieki — Network &amp; Service Operations engineer in Nairobi. Safaricom NOC-trained across five SOCs (IP, Transmission, RAN, Digital Services, Core). KPI monitoring, SLA and error-budget management, ITIL incident lifecycle — plus the automation that removes the toil. CCNA · JNCIA · ITIL." />
   <meta name="theme-color" content="#0C1018" />
-  <meta property="og:title" content="Ian Ondieki — Agentic AI & Automation" />
-  <meta property="og:description" content="Software engineer building agentic systems, RAG chatbots, and real API automations. Nairobi, Kenya · ex-Safaricom NOC." />
+  <meta property="og:title" content="Ian Ondieki — Network &amp; Service Operations Engineer" />
+  <meta property="og:description" content="Safaricom NOC-trained across five SOCs. KPI monitoring, SLA and error-budget management, ITIL incident lifecycle — and the automation that keeps the queue human-sized. Nairobi, Kenya." />
   <meta property="og:type" content="website" />
-  <title>Ian Ondieki — Software Engineer · Agentic AI & Automation</title>
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>Ian Ondieki — Network &amp; Service Operations Engineer · Nairobi</title>
 
   <!-- Favicon: node-graph mark -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2310151F'/%3E%3Ccircle cx='8' cy='16' r='3' fill='%230F8B5C'/%3E%3Ccircle cx='24' cy='10' r='2.5' fill='%23E8A33D'/%3E%3Ccircle cx='24' cy='22' r='2.5' fill='%23EDEAE2'/%3E%3Cpath d='M11 16 L21.5 10.5 M11 16 L21.5 21.5' stroke='%230F8B5C' stroke-width='1.5' fill='none' opacity='0.85'/%3E%3C/svg%3E" />
@@ -31,7 +32,11 @@
       theme: {
         extend: {
           colors: {
-            base: '#0C1018',
+            /* NOTE: no `base` colour here on purpose. Tailwind ships a built-in
+               `text-base` font-size utility; adding a colour called `base` makes
+               Tailwind emit a second `.text-base` rule that sets colour instead,
+               and it wins on order — every `text-base` element renders #0C1018
+               on a #0C1018 page. The --base CSS variable below is unaffected. */
             surface: '#161D2A',
             'surface-2': '#1E2736',
             forest: {
@@ -742,9 +747,12 @@
     .soc-orbit {
       position: relative;
       aspect-ratio: 1;
-      max-width: 22rem;
+      max-width: min(22rem, 100%);
       margin: 0 auto;
     }
+    /* Grid children default to min-width:auto (min-content), which let the
+       orbit force the document wider than the viewport on phones. */
+    .band .grid > * { min-width: 0; }
     .soc-orbit-ring {
       position: absolute;
       inset: 12%;
@@ -1014,6 +1022,838 @@
       font-variant-numeric: tabular-nums;
       letter-spacing: 0.02em;
     }
+
+    /* ═══════════════════════════════════════════════════════════
+       NETWORK & SERVICE OPERATIONS LAYER
+       Portrait frame, KPI wall, SLA gauges, incident lifecycle,
+       ops reel, command palette.
+       Severity colours reuse the base palette:
+         P1 rust · P2 gold · P3 azure · P4 faint ink
+       Tweak --azure below if you want a cooler/warmer 4th series.
+       ═══════════════════════════════════════════════════════════ */
+
+    :root {
+      --azure: #4DA3C7;
+      --azure-dim: #35768F;
+      --sev-p1: var(--rust);
+      --sev-p2: var(--gold);
+      --sev-p3: var(--azure);
+      --sev-p4: var(--ink-faint);
+    }
+
+    /* ── Scroll progress rail (top of viewport) ── */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 100%;
+      z-index: 60;
+      pointer-events: none;
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, var(--forest) 0%, var(--forest-glow) 45%, var(--gold) 100%);
+      opacity: 0.9;
+    }
+
+    /* ── Availability pill (nav + hero) ── */
+    .avail-pill {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      /* Rounded rather than fully pill-shaped: the label wraps to two lines on
+         narrow screens and a 999px radius looks wrong once it does. */
+      border-radius: 0.85rem;
+      border: 1px solid rgba(15, 139, 92, 0.32);
+      background: rgba(15, 139, 92, 0.09);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.62rem;
+      line-height: 1.55;
+      letter-spacing: 0.06em;
+      color: var(--ink);
+      max-width: 100%;
+    }
+    .avail-pill .status-dot { flex: none; margin-top: 0.42em; }
+
+    /* ═══════════ HERO PORTRAIT ═══════════ */
+    .portrait-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 23rem;
+      margin-inline: auto;
+    }
+    @media (min-width: 1024px) {
+      .portrait-wrap { max-width: 26rem; margin-inline: 0 0 0 auto; }
+    }
+
+    .portrait-frame {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      border-radius: 1rem;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 15%, rgba(15, 139, 92, 0.18) 0%, transparent 65%),
+        linear-gradient(170deg, #182131 0%, #10161F 60%, #0B1018 100%);
+      border: 1px solid rgba(237, 234, 226, 0.09);
+      box-shadow:
+        0 24px 70px -30px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(15, 139, 92, 0.1),
+        0 0 60px -22px rgba(15, 139, 92, 0.42);
+    }
+
+    .portrait-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 22%;
+      /* Grade the photo into the page palette instead of letting it sit on top */
+      filter: saturate(0.88) contrast(1.06) brightness(0.98);
+    }
+    /* Duotone-ish wash so the portrait belongs to the same world as the graphs */
+    .portrait-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(10, 14, 21, 0) 42%, rgba(9, 13, 19, 0.82) 100%),
+        radial-gradient(ellipse 70% 55% at 50% 30%, rgba(15, 139, 92, 0.1) 0%, transparent 70%);
+      mix-blend-mode: normal;
+    }
+
+    /* Fallback shown until assets/ian-portrait.jpg exists */
+    .portrait-fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .portrait-wrap.no-photo .portrait-img { display: none; }
+    .portrait-wrap.no-photo .portrait-fallback { display: flex; }
+    .portrait-monogram {
+      width: 5.5rem;
+      height: 5.5rem;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      background: linear-gradient(150deg, rgba(15, 139, 92, 0.3), rgba(232, 163, 61, 0.14));
+      border: 1px solid rgba(237, 234, 226, 0.14);
+    }
+
+    /* Rotating status ring */
+    .portrait-ring {
+      position: absolute;
+      inset: -7px;
+      border-radius: 1.3rem;
+      pointer-events: none;
+      background: conic-gradient(
+        from 0deg,
+        rgba(15, 139, 92, 0) 0deg,
+        rgba(15, 139, 92, 0) 210deg,
+        rgba(20, 168, 112, 0.75) 300deg,
+        rgba(232, 163, 61, 0.55) 340deg,
+        rgba(15, 139, 92, 0) 360deg
+      );
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 1px;
+      animation: ring-sweep 7s linear infinite;
+      opacity: 0.85;
+    }
+    @keyframes ring-sweep {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Corner brackets — reads as a monitoring viewport */
+    .portrait-bracket {
+      position: absolute;
+      width: 1.6rem;
+      height: 1.6rem;
+      border: 1.5px solid rgba(20, 168, 112, 0.55);
+      pointer-events: none;
+      z-index: 3;
+    }
+    .portrait-bracket.tl { top: 0.6rem; left: 0.6rem; border-right: 0; border-bottom: 0; border-top-left-radius: 0.35rem; }
+    .portrait-bracket.tr { top: 0.6rem; right: 0.6rem; border-left: 0; border-bottom: 0; border-top-right-radius: 0.35rem; }
+    .portrait-bracket.bl { bottom: 0.6rem; left: 0.6rem; border-right: 0; border-top: 0; border-bottom-left-radius: 0.35rem; }
+    .portrait-bracket.br { bottom: 0.6rem; right: 0.6rem; border-left: 0; border-top: 0; border-bottom-right-radius: 0.35rem; }
+
+    /* Slow scanline sweep over the frame */
+    .portrait-scan {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 1rem;
+    }
+    .portrait-scan::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 32%;
+      top: -32%;
+      background: linear-gradient(180deg, transparent, rgba(20, 168, 112, 0.09) 55%, transparent);
+      animation: portrait-sweep 6.5s ease-in-out infinite;
+    }
+    @keyframes portrait-sweep {
+      0%   { top: -34%; opacity: 0; }
+      12%  { opacity: 1; }
+      88%  { opacity: 1; }
+      100% { top: 102%; opacity: 0; }
+    }
+
+    /* Caption bar pinned inside the frame */
+    .portrait-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 3;
+      padding: 0.9rem 1rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    /* Floating telemetry chips around the portrait */
+    .telemetry-chip {
+      position: absolute;
+      z-index: 4;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.5rem 0.7rem;
+      border-radius: 0.55rem;
+      background: rgba(16, 22, 31, 0.92);
+      border: 1px solid rgba(237, 234, 226, 0.1);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px -14px rgba(0, 0, 0, 0.9);
+      animation: chip-float 8s ease-in-out infinite;
+    }
+    .telemetry-chip .t-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+    .telemetry-chip .t-value {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--forest-glow);
+      line-height: 1;
+    }
+    .telemetry-chip.is-gold .t-value { color: var(--gold); }
+    .telemetry-chip.chip-a { top: 12%; left: -1.25rem; animation-delay: -1s; }
+    .telemetry-chip.chip-b { top: 45%; right: -1.5rem; animation-delay: -4s; }
+    .telemetry-chip.chip-c { bottom: 16%; left: -1.75rem; animation-delay: -6.5s; }
+    @keyframes chip-float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-7px); }
+    }
+    @media (max-width: 420px) {
+      .telemetry-chip.chip-a { left: -0.25rem; }
+      .telemetry-chip.chip-b { right: -0.25rem; }
+      .telemetry-chip.chip-c { left: -0.25rem; }
+    }
+
+    /* ── Hero KPI strip beneath the copy ── */
+    .hero-kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+    @media (min-width: 640px) {
+      .hero-kpi-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    .hero-kpi {
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(237, 234, 226, 0.07);
+      background: rgba(22, 29, 42, 0.5);
+      backdrop-filter: blur(6px);
+    }
+
+    /* ═══════════ NOC BAND ═══════════ */
+    .band-noc {
+      background:
+        radial-gradient(ellipse 65% 45% at 15% 5%, rgba(77, 163, 199, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 40% at 90% 70%, rgba(15, 139, 92, 0.08) 0%, transparent 55%),
+        linear-gradient(180deg, #0A0F17 0%, #0D141E 40%, #0A1018 100%);
+    }
+    .band-noc::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.4;
+      background-image:
+        linear-gradient(rgba(237, 234, 226, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(237, 234, 226, 0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, black 0%, transparent 78%);
+      -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, black 0%, transparent 78%);
+    }
+    .band-noc > .band-inner { position: relative; z-index: 1; }
+
+    /* ── KPI tiles ── */
+    .kpi-tile {
+      position: relative;
+      border-radius: 0.7rem;
+      border: 1px solid rgba(237, 234, 226, 0.08);
+      background: linear-gradient(170deg, rgba(24, 32, 46, 0.85) 0%, rgba(16, 22, 31, 0.9) 100%);
+      padding: 0.95rem 1rem 0.7rem;
+      overflow: hidden;
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+    .kpi-tile:hover,
+    .kpi-tile:focus-within {
+      border-color: rgba(15, 139, 92, 0.38);
+      transform: translateY(-2px);
+    }
+    .kpi-tile.is-breach { border-color: rgba(184, 73, 46, 0.45); }
+    .kpi-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.45rem;
+    }
+    .kpi-name {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+    .kpi-value {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 1.45rem;
+      font-weight: 600;
+      line-height: 1;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-unit {
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+      margin-left: 0.15rem;
+      font-weight: 400;
+    }
+    .kpi-delta {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.58rem;
+      padding: 0.12rem 0.36rem;
+      border-radius: 0.25rem;
+      white-space: nowrap;
+    }
+    .kpi-delta.up   { color: var(--forest-glow); background: rgba(15, 139, 92, 0.13); }
+    .kpi-delta.down { color: var(--gold);        background: rgba(232, 163, 61, 0.12); }
+    .kpi-delta.flat { color: var(--ink-faint);   background: rgba(237, 234, 226, 0.06); }
+    .kpi-spark {
+      display: block;
+      width: 100%;
+      height: 38px;
+      margin-top: 0.55rem;
+      overflow: visible;
+    }
+    .kpi-spark .spark-line {
+      fill: none;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .kpi-spark .spark-area { stroke: none; opacity: 0.16; }
+    .kpi-spark .spark-head { stroke: none; }
+    .kpi-threshold {
+      stroke-dasharray: 3 4;
+      stroke-width: 1;
+      opacity: 0.45;
+    }
+    .kpi-foot {
+      margin-top: 0.4rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.53rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.06em;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    /* ── SLA gauge ── */
+    .sla-gauge-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      flex-wrap: wrap;
+    }
+    .sla-gauge { flex: none; width: 128px; height: 128px; position: relative; }
+    .sla-gauge svg { transform: rotate(-90deg); display: block; }
+    .sla-gauge .gauge-track { fill: none; stroke: rgba(237, 234, 226, 0.08); stroke-width: 9; }
+    .sla-gauge .gauge-fill {
+      fill: none;
+      stroke: var(--forest-glow);
+      stroke-width: 9;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sla-gauge .gauge-centre {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    /* Error-budget burn-down */
+    .budget-bar {
+      position: relative;
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(237, 234, 226, 0.07);
+      overflow: hidden;
+    }
+    .budget-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--forest) 0%, var(--forest-glow) 70%, var(--gold) 100%);
+      transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .budget-tick {
+      position: absolute;
+      top: -3px;
+      bottom: -3px;
+      width: 1px;
+      background: rgba(237, 234, 226, 0.28);
+    }
+
+    /* ── Incident lifecycle rail ── */
+    .lifecycle-rail {
+      position: relative;
+      display: grid;
+      gap: 0.5rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    @media (min-width: 900px) {
+      .lifecycle-rail { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    }
+    .lifecycle-step {
+      position: relative;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(237, 234, 226, 0.08);
+      background: rgba(18, 25, 36, 0.7);
+      padding: 0.8rem 0.85rem;
+      transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease;
+    }
+    .lifecycle-step.is-live {
+      border-color: rgba(20, 168, 112, 0.5);
+      background: rgba(15, 139, 92, 0.1);
+      transform: translateY(-3px);
+    }
+    .lifecycle-step .ls-index {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.14em;
+      color: var(--ink-faint);
+    }
+    .lifecycle-step.is-live .ls-index { color: var(--forest-glow); }
+    .lifecycle-step .ls-title {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 0.2rem;
+    }
+    .lifecycle-step .ls-metric {
+      margin-top: 0.4rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.55rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Escalation matrix ── */
+    .esc-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .esc-table th {
+      text-align: left;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      font-weight: 500;
+      padding: 0 0.6rem 0.6rem;
+      border-bottom: 1px solid rgba(237, 234, 226, 0.08);
+    }
+    .esc-table td {
+      padding: 0.6rem;
+      border-bottom: 1px solid rgba(237, 234, 226, 0.05);
+      color: var(--ink-mute);
+      vertical-align: middle;
+    }
+    .esc-table tr:last-child td { border-bottom: 0; }
+    .esc-table tbody tr { transition: background 0.2s ease; }
+    .esc-table tbody tr:hover { background: rgba(237, 234, 226, 0.025); }
+    .sev-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.62rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.3rem;
+      border: 1px solid currentColor;
+      white-space: nowrap;
+    }
+    .sev-chip::before {
+      content: '';
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .sev-p1 { color: var(--sev-p1); background: rgba(184, 73, 46, 0.1); }
+    .sev-p2 { color: var(--sev-p2); background: rgba(232, 163, 61, 0.1); }
+    .sev-p3 { color: var(--sev-p3); background: rgba(77, 163, 199, 0.1); }
+    .sev-p4 { color: var(--sev-p4); background: rgba(237, 234, 226, 0.05); }
+
+    /* ── Alarm ticker ── */
+    .alarm-ticker {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.68rem;
+      line-height: 1.5;
+      max-height: 13.5rem;
+      overflow: hidden;
+    }
+    .alarm-row {
+      display: grid;
+      grid-template-columns: auto auto 1fr auto;
+      gap: 0.6rem;
+      align-items: center;
+      padding: 0.42rem 0.1rem;
+      border-bottom: 1px solid rgba(237, 234, 226, 0.04);
+      color: var(--ink-mute);
+      animation: alarm-in 0.45s ease-out both;
+    }
+    @keyframes alarm-in {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .alarm-row .a-ts { color: var(--ink-faint); font-size: 0.62rem; }
+    .alarm-row .a-sev {
+      font-weight: 600;
+      font-size: 0.62rem;
+      padding: 0.1rem 0.32rem;
+      border-radius: 0.22rem;
+    }
+    .alarm-row .a-msg { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+    .alarm-row .a-state {
+      font-size: 0.58rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.06em;
+    }
+    .alarm-row .a-state.cleared { color: var(--forest-glow); }
+    .alarm-row .a-state.ack { color: var(--gold); }
+
+    /* ═══════════ OPS REEL ═══════════ */
+    .band-reel {
+      background:
+        radial-gradient(ellipse 70% 50% at 80% 10%, rgba(232, 163, 61, 0.05) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 10% 90%, rgba(77, 163, 199, 0.06) 0%, transparent 50%),
+        linear-gradient(180deg, #0E1520 0%, #0B111A 55%, #0A0F17 100%);
+    }
+    .reel-stage {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      border-radius: 0.8rem;
+      overflow: hidden;
+      background: linear-gradient(170deg, #121A26 0%, #0B1119 100%);
+      border: 1px solid rgba(237, 234, 226, 0.08);
+      box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.95);
+    }
+    .reel-clip {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.55s ease;
+    }
+    .reel-clip.is-active { opacity: 1; visibility: visible; }
+    .reel-clip svg, .reel-clip video { width: 100%; height: 100%; display: block; }
+    .reel-clip video { object-fit: cover; }
+
+    .reel-scanlines {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.35;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(237, 234, 226, 0.022) 0px,
+        rgba(237, 234, 226, 0.022) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    }
+    .reel-vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(ellipse 85% 75% at 50% 45%, transparent 45%, rgba(6, 9, 13, 0.6) 100%);
+    }
+    .reel-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 3;
+      padding: 1rem 1.1rem 0.9rem;
+      background: linear-gradient(180deg, transparent, rgba(8, 11, 16, 0.9) 60%);
+      pointer-events: none;
+    }
+    .reel-progress {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      z-index: 4;
+      background: linear-gradient(90deg, var(--forest-glow), var(--gold));
+      width: 0%;
+    }
+
+    .reel-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .reel-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      height: 2.25rem;
+      min-width: 2.25rem;
+      padding: 0 0.7rem;
+      border-radius: 0.45rem;
+      border: 1px solid rgba(237, 234, 226, 0.12);
+      background: rgba(22, 29, 42, 0.8);
+      color: var(--ink-mute);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .reel-btn:hover, .reel-btn:focus-visible {
+      color: var(--ink);
+      border-color: rgba(15, 139, 92, 0.45);
+      background: rgba(15, 139, 92, 0.12);
+    }
+    .reel-btn.is-on {
+      color: var(--forest-glow);
+      border-color: rgba(20, 168, 112, 0.5);
+      background: rgba(15, 139, 92, 0.14);
+    }
+    .reel-chapters { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .reel-dot {
+      height: 0.45rem;
+      width: 1.5rem;
+      border-radius: 999px;
+      background: rgba(237, 234, 226, 0.14);
+      transition: background 0.3s ease, width 0.3s ease;
+    }
+    .reel-dot.is-active { background: var(--forest-glow); width: 2.4rem; }
+
+    /* Tiny equaliser shown while audio is on */
+    .eq-bars { display: inline-flex; align-items: flex-end; gap: 1.5px; height: 0.7rem; }
+    .eq-bars span {
+      width: 2px;
+      background: currentColor;
+      border-radius: 1px;
+      height: 30%;
+      animation: eq 0.9s ease-in-out infinite;
+    }
+    .eq-bars span:nth-child(2) { animation-delay: 0.15s; }
+    .eq-bars span:nth-child(3) { animation-delay: 0.3s; }
+    .eq-bars span:nth-child(4) { animation-delay: 0.45s; }
+    @keyframes eq {
+      0%, 100% { height: 25%; }
+      50%      { height: 100%; }
+    }
+    .reel-btn:not(.is-on) .eq-bars span { animation-play-state: paused; height: 30%; }
+
+    /* Reel clip primitives (inline SVG scenes) */
+    .clip-sweep { animation: clip-sweep 3.6s linear infinite; }
+    @keyframes clip-sweep {
+      from { transform: translateX(-10%); }
+      to   { transform: translateX(110%); }
+    }
+    .clip-blink { animation: clip-blink 1.05s steps(1, end) infinite; }
+    @keyframes clip-blink {
+      0%, 55%  { opacity: 1; }
+      56%, 100% { opacity: 0.18; }
+    }
+    .clip-trace {
+      stroke-dasharray: 720;
+      stroke-dashoffset: 720;
+      animation: clip-trace 4.2s ease-in-out infinite;
+    }
+    @keyframes clip-trace {
+      0%   { stroke-dashoffset: 720; }
+      55%  { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 0; opacity: 0.35; }
+    }
+    .clip-rise {
+      animation: clip-rise 3.2s ease-in-out infinite alternate;
+      /* Without fill-box, percentage origins resolve against the whole
+         viewBox and the bars scale off their own baseline. */
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+    }
+    @keyframes clip-rise {
+      from { transform: scaleY(0.45); }
+      to   { transform: scaleY(1); }
+    }
+    /* Payload travelling the automation rail — stops at the last node
+       rather than running off the frame like .clip-sweep does. */
+    .clip-travel { animation: clip-travel 4.4s ease-in-out infinite; }
+    @keyframes clip-travel {
+      0%, 6%    { transform: translateX(0); }
+      94%, 100% { transform: translateX(496px); }
+    }
+
+    /* ═══════════ COMMAND PALETTE ═══════════ */
+    .cmdk-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 12vh 1rem 1rem;
+      background: rgba(6, 9, 13, 0.72);
+      backdrop-filter: blur(6px);
+    }
+    .cmdk-overlay.is-open { display: flex; }
+    .cmdk-panel {
+      width: 100%;
+      max-width: 34rem;
+      border-radius: 0.8rem;
+      overflow: hidden;
+      background: #121A26;
+      border: 1px solid rgba(237, 234, 226, 0.12);
+      box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.95);
+      animation: cmdk-in 0.18s ease-out both;
+    }
+    @keyframes cmdk-in {
+      from { opacity: 0; transform: translateY(-10px) scale(0.985); }
+      to   { opacity: 1; transform: none; }
+    }
+    .cmdk-input {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      outline: none;
+      color: var(--ink);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 0.95rem;
+      padding: 0.95rem 1rem;
+    }
+    .cmdk-input::placeholder { color: var(--ink-faint); }
+    .cmdk-list { max-height: 19rem; overflow-y: auto; padding: 0.35rem; }
+    .cmdk-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      width: 100%;
+      text-align: left;
+      padding: 0.6rem 0.7rem;
+      border-radius: 0.45rem;
+      color: var(--ink-mute);
+      font-size: 0.875rem;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .cmdk-item[aria-selected='true'] { background: rgba(15, 139, 92, 0.16); color: var(--ink); }
+    .cmdk-item .ck-hint {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.58rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.08em;
+    }
+    .cmdk-empty { padding: 1.25rem 1rem; color: var(--ink-faint); font-size: 0.85rem; }
+    .kbd {
+      display: inline-block;
+      padding: 0.08rem 0.3rem;
+      border-radius: 0.22rem;
+      border: 1px solid rgba(237, 234, 226, 0.16);
+      background: rgba(237, 234, 226, 0.05);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.6rem;
+      color: var(--ink-mute);
+      line-height: 1.4;
+    }
+
+    /* ── Reduced-motion: freeze the decorative layers, keep meaning ── */
+    @media (prefers-reduced-motion: reduce) {
+      .portrait-ring,
+      .portrait-scan::before,
+      .telemetry-chip,
+      .clip-sweep,
+      .clip-blink,
+      .clip-trace,
+      .clip-rise,
+      .clip-travel,
+      .eq-bars span {
+        animation: none !important;
+      }
+      .portrait-scan::before { opacity: 0; }
+      .clip-trace { stroke-dashoffset: 0; }
+      .alarm-row { animation: none; }
+    }
+
+    /* ── Print: a recruiter hitting Cmd-P should get a clean one-pager ── */
+    @media print {
+      .site-ambient,
+      .site-nav,
+      .scroll-progress,
+      .cmdk-overlay,
+      .reel-stage,
+      .reel-controls,
+      .portrait-scan,
+      .portrait-ring,
+      .telemetry-chip { display: none !important; }
+      body { background: #fff !important; color: #111 !important; }
+      .band { background: #fff !important; }
+      .band::before, .band::after { display: none !important; }
+      a { color: #111 !important; text-decoration: underline; }
+    }
+
   </style>
 </head>
 <body class="text-ink font-body antialiased">
@@ -1028,6 +1868,9 @@
 
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <!-- Scroll progress rail — scaled by JS, purely decorative -->
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
   <!-- ═══════════════ NAV ═══════════════ -->
   <header class="site-nav fixed top-0 inset-x-0 z-50" id="site-nav">
     <div class="mx-auto max-w-content px-5 sm:px-8">
@@ -1037,15 +1880,18 @@
           Ian Ondieki
         </a>
 
-        <nav class="hidden md:flex items-center gap-6 lg:gap-7 text-sm font-medium" aria-label="Primary">
+        <nav class="hidden md:flex items-center gap-5 lg:gap-6 text-sm font-medium" aria-label="Primary">
+          <a href="#noc" class="nav-link" data-section="noc">NOC Ops</a>
           <a href="#experience" class="nav-link" data-section="experience">Experience</a>
+          <a href="#reel" class="nav-link" data-section="reel">Reel</a>
           <a href="#projects" class="nav-link" data-section="projects">Projects</a>
           <a href="#skills" class="nav-link" data-section="skills">Skills</a>
-          <a href="#certifications" class="nav-link" data-section="certifications">Certs</a>
           <a href="#contact" class="nav-link" data-section="contact">Contact</a>
           <span class="w-px h-4 bg-ink/10" aria-hidden="true"></span>
-          <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="nav-link font-mono text-xs tracking-wide" aria-label="GitHub (opens in new tab)">GitHub ↗</a>
-          <a href="https://www.linkedin.com/in/ian-ondieki/" target="_blank" rel="noopener noreferrer" class="nav-link font-mono text-xs tracking-wide" aria-label="LinkedIn (opens in new tab)">LinkedIn ↗</a>
+          <button type="button" id="cmdk-open" class="nav-link font-mono text-[0.65rem] tracking-wide inline-flex items-center gap-1.5" aria-label="Open command menu">
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z"/></svg>
+            <span class="kbd">⌘K</span>
+          </button>
         </nav>
 
         <button type="button" id="menu-toggle" class="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-md border border-ink/10 text-ink-mute hover:text-ink hover:border-forest/40 transition-colors" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
@@ -1060,7 +1906,9 @@
 
       <div id="mobile-menu" class="mobile-menu md:hidden border-t border-ink/5">
         <nav class="flex flex-col gap-1 py-3 text-sm" aria-label="Mobile">
+          <a href="#noc" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">NOC Ops &amp; SLA</a>
           <a href="#experience" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Experience</a>
+          <a href="#reel" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Ops Reel</a>
           <a href="#projects" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Projects</a>
           <a href="#skills" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Skills</a>
           <a href="#certifications" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Certifications</a>
@@ -1122,45 +1970,142 @@
       <div class="absolute left-[-10%] bottom-[-10%] w-[40vw] h-[40vw] max-w-lg max-h-lg rounded-full bg-gold/[0.04] blur-3xl pointer-events-none" aria-hidden="true"></div>
 
       <div class="relative mx-auto max-w-content px-5 sm:px-8 w-full">
-        <div class="max-w-3xl hero-copy">
-          <p class="font-mono text-xs sm:text-[0.7rem] tracking-[0.14em] uppercase text-forest-glow mb-5 sm:mb-6 flex items-center gap-2">
-            <span class="inline-block h-1.5 w-1.5 rounded-full bg-forest animate-pulse-dot" aria-hidden="true"></span>
-            Software Engineer · Agentic AI &amp; Automation
-          </p>
+        <div class="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
 
-          <!--
-            HEADLINE OPTIONS (pick one, comment the rest):
-            1. I build agentic systems that act on real tools.          ← active
-            2. Automations that book, message, and report — without hand-holding.
-            3. From live network ops to systems that run themselves.
-          -->
-          <h1 id="hero-heading" class="font-display text-[2.15rem] sm:text-5xl lg:text-[3.35rem] font-semibold leading-[1.12] tracking-tight text-ink">
-            I build agentic systems<br class="hidden sm:block" />
-            that act on <span class="text-transparent bg-clip-text bg-gradient-to-r from-forest-glow via-[#3DBF8C] to-gold">real tools</span>.
-          </h1>
+          <!-- ── Copy column ── -->
+          <div class="lg:col-span-7 hero-copy">
+            <p class="font-mono text-xs sm:text-[0.7rem] tracking-[0.14em] uppercase text-forest-glow mb-4 flex items-start gap-2">
+              <span class="inline-block h-1.5 w-1.5 rounded-full bg-forest animate-pulse-dot mt-[0.45em] shrink-0" aria-hidden="true"></span>
+              <span>Network &amp; Service Operations · Automation Engineer</span>
+            </p>
 
-          <p class="mt-6 sm:mt-7 text-base sm:text-lg text-ink-mute leading-relaxed max-w-xl">
-            Automations and RAG systems that connect business APIs to LLM agents — WhatsApp, Calendar, Gmail, Sheets, payment rails, document retrieval — orchestrated through n8n and LangGraph.
-          </p>
+            <!-- Availability — the first thing a hiring manager should read -->
+            <p class="avail-pill mb-6">
+              <span class="status-dot" aria-hidden="true"></span>
+              Open to: Network &amp; Service Operations Centre Engineer · Nairobi
+            </p>
 
-          <div class="mt-8 sm:mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
-            <a href="#projects" class="inline-flex items-center gap-2 rounded-md bg-forest px-5 py-2.5 text-sm font-medium text-ink hover:bg-forest-glow transition-colors shadow-glow">
-              View Projects
-              <svg class="h-3.5 w-3.5 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </a>
-            <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-md border border-ink/15 bg-surface/70 backdrop-blur-sm px-5 py-2.5 text-sm font-medium text-ink hover:border-forest/40 hover:bg-surface transition-colors">
-              GitHub
-              <span class="font-mono text-[0.65rem] text-ink-mute">↗</span>
-            </a>
+            <!--
+              HEADLINE OPTIONS (pick one, comment the rest):
+              1. Eyes on the network. Hands on the automation.      ← active
+              2. I keep networks and services inside SLA.
+              3. Trained where downtime is measured in money.
+            -->
+            <h1 id="hero-heading" class="font-display text-[2.15rem] sm:text-5xl lg:text-[3.3rem] font-semibold leading-[1.1] tracking-tight text-ink">
+              Eyes on the network.<br class="hidden sm:block" />
+              Hands on the <span class="text-transparent bg-clip-text bg-gradient-to-r from-forest-glow via-[#3DBF8C] to-gold">automation</span>.
+            </h1>
+
+            <p class="mt-6 text-base sm:text-lg text-ink-mute leading-relaxed max-w-xl">
+              I came up on Safaricom's NOC floor — five SOCs, live IP, transmission, RAN, digital services
+              and M-Pesa core. I read KPIs, drive incidents to closure inside SLA, and automate the
+              repetitive half of the job so the queue stays short.
+            </p>
+
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <a href="#noc" class="inline-flex items-center gap-2 rounded-md bg-forest px-5 py-2.5 text-sm font-medium text-ink hover:bg-forest-glow transition-colors shadow-glow">
+                Enter the ops floor
+                <svg class="h-3.5 w-3.5 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </a>
+              <a href="#reel" class="inline-flex items-center gap-2 rounded-md border border-ink/15 bg-surface/70 backdrop-blur-sm px-5 py-2.5 text-sm font-medium text-ink hover:border-forest/40 hover:bg-surface transition-colors">
+                <svg class="h-3.5 w-3.5 text-forest-glow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+                Watch the ops reel
+              </a>
+              <a href="#projects" class="inline-flex items-center gap-2 rounded-md border border-ink/10 px-5 py-2.5 text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/25 transition-colors">
+                Projects
+              </a>
+            </div>
+
+            <!-- Credibility strip — four facts, no fluff -->
+            <div class="hero-kpi-strip mt-9 max-w-xl">
+              <div class="hero-kpi">
+                <p class="font-mono text-[0.52rem] tracking-[0.13em] uppercase text-ink-faint">SOC domains</p>
+                <p class="font-mono text-lg font-semibold text-ink mt-0.5 leading-none">5</p>
+                <p class="font-mono text-[0.52rem] text-ink-faint mt-1">IP · TX · RAN · DIG · Core</p>
+              </div>
+              <div class="hero-kpi">
+                <p class="font-mono text-[0.52rem] tracking-[0.13em] uppercase text-ink-faint">Coverage model</p>
+                <p class="font-mono text-lg font-semibold text-ink mt-0.5 leading-none">24×7</p>
+                <p class="font-mono text-[0.52rem] text-ink-faint mt-1">Shift rotation</p>
+              </div>
+              <div class="hero-kpi">
+                <p class="font-mono text-[0.52rem] tracking-[0.13em] uppercase text-ink-faint">Certified</p>
+                <p class="font-mono text-lg font-semibold text-forest-glow mt-0.5 leading-none">3</p>
+                <p class="font-mono text-[0.52rem] text-ink-faint mt-1">CCNA · JNCIA · ITIL</p>
+              </div>
+              <div class="hero-kpi">
+                <p class="font-mono text-[0.52rem] tracking-[0.13em] uppercase text-ink-faint">Operating model</p>
+                <p class="font-mono text-lg font-semibold text-gold mt-0.5 leading-none">SLA</p>
+                <p class="font-mono text-[0.52rem] text-ink-faint mt-1">Detect → resolve → RCA</p>
+              </div>
+            </div>
+
+            <p class="mt-8 font-mono text-[0.65rem] sm:text-xs text-ink-faint tracking-wide flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span>Nairobi, Kenya · GMT+3</span>
+              <span class="hidden sm:inline text-ink/20">|</span>
+              <span>B.Sc. Software Engineering · MMU Kenya</span>
+              <span class="hidden sm:inline text-ink/20">|</span>
+              <span>ex-Safaricom NOC</span>
+            </p>
           </div>
 
-          <p class="mt-10 sm:mt-12 font-mono text-[0.65rem] sm:text-xs text-ink-faint tracking-wide flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span>Nairobi, Kenya · GMT+3</span>
-            <span class="hidden sm:inline text-ink/20">|</span>
-            <span>B.Sc. Software Engineering · MMU Kenya</span>
-            <span class="hidden sm:inline text-ink/20">|</span>
-            <span>ex-Safaricom NOC</span>
-          </p>
+          <!-- ── Portrait column ──
+               Drop your photo at assets/ian-portrait.jpg (portrait crop, ~1200×1500,
+               face in the upper third). If the file is missing the frame falls back
+               to a monogram card automatically — nothing looks broken either way.
+               Adjust object-position in .portrait-img if your crop sits differently.
+          -->
+          <div class="lg:col-span-5 mt-4 lg:mt-0">
+            <div class="portrait-wrap" id="portrait-wrap">
+              <span class="portrait-ring" aria-hidden="true"></span>
+
+              <div class="portrait-frame">
+                <img
+                  class="portrait-img"
+                  src="assets/ian-portrait.jpg"
+                  alt="Ian Ondieki, network and service operations engineer, Nairobi"
+                  width="1200" height="1500" decoding="async" fetchpriority="high"
+                  onerror="this.closest('.portrait-wrap').classList.add('no-photo')" />
+
+                <div class="portrait-fallback" aria-hidden="true">
+                  <span class="portrait-monogram">IO</span>
+                  <p class="font-mono text-[0.58rem] text-ink-faint leading-relaxed max-w-[15rem]">
+                    Add your photo at<br /><span class="text-forest-glow">assets/ian-portrait.jpg</span>
+                  </p>
+                </div>
+
+                <span class="portrait-bracket tl" aria-hidden="true"></span>
+                <span class="portrait-bracket tr" aria-hidden="true"></span>
+                <span class="portrait-bracket bl" aria-hidden="true"></span>
+                <span class="portrait-bracket br" aria-hidden="true"></span>
+                <span class="portrait-scan" aria-hidden="true"></span>
+
+                <div class="portrait-caption">
+                  <div>
+                    <p class="font-display text-[0.95rem] font-semibold text-ink leading-tight">Ian Ondieki</p>
+                    <p class="font-mono text-[0.58rem] text-ink-mute mt-0.5">NOC / Service Operations · Nairobi</p>
+                  </div>
+                  <p class="font-mono text-[0.55rem] text-forest-glow flex items-center gap-1.5 shrink-0">
+                    <span class="status-dot" aria-hidden="true"></span> on shift
+                  </p>
+                </div>
+              </div>
+
+              <!-- Telemetry chips — values animate in JS, these are the static fallbacks -->
+              <div class="telemetry-chip chip-a" aria-hidden="true">
+                <span class="t-label">Availability</span>
+                <span class="t-value" data-chip="avail">99.98%</span>
+              </div>
+              <div class="telemetry-chip chip-b is-gold" aria-hidden="true">
+                <span class="t-label">MTTR</span>
+                <span class="t-value" data-chip="mttr">18m</span>
+              </div>
+              <div class="telemetry-chip chip-c" aria-hidden="true">
+                <span class="t-label">Open P1</span>
+                <span class="t-value" data-chip="p1">0</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1174,11 +2119,412 @@
           <div class="lg:col-span-4 reveal">
             <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">About</p>
             <h2 id="about-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Built where systems stay up.</h2>
+            <p class="mt-4 font-mono text-[0.62rem] text-ink-faint leading-relaxed">
+              Operations first. Automation second.<br />Both in the same head.
+            </p>
           </div>
           <div class="lg:col-span-7 lg:col-start-6 reveal" style="transition-delay: 80ms">
             <p class="text-ink-mute text-[1.02rem] sm:text-lg leading-[1.75]">
-              I came up monitoring live network and M-Pesa infrastructure across Safaricom’s SOCs — IP, Transmission, RAN, Digital Services, Core — watching business processes run and break in real time. Now I build the automations that own those same kinds of flows: agents that book, message, route, and report, plus RAG chatbots grounded in real documents — not waiting on a human for every step. I work iteratively — build, break, debug, rebuild — and I’m aiming to become an AWS AI/ML Agent Engineer. Still shipping, still learning the hard parts of reliability.
+              I came up monitoring live network and M-Pesa infrastructure across Safaricom’s SOCs — IP,
+              Transmission, RAN, Digital Services, Core — watching business processes run and break in
+              real time. That floor taught me the job an NSOC actually does: notice the degradation before
+              the customer does, classify it honestly, escalate it to the right team with the right context,
+              and keep the clock inside the SLA. ITIL gave me the vocabulary; CCNA and JNCIA gave me the
+              layer-3 reasoning underneath it.
             </p>
+            <p class="mt-4 text-ink-mute text-[1.02rem] sm:text-lg leading-[1.75]">
+              The other half of my work is removing the toil: automations and RAG systems that own the
+              repetitive flows — routing, notifying, reporting, answering from real documents — so the
+              people on shift spend their attention on the incidents that need a human. I build
+              iteratively, design for failure modes before happy paths, and I’m finishing AWS AI
+              Practitioner on the way to AI/ML agent engineering.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ NOC OPS & SLA ═══════════════
+         The role-targeted section. KPI wall, SLA/error budget, incident
+         lifecycle, escalation matrix, alarm feed. Every number here is
+         generated client-side from a synthetic model — see initNocFloor()
+         in the script block. Nothing proprietary is reproduced.
+    -->
+    <section id="noc" class="band band-noc py-20 sm:py-28" aria-labelledby="noc-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12 sm:mb-14">
+          <div class="max-w-2xl">
+            <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Service Operations</p>
+            <h2 id="noc-heading" class="font-display text-2xl sm:text-3xl lg:text-[2.35rem] font-semibold tracking-tight leading-tight">
+              The floor I was trained on — <span class="text-forest-glow">rebuilt here</span>.
+            </h2>
+            <p class="mt-4 text-ink-mute leading-relaxed">
+              This is how a Network &amp; Service Operations Centre actually runs: KPIs under continuous
+              watch, an SLA with a budget you can spend, an incident lifecycle with a clock on every
+              stage, and an escalation path that is agreed <em class="text-ink not-italic font-medium">before</em>
+              the P1 lands. Hover any tile — it is live in the browser.
+            </p>
+          </div>
+
+          <div class="shrink-0 flex flex-col gap-2 lg:items-end">
+            <span class="avail-pill">
+              <span class="status-dot" aria-hidden="true"></span>
+              Ops model · running in your browser
+            </span>
+            <p class="font-mono text-[0.58rem] text-ink-faint lg:text-right max-w-[16rem] leading-relaxed">
+              Synthetic telemetry generated on page load. Demonstrates the discipline — never Safaricom data.
+            </p>
+          </div>
+        </div>
+
+        <!-- ── KPI WALL ── -->
+        <div class="mb-5 flex items-center justify-between gap-4 flex-wrap">
+          <h3 class="font-display text-lg font-semibold tracking-tight">Continuous KPI watch</h3>
+          <p class="font-mono text-[0.6rem] text-ink-faint flex items-center gap-2">
+            <span class="status-dot" aria-hidden="true"></span>
+            polling · 2s · <span id="noc-clock">--:--:--</span> GMT+3
+          </p>
+        </div>
+
+        <!--
+          KPI TILES — each is driven by data-kpi in JS.
+          data-target = the SLO line drawn on the sparkline.
+          data-invert = "1" when lower is better (latency, loss, queue).
+        -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-14">
+          <div class="kpi-tile" data-kpi="availability" data-target="99.95" data-unit="%" data-colour="forest" tabindex="0" role="group" aria-label="Network availability KPI">
+            <div class="kpi-head">
+              <span class="kpi-name">Network availability</span>
+              <span class="kpi-delta up" data-delta>—</span>
+            </div>
+            <p><span class="kpi-value" data-value>99.98</span><span class="kpi-unit">%</span></p>
+            <svg class="kpi-spark" viewBox="0 0 220 38" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="kpi-foot"><span>SLO ≥ 99.95%</span><span data-status>within SLO</span></div>
+          </div>
+
+          <div class="kpi-tile" data-kpi="latency" data-target="40" data-unit="ms" data-colour="azure" data-invert="1" tabindex="0" role="group" aria-label="Round trip latency KPI">
+            <div class="kpi-head">
+              <span class="kpi-name">Round-trip latency</span>
+              <span class="kpi-delta flat" data-delta>—</span>
+            </div>
+            <p><span class="kpi-value" data-value>28</span><span class="kpi-unit">ms</span></p>
+            <svg class="kpi-spark" viewBox="0 0 220 38" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="kpi-foot"><span>Threshold ≤ 40ms</span><span data-status>within SLO</span></div>
+          </div>
+
+          <div class="kpi-tile" data-kpi="loss" data-target="0.5" data-unit="%" data-colour="gold" data-invert="1" tabindex="0" role="group" aria-label="Packet loss KPI">
+            <div class="kpi-head">
+              <span class="kpi-name">Packet loss</span>
+              <span class="kpi-delta flat" data-delta>—</span>
+            </div>
+            <p><span class="kpi-value" data-value>0.08</span><span class="kpi-unit">%</span></p>
+            <svg class="kpi-spark" viewBox="0 0 220 38" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="kpi-foot"><span>Threshold ≤ 0.5%</span><span data-status>within SLO</span></div>
+          </div>
+
+          <div class="kpi-tile" data-kpi="utilisation" data-target="80" data-unit="%" data-colour="forest" data-invert="1" tabindex="0" role="group" aria-label="Backbone link utilisation KPI">
+            <div class="kpi-head">
+              <span class="kpi-name">Backbone utilisation</span>
+              <span class="kpi-delta flat" data-delta>—</span>
+            </div>
+            <p><span class="kpi-value" data-value>62</span><span class="kpi-unit">%</span></p>
+            <svg class="kpi-spark" viewBox="0 0 220 38" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="kpi-foot"><span>Capacity alarm ≥ 80%</span><span data-status>headroom OK</span></div>
+          </div>
+
+          <div class="kpi-tile" data-kpi="queue" data-target="12" data-unit="" data-colour="azure" data-invert="1" tabindex="0" role="group" aria-label="Open ticket queue KPI">
+            <div class="kpi-head">
+              <span class="kpi-name">Open ticket queue</span>
+              <span class="kpi-delta flat" data-delta>—</span>
+            </div>
+            <p><span class="kpi-value" data-value>7</span><span class="kpi-unit">open</span></p>
+            <svg class="kpi-spark" viewBox="0 0 220 38" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="kpi-foot"><span>Shift ceiling 12</span><span data-status>queue healthy</span></div>
+          </div>
+
+          <div class="kpi-tile" data-kpi="mtta" data-target="5" data-unit="m" data-colour="gold" data-invert="1" tabindex="0" role="group" aria-label="Mean time to acknowledge KPI">
+            <div class="kpi-head">
+              <span class="kpi-name">Mean time to acknowledge</span>
+              <span class="kpi-delta flat" data-delta>—</span>
+            </div>
+            <p><span class="kpi-value" data-value>3.4</span><span class="kpi-unit">min</span></p>
+            <svg class="kpi-spark" viewBox="0 0 220 38" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="kpi-foot"><span>P1 target ≤ 5 min</span><span data-status>within target</span></div>
+          </div>
+        </div>
+
+        <!-- ── SLA + ERROR BUDGET + ALARM FEED ── -->
+        <div class="grid lg:grid-cols-12 gap-4 sm:gap-5 mb-14">
+
+          <!-- SLA gauge -->
+          <div class="lg:col-span-5 term-panel">
+            <div class="term-chrome">
+              <span class="term-dot live"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">sla · month-to-date</span>
+            </div>
+            <div class="p-5 sm:p-6">
+              <div class="sla-gauge-wrap">
+                <div class="sla-gauge" id="sla-gauge">
+                  <svg viewBox="0 0 128 128" aria-hidden="true">
+                    <circle class="gauge-track" cx="64" cy="64" r="54" />
+                    <circle class="gauge-fill" id="sla-gauge-fill" cx="64" cy="64" r="54"
+                            stroke-dasharray="339.29" stroke-dashoffset="339.29" />
+                  </svg>
+                  <div class="gauge-centre">
+                    <div>
+                      <p class="font-mono text-[1.25rem] font-semibold text-ink leading-none" id="sla-pct">99.98<span class="text-[0.7rem] text-ink-faint">%</span></p>
+                      <p class="font-mono text-[0.5rem] tracking-[0.12em] uppercase text-ink-faint mt-1">achieved</p>
+                      <p class="font-mono text-[0.44rem] text-ink-faint/70 mt-0.5">ring: 99.9–100%</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="min-w-[9rem] flex-1">
+                  <h3 class="font-display text-base font-semibold tracking-tight">SLA compliance</h3>
+                  <p class="mt-1.5 font-mono text-[0.6rem] text-ink-mute leading-relaxed">
+                    Target <span class="text-ink">99.95%</span> monthly<br />
+                    Allowed downtime <span class="text-ink">21m 54s</span>
+                  </p>
+                  <p class="mt-3 font-mono text-[0.58rem] text-forest-glow flex items-center gap-1.5">
+                    <span class="status-dot" aria-hidden="true"></span> meeting target
+                  </p>
+                </div>
+              </div>
+
+              <!-- Error budget burn-down -->
+              <div class="mt-7">
+                <div class="flex items-baseline justify-between mb-2">
+                  <span class="font-mono text-[0.58rem] tracking-[0.12em] uppercase text-ink-faint">Error budget remaining</span>
+                  <span class="font-mono text-xs text-ink" id="budget-label">64%</span>
+                </div>
+                <div class="budget-bar">
+                  <div class="budget-fill" id="budget-fill" style="width: 0%"></div>
+                  <span class="budget-tick" style="left: 25%" aria-hidden="true"></span>
+                  <span class="budget-tick" style="left: 50%" aria-hidden="true"></span>
+                  <span class="budget-tick" style="left: 75%" aria-hidden="true"></span>
+                </div>
+                <p class="mt-2.5 font-mono text-[0.55rem] text-ink-faint leading-relaxed">
+                  Burn rate <span class="text-gold" id="burn-rate">0.8×</span> — at this pace the budget
+                  lasts the full window. Above 1.0× I freeze change and escalate.
+                </p>
+              </div>
+
+              <!-- What the numbers mean — the part interviewers actually probe -->
+              <div class="mt-7 why-callout pl-4 py-3 pr-3 rounded-r-md">
+                <span class="font-mono text-[0.6rem] uppercase tracking-[0.12em] text-gold block mb-1.5">How I use it</span>
+                <p class="text-sm text-ink-mute leading-relaxed">
+                  An error budget turns "is this urgent?" into arithmetic. If 64% is left, a single-site
+                  degradation waits for business hours. If it is at 5% and burning, the same alarm becomes
+                  a P1 with a change freeze behind it.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alarm feed -->
+          <div class="lg:col-span-7 term-panel has-scan">
+            <div class="term-chrome">
+              <span class="term-dot alert"></span>
+              <span class="term-dot warn"></span>
+              <span class="term-dot live"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">alarm console · severity-sorted</span>
+              <span class="ml-auto font-mono text-[0.58rem] text-ink-faint hidden sm:inline">
+                <span id="alarm-count">0</span> active
+              </span>
+            </div>
+            <div class="activity-strip" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="px-4 sm:px-5 py-4">
+              <div class="grid grid-cols-4 gap-2 mb-4">
+                <div class="text-center py-2 rounded-md border border-rust/25 bg-rust/[0.07]">
+                  <p class="font-mono text-base font-semibold text-rust leading-none" data-sev-count="P1">0</p>
+                  <p class="font-mono text-[0.5rem] tracking-[0.1em] uppercase text-ink-faint mt-1">P1</p>
+                </div>
+                <div class="text-center py-2 rounded-md border border-gold/25 bg-gold/[0.06]">
+                  <p class="font-mono text-base font-semibold text-gold leading-none" data-sev-count="P2">1</p>
+                  <p class="font-mono text-[0.5rem] tracking-[0.1em] uppercase text-ink-faint mt-1">P2</p>
+                </div>
+                <div class="text-center py-2 rounded-md border border-[#4DA3C7]/25 bg-[#4DA3C7]/[0.06]">
+                  <p class="font-mono text-base font-semibold text-[#4DA3C7] leading-none" data-sev-count="P3">3</p>
+                  <p class="font-mono text-[0.5rem] tracking-[0.1em] uppercase text-ink-faint mt-1">P3</p>
+                </div>
+                <div class="text-center py-2 rounded-md border border-ink/10 bg-ink/[0.03]">
+                  <p class="font-mono text-base font-semibold text-ink-faint leading-none" data-sev-count="P4">5</p>
+                  <p class="font-mono text-[0.5rem] tracking-[0.1em] uppercase text-ink-faint mt-1">P4</p>
+                </div>
+              </div>
+              <div class="alarm-ticker" id="alarm-ticker" aria-live="polite" aria-atomic="false"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── INCIDENT LIFECYCLE ── -->
+        <div class="mb-5">
+          <h3 class="font-display text-lg font-semibold tracking-tight">Incident lifecycle — with a clock on every stage</h3>
+          <p class="mt-1.5 text-sm text-ink-mute max-w-2xl">
+            The stage lights up as the synthetic P2 below moves through it. This is the loop I ran on shift,
+            and the loop ITIL names: detect, triage, escalate, restore, review.
+          </p>
+        </div>
+
+        <div class="lifecycle-rail mb-4" id="lifecycle-rail">
+          <div class="lifecycle-step" data-step="0">
+            <p class="ls-index">01 / DETECT</p>
+            <p class="ls-title">Alarm raised</p>
+            <p class="text-xs text-ink-mute mt-1.5 leading-relaxed">Threshold crossed on a monitored KPI, or a customer ticket lands first.</p>
+            <p class="ls-metric">MTTD · target &lt; 60s</p>
+          </div>
+          <div class="lifecycle-step" data-step="1">
+            <p class="ls-index">02 / TRIAGE</p>
+            <p class="ls-title">Classify &amp; acknowledge</p>
+            <p class="text-xs text-ink-mute mt-1.5 leading-relaxed">Severity assigned, scope confirmed, duplicates correlated, ticket owned.</p>
+            <p class="ls-metric">MTTA · target &lt; 5m</p>
+          </div>
+          <div class="lifecycle-step" data-step="2">
+            <p class="ls-index">03 / ESCALATE</p>
+            <p class="ls-title">Route with context</p>
+            <p class="text-xs text-ink-mute mt-1.5 leading-relaxed">Domain team paged with evidence attached — not "it's slow", but which hop and since when.</p>
+            <p class="ls-metric">Bridge open · &lt; 15m</p>
+          </div>
+          <div class="lifecycle-step" data-step="3">
+            <p class="ls-index">04 / RESTORE</p>
+            <p class="ls-title">Service back</p>
+            <p class="text-xs text-ink-mute mt-1.5 leading-relaxed">Workaround or fix applied, customer impact confirmed ended, ticket updated.</p>
+            <p class="ls-metric">MTTR · P1 target &lt; 4h</p>
+          </div>
+          <div class="lifecycle-step" data-step="4">
+            <p class="ls-index">05 / REVIEW</p>
+            <p class="ls-title">RCA &amp; prevent</p>
+            <p class="text-xs text-ink-mute mt-1.5 leading-relaxed">Root cause written up, runbook updated, monitoring gap closed so it alarms earlier next time.</p>
+            <p class="ls-metric">RCA filed · &lt; 5 days</p>
+          </div>
+        </div>
+        <p class="font-mono text-[0.58rem] text-ink-faint mb-14" id="lifecycle-caption">
+          Simulating: P2 · transmission ring capacity degradation
+        </p>
+
+        <!-- ── ESCALATION MATRIX ── -->
+        <div class="grid lg:grid-cols-12 gap-5">
+          <div class="lg:col-span-7 term-panel">
+            <div class="term-chrome">
+              <span class="term-dot live"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">escalation matrix · agreed before the incident</span>
+            </div>
+            <div class="p-4 sm:p-5 overflow-x-auto">
+              <table class="esc-table">
+                <caption class="sr-only">Severity levels with response, update and resolution targets and escalation path</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Severity</th>
+                    <th scope="col">Trigger</th>
+                    <th scope="col">Respond</th>
+                    <th scope="col">Resolve</th>
+                    <th scope="col">Escalates to</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="sev-chip sev-p1">P1</span></td>
+                    <td class="text-ink">Service down · revenue impacting</td>
+                    <td class="font-mono text-xs text-ink">5 min</td>
+                    <td class="font-mono text-xs text-ink">4 hrs</td>
+                    <td class="text-xs">Shift lead → domain eng → vendor</td>
+                  </tr>
+                  <tr>
+                    <td><span class="sev-chip sev-p2">P2</span></td>
+                    <td class="text-ink">Degraded · redundancy lost</td>
+                    <td class="font-mono text-xs text-ink">15 min</td>
+                    <td class="font-mono text-xs text-ink">8 hrs</td>
+                    <td class="text-xs">Shift lead → domain eng</td>
+                  </tr>
+                  <tr>
+                    <td><span class="sev-chip sev-p3">P3</span></td>
+                    <td class="text-ink">Single site · no customer impact</td>
+                    <td class="font-mono text-xs text-ink">30 min</td>
+                    <td class="font-mono text-xs text-ink">24 hrs</td>
+                    <td class="text-xs">Shift engineer</td>
+                  </tr>
+                  <tr>
+                    <td><span class="sev-chip sev-p4">P4</span></td>
+                    <td class="text-ink">Informational · monitoring noise</td>
+                    <td class="font-mono text-xs text-ink">4 hrs</td>
+                    <td class="font-mono text-xs text-ink">72 hrs</td>
+                    <td class="text-xs">Backlog / tuning queue</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="mt-4 font-mono text-[0.55rem] text-ink-faint leading-relaxed">
+                Industry-standard targets shown for discussion. Every operator tunes these — the point is
+                that they are written down before the alarm, not argued about during it.
+              </p>
+            </div>
+          </div>
+
+          <!-- Toolchain / vocabulary -->
+          <div class="lg:col-span-5 flex flex-col gap-4">
+            <!-- EDIT ME: trim each list to what you can defend in an interview. -->
+            <div class="term-panel">
+              <div class="term-chrome">
+                <span class="term-dot live"></span>
+                <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">~/ops/network</span>
+              </div>
+              <div class="p-5">
+                <h3 class="font-display font-semibold text-sm mb-3">Network &amp; protocols</h3>
+                <ul class="flex flex-wrap gap-1.5">
+                  <li><span class="tech-tag">TCP/IP</span></li>
+                  <li><span class="tech-tag">BGP</span></li>
+                  <li><span class="tech-tag">OSPF</span></li>
+                  <li><span class="tech-tag">MPLS</span></li>
+                  <li><span class="tech-tag">VLAN / STP</span></li>
+                  <li><span class="tech-tag">Routing &amp; switching</span></li>
+                  <li><span class="tech-tag">Transmission paths</span></li>
+                  <li><span class="tech-tag">RAN fundamentals</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="term-panel">
+              <div class="term-chrome">
+                <span class="term-dot live"></span>
+                <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">~/ops/monitoring</span>
+              </div>
+              <div class="p-5">
+                <h3 class="font-display font-semibold text-sm mb-3">Monitoring &amp; observability</h3>
+                <ul class="flex flex-wrap gap-1.5">
+                  <li><span class="tech-tag">SNMP</span></li>
+                  <li><span class="tech-tag">Syslog</span></li>
+                  <li><span class="tech-tag">NetFlow</span></li>
+                  <li><span class="tech-tag">ICMP probes</span></li>
+                  <li><span class="tech-tag">Alarm correlation</span></li>
+                  <li><span class="tech-tag">KPI dashboards</span></li>
+                  <li><span class="tech-tag">Threshold tuning</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="term-panel">
+              <div class="term-chrome">
+                <span class="term-dot warn"></span>
+                <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">~/ops/practice</span>
+              </div>
+              <div class="p-5">
+                <h3 class="font-display font-semibold text-sm mb-3">Service management</h3>
+                <ul class="flex flex-wrap gap-1.5">
+                  <li><span class="tech-tag">ITIL v4</span></li>
+                  <li><span class="tech-tag">Incident management</span></li>
+                  <li><span class="tech-tag">Problem &amp; RCA</span></li>
+                  <li><span class="tech-tag">Change management</span></li>
+                  <li><span class="tech-tag">SLA / SLO / error budget</span></li>
+                  <li><span class="tech-tag">Runbooks</span></li>
+                  <li><span class="tech-tag">Shift handover</span></li>
+                  <li><span class="tech-tag">24×7 on-call</span></li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1211,6 +2557,20 @@
             </div>
             <h3 class="font-display text-xl sm:text-2xl font-semibold tracking-tight">NOC Engineering Intern</h3>
             <p class="mt-1 font-mono text-xs text-ink-mute">Network Operations Centre · multi-SOC rotation</p>
+            <div class="mt-4 grid grid-cols-3 gap-2">
+              <div class="rounded-md border border-ink/8 bg-surface/40 px-3 py-2">
+                <p class="font-mono text-base font-semibold text-forest-glow leading-none">5</p>
+                <p class="font-mono text-[0.5rem] tracking-[0.1em] uppercase text-ink-faint mt-1">SOCs rotated</p>
+              </div>
+              <div class="rounded-md border border-ink/8 bg-surface/40 px-3 py-2">
+                <p class="font-mono text-base font-semibold text-ink leading-none">24×7</p>
+                <p class="font-mono text-[0.5rem] tracking-[0.1em] uppercase text-ink-faint mt-1">Shift coverage</p>
+              </div>
+              <div class="rounded-md border border-ink/8 bg-surface/40 px-3 py-2">
+                <p class="font-mono text-base font-semibold text-gold leading-none">M-Pesa</p>
+                <p class="font-mono text-[0.5rem] tracking-[0.1em] uppercase text-ink-faint mt-1">Core exposure</p>
+              </div>
+            </div>
             <p class="mt-5 text-ink-mute leading-relaxed text-[0.95rem]">
               Rotated through five Security / Operations Centres supporting Kenya’s largest mobile network and M-Pesa fintech stack. Day-to-day meant reading live signals, escalating incidents, and understanding how IP, radio, transmission, digital services, and core domains depend on each other when something breaks.
             </p>
@@ -1238,7 +2598,11 @@
             </ul>
             <p class="mt-6 why-callout pl-4 py-3 pr-3 rounded-r-md text-sm text-ink-mute leading-relaxed">
               <span class="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-gold block mb-1.5">What stuck</span>
-              Watching money and messages move on real rails taught me to design automations for failure modes first — retries, handshakes, and partial success — not just happy-path demos.
+              Watching money and messages move on real rails taught me to design for failure modes first — retries, handshakes, and partial success — not just happy-path demos. It also taught me that the hardest part of an NSOC shift is not reading a dashboard; it is deciding, quickly and defensibly, what deserves to wake someone up.
+            </p>
+            <p class="mt-4 why-callout pl-4 py-3 pr-3 rounded-r-md text-sm text-ink-mute leading-relaxed" style="border-left-color: rgba(15, 139, 92, 0.5)">
+              <span class="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-forest-glow block mb-1.5">Why this maps to an NSOC role</span>
+              Multi-domain rotation means I can hold a service view rather than a single-technology view — when a customer-facing platform degrades, I already know to ask whether it is transport, radio, core or the application, and who owns each answer.
             </p>
           </div>
 
@@ -1309,6 +2673,366 @@
             <p class="mt-3 font-mono text-[0.6rem] text-ink-faint text-center sm:text-left">
               Decorative console — not live Safaricom telemetry. Encodes the rotation, not proprietary data.
             </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ OPS REEL ═══════════════
+         Four looping scenes that play through seamlessly, with an optional
+         synthesised ops-floor soundbed. Each scene is inline SVG so it loads
+         instantly and stays sharp — no video file required.
+
+         TO USE REAL FOOTAGE / NARRATION instead: fill in REEL_MEDIA in the
+         script block at the bottom of this file. Any clip given a `video`
+         path renders a <video> in place of the SVG; any clip given a
+         `narration` path plays that audio instead of the synth bed.
+    -->
+    <section id="reel" class="band band-reel py-20 sm:py-28" aria-labelledby="reel-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-10">
+          <div class="max-w-2xl">
+            <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Ops reel</p>
+            <h2 id="reel-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">
+              Four minutes of the job, in four scenes.
+            </h2>
+            <p class="mt-3 text-ink-mute leading-relaxed">
+              An alarm arriving, KPIs under watch, an SLA budget burning, and the automation that takes
+              the repetitive part off the shift. Plays through on its own — sound is optional.
+            </p>
+          </div>
+          <div class="reel-controls shrink-0">
+            <button type="button" class="reel-btn is-on" id="reel-play" aria-label="Pause the reel">
+              <svg class="h-3.5 w-3.5" id="reel-icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+              <svg class="h-3.5 w-3.5 hidden" id="reel-icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+              <span id="reel-play-label">Pause</span>
+            </button>
+            <button type="button" class="reel-btn" id="reel-audio" aria-pressed="false" aria-label="Turn reel sound on">
+              <svg class="h-3.5 w-3.5" id="reel-icon-muted" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm13.6 3l2.1-2.1-1.4-1.4-2.1 2.1-2.1-2.1-1.4 1.4 2.1 2.1-2.1 2.1 1.4 1.4 2.1-2.1 2.1 2.1 1.4-1.4-2.1-2.1z"/></svg>
+              <svg class="h-3.5 w-3.5 hidden" id="reel-icon-sound" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm11.5 3a4 4 0 00-2-3.46v6.92A4 4 0 0015.5 12zm-2 7.29A6 6 0 0017.5 12a6 6 0 00-4-5.65v2.06A4 4 0 0115.5 12a4 4 0 01-2 3.46v1.83z"/></svg>
+              <span class="eq-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+              <span id="reel-audio-label">Sound off</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+
+          <!-- ── Stage ── -->
+          <div class="lg:col-span-8">
+            <div class="reel-stage" id="reel-stage" role="region" aria-label="Operations reel" aria-roledescription="carousel">
+
+              <!-- Shared paint shared by every scene -->
+              <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+                <defs>
+                  <linearGradient id="rg-bg1" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#121A26" /><stop offset="100%" stop-color="#0A1018" />
+                  </linearGradient>
+                  <pattern id="rg-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+                    <path d="M32 0H0v32" fill="none" stroke="#EDEAE2" stroke-opacity="0.045" stroke-width="1" />
+                  </pattern>
+                </defs>
+              </svg>
+
+              <!-- ── Clip 1 · Alarm to triage ── -->
+              <div class="reel-clip is-active" data-clip="alarm" role="group" aria-roledescription="slide" aria-label="Scene 1 of 4: alarm to triage">
+                <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <rect width="640" height="360" fill="url(#rg-bg1)" />
+                  <rect width="640" height="360" fill="url(#rg-grid)" />
+
+                  <!-- topology edges -->
+                  <g stroke="#0F8B5C" stroke-opacity="0.32" stroke-width="1.5" fill="none">
+                    <path d="M62 148 L146 84" /><path d="M146 84 L242 140" />
+                    <path d="M62 148 L138 212" /><path d="M138 212 L242 140" />
+                    <path d="M242 140 L322 88" />
+                  </g>
+                  <!-- the degrading path, traced in rust -->
+                  <path class="clip-trace" d="M242 140 L322 88" stroke="#B8492E" stroke-width="2.5" fill="none" stroke-linecap="round" />
+
+                  <!-- healthy nodes -->
+                  <g>
+                    <circle cx="62" cy="148" r="7" fill="#0F8B5C" fill-opacity="0.85" />
+                    <circle cx="146" cy="84" r="6" fill="#0F8B5C" fill-opacity="0.7" />
+                    <circle cx="138" cy="212" r="6" fill="#0F8B5C" fill-opacity="0.7" />
+                    <circle cx="242" cy="140" r="8" fill="#0F8B5C" fill-opacity="0.85" />
+                  </g>
+                  <!-- alarming node -->
+                  <g class="clip-blink">
+                    <circle cx="322" cy="88" r="17" fill="#B8492E" fill-opacity="0.16" />
+                    <circle cx="322" cy="88" r="9" fill="#B8492E" />
+                  </g>
+
+                  <text x="62" y="174" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="9" text-anchor="middle">CORE-RTR-01</text>
+                  <text x="242" y="166" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="9" text-anchor="middle">AGG-SW-04</text>
+                  <text x="322" y="62" fill="#B8492E" font-family="JetBrains Mono, monospace" font-size="9" text-anchor="middle">TX-RING-07</text>
+
+                  <!-- triage console — kept above y=230 so the caption scrim never dims it -->
+                  <g transform="translate(372, 52)">
+                    <rect width="236" height="118" rx="8" fill="#0E141D" stroke="#EDEAE2" stroke-opacity="0.1" />
+                    <rect width="236" height="22" rx="8" fill="#161D2A" />
+                    <rect y="14" width="236" height="8" fill="#161D2A" />
+                    <circle cx="14" cy="11" r="3" fill="#B8492E" />
+                    <circle cx="26" cy="11" r="3" fill="#E8A33D" fill-opacity="0.6" />
+                    <text x="40" y="15" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="8">alarm · triage</text>
+
+                    <rect x="12" y="34" width="46" height="16" rx="3" fill="#E8A33D" fill-opacity="0.16" stroke="#E8A33D" stroke-opacity="0.5" />
+                    <text x="35" y="46" fill="#E8A33D" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" text-anchor="middle">P2</text>
+                    <text x="66" y="46" fill="#F2EFE6" font-family="JetBrains Mono, monospace" font-size="9">ring capacity degraded</text>
+
+                    <text x="12" y="70" fill="#B0ABA0" font-family="JetBrains Mono, monospace" font-size="8">scope · 1 ring · 4 sites · no outage</text>
+                    <text x="12" y="88" fill="#B0ABA0" font-family="JetBrains Mono, monospace" font-size="8">owner · shift eng · acked 00:02:41</text>
+                    <text x="12" y="106" fill="#0F8B5C" font-family="JetBrains Mono, monospace" font-size="8">→ escalated · transmission domain</text>
+                  </g>
+
+                  <!-- sweeping radar line -->
+                  <g class="clip-sweep">
+                    <rect x="0" y="0" width="2" height="360" fill="#14A870" fill-opacity="0.28" />
+                  </g>
+                </svg>
+              </div>
+
+              <!-- ── Clip 2 · KPI watch ── -->
+              <div class="reel-clip" data-clip="kpi" role="group" aria-roledescription="slide" aria-label="Scene 2 of 4: KPI watch">
+                <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <rect width="640" height="360" fill="url(#rg-bg1)" />
+                  <rect width="640" height="360" fill="url(#rg-grid)" />
+
+                  <text x="32" y="32" fill="#F2EFE6" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="600">Backbone KPI watch</text>
+                  <text x="32" y="48" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="9">rolling 60 min · 5 min buckets</text>
+
+                  <!-- readouts -->
+                  <g transform="translate(32, 62)">
+                    <rect width="176" height="40" rx="6" fill="#0E141D" stroke="#EDEAE2" stroke-opacity="0.08" />
+                    <text x="12" y="16" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="8">AVAILABILITY</text>
+                    <text x="12" y="32" fill="#0F8B5C" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600">99.98%</text>
+                  </g>
+                  <g transform="translate(232, 62)">
+                    <rect width="176" height="40" rx="6" fill="#0E141D" stroke="#EDEAE2" stroke-opacity="0.08" />
+                    <text x="12" y="16" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="8">LATENCY</text>
+                    <text x="12" y="32" fill="#4DA3C7" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600">28 ms</text>
+                  </g>
+                  <g transform="translate(432, 62)">
+                    <rect width="176" height="40" rx="6" fill="#0E141D" stroke="#EDEAE2" stroke-opacity="0.08" />
+                    <text x="12" y="16" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="8">UTILISATION</text>
+                    <text x="12" y="32" fill="#E8A33D" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600">62%</text>
+                  </g>
+
+                  <!-- plot frame -->
+                  <g stroke="#EDEAE2" stroke-opacity="0.08" stroke-width="1">
+                    <line x1="32" y1="130" x2="584" y2="130" /><line x1="32" y1="166" x2="584" y2="166" />
+                    <line x1="32" y1="202" x2="584" y2="202" /><line x1="32" y1="236" x2="584" y2="236" />
+                  </g>
+                  <!-- SLO threshold -->
+                  <line x1="32" y1="148" x2="584" y2="148" stroke="#E8A33D" stroke-opacity="0.55" stroke-width="1.2" stroke-dasharray="4 5" />
+                  <text x="608" y="152" fill="#E8A33D" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="end" opacity="0.85">SLO</text>
+
+                  <!-- three series, stacked as a NOC strip chart -->
+                  <path class="clip-trace" d="M32 175 L101 165 L170 170 L239 150 L308 158 L377 138 L446 148 L515 128 L584 134"
+                        stroke="#0F8B5C" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round" />
+                  <path class="clip-trace" style="animation-delay: .35s" d="M32 205 L101 200 L170 210 L239 195 L308 203 L377 188 L446 198 L515 184 L584 190"
+                        stroke="#4DA3C7" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round" />
+                  <path class="clip-trace" style="animation-delay: .7s" d="M32 228 L101 224 L170 231 L239 219 L308 226 L377 216 L446 223 L515 211 L584 218"
+                        stroke="#E8A33D" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round" />
+
+                  <g class="clip-sweep"><rect x="0" y="120" width="1.5" height="122" fill="#14A870" fill-opacity="0.35" /></g>
+                </svg>
+              </div>
+
+              <!-- ── Clip 3 · SLA burn ── -->
+              <div class="reel-clip" data-clip="sla" role="group" aria-roledescription="slide" aria-label="Scene 3 of 4: SLA and error budget">
+                <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <rect width="640" height="360" fill="url(#rg-bg1)" />
+                  <rect width="640" height="360" fill="url(#rg-grid)" />
+
+                  <text x="32" y="32" fill="#F2EFE6" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="600">Error budget · month to date</text>
+                  <text x="32" y="48" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="9">SLA 99.95% · 21m 54s allowed</text>
+
+                  <!-- gauge -->
+                  <g transform="translate(108, 152)">
+                    <circle r="52" fill="none" stroke="#EDEAE2" stroke-opacity="0.08" stroke-width="10" />
+                    <circle r="52" fill="none" stroke="#0F8B5C" stroke-width="10" stroke-linecap="round"
+                            stroke-dasharray="326.7" stroke-dashoffset="33" transform="rotate(-90)" />
+                    <text y="-2" fill="#F2EFE6" font-family="JetBrains Mono, monospace" font-size="17" font-weight="600" text-anchor="middle">99.98%</text>
+                    <text y="16" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">ACHIEVED</text>
+                  </g>
+                  <text x="108" y="232" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">against a 99.95% target</text>
+
+                  <!-- budget bar -->
+                  <g transform="translate(220, 88)">
+                    <text y="-10" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="9">BUDGET REMAINING</text>
+                    <rect width="388" height="14" rx="7" fill="#EDEAE2" fill-opacity="0.07" />
+                    <rect width="248" height="14" rx="7" fill="#0F8B5C" />
+                    <rect x="232" width="16" height="14" fill="#E8A33D" fill-opacity="0.85" />
+                    <text x="0" y="32" fill="#E8A33D" font-family="JetBrains Mono, monospace" font-size="9">64% left · burning at 0.8×</text>
+                  </g>
+
+                  <!-- decision rule -->
+                  <g transform="translate(220, 138)">
+                    <rect width="388" height="38" rx="6" fill="#0F8B5C" fill-opacity="0.08" stroke="#0F8B5C" stroke-opacity="0.28" />
+                    <text x="14" y="16" fill="#0F8B5C" font-family="JetBrains Mono, monospace" font-size="8">DECISION RULE</text>
+                    <text x="14" y="30" fill="#B0ABA0" font-family="JetBrains Mono, monospace" font-size="8.5">burn &lt; 1.0× → change window open · ≥ 1.0× → freeze &amp; escalate</text>
+                  </g>
+
+                  <!-- daily consumption -->
+                  <g transform="translate(220, 196)">
+                    <text y="-6" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="9">DAILY CONSUMPTION</text>
+                    <g class="clip-rise">
+                      <rect x="0"   y="20" width="13" height="24" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="21"  y="28" width="13" height="16" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="42"  y="10" width="13" height="34" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="63"  y="32" width="13" height="12" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="84"  y="4"  width="13" height="40" rx="2" fill="#E8A33D" fill-opacity="0.8" />
+                      <rect x="105" y="24" width="13" height="20" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="126" y="34" width="13" height="10" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="147" y="16" width="13" height="28" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="168" y="36" width="13" height="8"  rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="189" y="26" width="13" height="18" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="210" y="14" width="13" height="30" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="231" y="34" width="13" height="10" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="252" y="22" width="13" height="22" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                      <rect x="273" y="30" width="13" height="14" rx="2" fill="#0F8B5C" fill-opacity="0.55" />
+                    </g>
+                    <line x1="0" y1="44" x2="300" y2="44" stroke="#EDEAE2" stroke-opacity="0.12" />
+                    <text x="318" y="42" fill="#E8A33D" font-family="JetBrains Mono, monospace" font-size="8">worst day</text>
+                  </g>
+                </svg>
+              </div>
+
+              <!-- ── Clip 4 · Automation ── -->
+              <div class="reel-clip" data-clip="automation" role="group" aria-roledescription="slide" aria-label="Scene 4 of 4: automating the repetitive half">
+                <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <rect width="640" height="360" fill="url(#rg-bg1)" />
+                  <rect width="640" height="360" fill="url(#rg-grid)" />
+
+                  <text x="32" y="44" fill="#F2EFE6" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="600">Taking the toil off the shift</text>
+                  <text x="32" y="62" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="9">alarm → enrich → classify → notify → ticket</text>
+
+                  <!-- payload preview -->
+                  <g transform="translate(176, 76)">
+                    <rect width="288" height="82" rx="7" fill="#0E141D" stroke="#EDEAE2" stroke-opacity="0.09" />
+                    <text x="14" y="20" fill="#7A766C" font-family="JetBrains Mono, monospace" font-size="8">PAYLOAD</text>
+                    <text x="14" y="38" fill="#B0ABA0" font-family="JetBrains Mono, monospace" font-size="8.5">{ "site": "TX-RING-07", "sev": "P2",</text>
+                    <text x="14" y="54" fill="#B0ABA0" font-family="JetBrains Mono, monospace" font-size="8.5">&#160;&#160;"dupes": 14, "first_seen": "00:01:12",</text>
+                    <text x="14" y="70" fill="#0F8B5C" font-family="JetBrains Mono, monospace" font-size="8.5">&#160;&#160;"route": "transmission-domain" }</text>
+                  </g>
+
+                  <!-- pipeline rail -->
+                  <line x1="72" y1="190" x2="568" y2="190" stroke="#0F8B5C" stroke-opacity="0.25" stroke-width="1.5" />
+                  <path class="clip-trace" d="M72 190 L568 190" stroke="#14A870" stroke-width="2" fill="none" stroke-linecap="round" />
+
+                  <g font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">
+                    <g>
+                      <circle cx="72" cy="190" r="15" fill="#0E141D" stroke="#B8492E" stroke-opacity="0.7" stroke-width="1.5" />
+                      <circle cx="72" cy="190" r="4" fill="#B8492E" class="clip-blink" />
+                      <text x="72" y="224" fill="#F2EFE6">ALARM</text>
+                      <text x="72" y="236" fill="#7A766C" font-size="7">SNMP trap</text>
+                    </g>
+                    <g>
+                      <circle cx="196" cy="190" r="15" fill="#0E141D" stroke="#0F8B5C" stroke-opacity="0.7" stroke-width="1.5" />
+                      <circle cx="196" cy="190" r="4" fill="#0F8B5C" />
+                      <text x="196" y="224" fill="#F2EFE6">ENRICH</text>
+                      <text x="196" y="236" fill="#7A766C" font-size="7">site + history</text>
+                    </g>
+                    <g>
+                      <circle cx="320" cy="190" r="15" fill="#0E141D" stroke="#E8A33D" stroke-opacity="0.7" stroke-width="1.5" />
+                      <circle cx="320" cy="190" r="4" fill="#E8A33D" />
+                      <text x="320" y="224" fill="#F2EFE6">CLASSIFY</text>
+                      <text x="320" y="236" fill="#7A766C" font-size="7">severity + dedupe</text>
+                    </g>
+                    <g>
+                      <circle cx="444" cy="190" r="15" fill="#0E141D" stroke="#4DA3C7" stroke-opacity="0.7" stroke-width="1.5" />
+                      <circle cx="444" cy="190" r="4" fill="#4DA3C7" />
+                      <text x="444" y="224" fill="#F2EFE6">NOTIFY</text>
+                      <text x="444" y="236" fill="#7A766C" font-size="7">right team only</text>
+                    </g>
+                    <g>
+                      <circle cx="568" cy="190" r="15" fill="#0E141D" stroke="#0F8B5C" stroke-opacity="0.7" stroke-width="1.5" />
+                      <circle cx="568" cy="190" r="4" fill="#0F8B5C" />
+                      <text x="568" y="224" fill="#F2EFE6">TICKET</text>
+                      <text x="568" y="236" fill="#7A766C" font-size="7">context attached</text>
+                    </g>
+                  </g>
+
+                  <!-- travelling payload — stops on the TICKET node -->
+                  <g class="clip-travel">
+                    <circle cx="72" cy="190" r="5" fill="#14A870" />
+                    <circle cx="72" cy="190" r="11" fill="#14A870" fill-opacity="0.18" />
+                  </g>
+                </svg>
+              </div>
+
+              <span class="reel-scanlines" aria-hidden="true"></span>
+              <span class="reel-vignette" aria-hidden="true"></span>
+
+              <div class="reel-caption">
+                <p class="font-mono text-[0.58rem] tracking-[0.12em] uppercase text-forest-glow mb-1" id="reel-kicker">Scene 01 · Detect</p>
+                <p class="font-display text-base sm:text-lg font-semibold text-ink leading-snug" id="reel-title">An alarm arrives at 02:41</p>
+                <p class="text-xs sm:text-sm text-ink-mute mt-1 max-w-xl leading-relaxed" id="reel-body">
+                  A transmission ring loses redundancy. No customer outage yet — which is exactly the window
+                  where the NOC earns its keep.
+                </p>
+              </div>
+              <span class="reel-progress" id="reel-progress" aria-hidden="true"></span>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between gap-4 flex-wrap">
+              <div class="reel-chapters" id="reel-chapters" role="tablist" aria-label="Reel scenes"></div>
+              <p class="font-mono text-[0.55rem] text-ink-faint">
+                Scenes render as vector — no video download. Sound is synthesised in-browser.
+              </p>
+            </div>
+          </div>
+
+          <!-- ── Scene notes ── -->
+          <div class="lg:col-span-4">
+            <div class="term-panel">
+              <div class="term-chrome">
+                <span class="term-dot live"></span>
+                <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">reel · scene notes</span>
+              </div>
+              <div class="p-5">
+                <ol class="space-y-4" id="reel-notes">
+                  <li class="flex gap-3" data-note="0">
+                    <span class="font-mono text-[0.6rem] text-ink-faint mt-0.5 shrink-0 w-5">01</span>
+                    <div>
+                      <p class="font-display text-sm font-semibold text-ink">Detect &amp; triage</p>
+                      <p class="text-xs text-ink-mute mt-1 leading-relaxed">Correlate the traps, confirm scope, assign severity honestly. Over-calling a P1 costs as much as under-calling one.</p>
+                    </div>
+                  </li>
+                  <li class="flex gap-3" data-note="1">
+                    <span class="font-mono text-[0.6rem] text-ink-faint mt-0.5 shrink-0 w-5">02</span>
+                    <div>
+                      <p class="font-display text-sm font-semibold text-ink">Watch the KPIs</p>
+                      <p class="text-xs text-ink-mute mt-1 leading-relaxed">Availability, latency, loss and utilisation against thresholds — trend matters more than any single sample.</p>
+                    </div>
+                  </li>
+                  <li class="flex gap-3" data-note="2">
+                    <span class="font-mono text-[0.6rem] text-ink-faint mt-0.5 shrink-0 w-5">03</span>
+                    <div>
+                      <p class="font-display text-sm font-semibold text-ink">Spend the budget deliberately</p>
+                      <p class="text-xs text-ink-mute mt-1 leading-relaxed">SLA maths decides what wakes someone at 3am and what waits for the morning stand-up.</p>
+                    </div>
+                  </li>
+                  <li class="flex gap-3" data-note="3">
+                    <span class="font-mono text-[0.6rem] text-ink-faint mt-0.5 shrink-0 w-5">04</span>
+                    <div>
+                      <p class="font-display text-sm font-semibold text-ink">Automate the repetition</p>
+                      <p class="text-xs text-ink-mute mt-1 leading-relaxed">Where I bring something extra: the enrichment, dedupe and routing that keeps the queue human-sized.</p>
+                    </div>
+                  </li>
+                </ol>
+
+                <div class="mt-6 pt-5 border-t border-ink/5">
+                  <p class="font-mono text-[0.58rem] text-ink-faint leading-relaxed">
+                    Keyboard: <span class="kbd">←</span> <span class="kbd">→</span> change scene ·
+                    <span class="kbd">Space</span> play/pause when the reel has focus.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -2130,9 +3854,35 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
         <div class="mb-12 reveal">
           <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Stack</p>
           <h2 id="skills-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Skills, grouped by how I use them.</h2>
+          <p class="mt-2 text-sm text-ink-mute max-w-xl">Operations is the spine. Everything below it is what I reach for when a manual process deserves to be automated away.</p>
         </div>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 reveal">
+          <div class="term-panel sm:col-span-2">
+            <div class="term-chrome">
+              <span class="term-dot live"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">~/skills/network-service-ops</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-semibold text-sm mb-1">Network &amp; Service Operations</h3>
+              <p class="font-mono text-[0.58rem] text-ink-faint mb-3">Primary discipline · Safaricom NOC, five SOCs</p>
+              <ul class="flex flex-wrap gap-1.5">
+                <li><span class="tech-tag">NOC / SOC monitoring</span></li>
+                <li><span class="tech-tag">Incident management</span></li>
+                <li><span class="tech-tag">SLA · SLO · error budget</span></li>
+                <li><span class="tech-tag">Escalation &amp; on-call</span></li>
+                <li><span class="tech-tag">RCA &amp; problem management</span></li>
+                <li><span class="tech-tag">KPI dashboards</span></li>
+                <li><span class="tech-tag">SNMP · Syslog · NetFlow</span></li>
+                <li><span class="tech-tag">BGP · OSPF · MPLS</span></li>
+                <li><span class="tech-tag">IP · Transmission · RAN · Core</span></li>
+                <li><span class="tech-tag">ITIL v4</span></li>
+                <li><span class="tech-tag">CCNA</span></li>
+                <li><span class="tech-tag">JNCIA</span></li>
+              </ul>
+            </div>
+          </div>
+
           <div class="term-panel">
             <div class="term-chrome">
               <span class="term-dot live"></span>
@@ -2195,21 +3945,6 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
             </div>
           </div>
 
-          <div class="term-panel sm:col-span-2">
-            <div class="term-chrome">
-              <span class="term-dot live"></span>
-              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">~/skills/networking</span>
-            </div>
-            <div class="p-5">
-              <h3 class="font-display font-semibold text-sm mb-3">Networking &amp; Systems</h3>
-              <ul class="flex flex-wrap gap-1.5">
-                <li><span class="tech-tag">CCNA</span></li>
-                <li><span class="tech-tag">JNCIA</span></li>
-                <li><span class="tech-tag">NOC / SOC · Safaricom</span></li>
-                <li><span class="tech-tag">IP · Transmission · RAN · Core</span></li>
-              </ul>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -2292,10 +4027,16 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
         <div class="reveal mb-16 sm:mb-20 max-w-2xl">
           <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Contact</p>
           <h2 id="contact-heading" class="font-display text-2xl sm:text-3xl font-semibold tracking-tight mb-4">
-            Building something that needs agents that actually ship?
+            Need someone who can hold a shift and automate it?
           </h2>
+          <p class="avail-pill mb-5">
+            <span class="status-dot" aria-hidden="true"></span>
+            Actively interviewing · Network &amp; Service Operations Centre Engineer · Nairobi
+          </p>
           <p class="text-ink-mute leading-relaxed mb-6">
-            Open to roles in AI, automation, and fintech engineering. Reach me by email, phone, or LinkedIn.
+            Primary target: Network &amp; Service Operations Centre roles — 24×7 monitoring, incident
+            and SLA ownership, escalation. Also open to automation and AI engineering work. Reach me by
+            email, phone, or LinkedIn.
           </p>
           <div class="flex flex-wrap gap-3">
             <a href="mailto:ondiekiian0@gmail.com" class="inline-flex items-center gap-2 rounded-md bg-forest px-5 py-2.5 text-sm font-medium text-ink hover:bg-forest-glow transition-colors">
@@ -2347,7 +4088,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
 
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-6 border-t border-ink/5">
             <p class="font-mono text-[0.65rem] text-ink-faint">
-              Currently: finishing AWS Certified AI Practitioner (AIF-C01)
+              Currently: interviewing for NSOC roles · finishing AWS AI Practitioner (AIF-C01)
             </p>
             <p class="font-mono text-[0.65rem] text-ink-faint">
               © <span id="year">2026</span> Ian Ondieki
@@ -2360,6 +4101,29 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
 
   <!-- Global payload tooltip (positioned by JS) -->
   <div id="payload-tip" class="payload-tip" role="tooltip" aria-hidden="true"></div>
+
+  <!-- ═══════════════ COMMAND PALETTE (⌘K / Ctrl-K) ═══════════════ -->
+  <div class="cmdk-overlay" id="cmdk" role="dialog" aria-modal="true" aria-labelledby="cmdk-label" hidden>
+    <div class="cmdk-panel" role="document">
+      <label class="sr-only" id="cmdk-label" for="cmdk-input">Search sections and actions</label>
+      <div class="flex items-center gap-2 px-4 border-b border-ink/8">
+        <svg class="h-4 w-4 text-ink-faint shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z"/></svg>
+        <input id="cmdk-input" class="cmdk-input px-0" type="text" autocomplete="off" spellcheck="false"
+               placeholder="Jump to a section, copy my email, open GitHub…"
+               role="combobox" aria-expanded="true" aria-controls="cmdk-list" aria-autocomplete="list" />
+        <span class="kbd shrink-0">esc</span>
+      </div>
+      <div class="cmdk-list" id="cmdk-list" role="listbox" aria-label="Results"></div>
+      <div class="px-4 py-2.5 border-t border-ink/8 flex items-center gap-4 font-mono text-[0.55rem] text-ink-faint">
+        <span><span class="kbd">↑</span> <span class="kbd">↓</span> navigate</span>
+        <span><span class="kbd">↵</span> select</span>
+        <span class="ml-auto">Ian Ondieki</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen-reader announcements for palette actions -->
+  <p class="sr-only" id="cmdk-status" role="status" aria-live="polite"></p>
 
   <script>
     /* ═══════════════════════════════════════════════════════════
@@ -2417,7 +4181,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
       });
 
       // ── Active section highlighting ──
-      const sectionIds = ['experience', 'projects', 'skills', 'certifications', 'contact'];
+      const sectionIds = ['noc', 'experience', 'reel', 'projects', 'skills', 'certifications', 'contact'];
       const navLinks = document.querySelectorAll('.nav-link[data-section]');
 
       function updateActiveNav() {
@@ -2706,6 +4470,8 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
         });
       }
 
+      // Project pipeline diagrams — bind hover/focus payload tooltips.
+      const diagrams = document.querySelectorAll('.diagram-stage');
       diagrams.forEach(bindDiagramNodes);
 
       // Hide tip on scroll / resize
@@ -2733,6 +4499,846 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
           if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
         });
       });
+    })();
+  </script>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════
+       OPS LAYER
+       - Scroll progress rail
+       - Hero telemetry chips
+       - NOC floor: KPI wall, sparklines, SLA gauge, error budget,
+         alarm console, incident lifecycle
+       - Ops reel: scene sequencing + synthesised soundbed
+       - Command palette (⌘K)
+
+       Every number on this page is generated here from a synthetic
+       model. Nothing is fetched, nothing is real telemetry.
+       Tweak the models in KPI_MODELS / ALARM_POOL below.
+       ═══════════════════════════════════════════════════════════ */
+    (function () {
+      'use strict';
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const $ = (sel, root) => (root || document).querySelector(sel);
+      const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+
+      const COLOURS = { forest: '#14A870', azure: '#4DA3C7', gold: '#E8A33D', rust: '#B8492E' };
+
+      /* Runs `fn` only while `el` is on screen — keeps idle tabs and
+         off-screen panels from burning cycles on animation. */
+      function whileVisible(el, fn, intervalMs) {
+        if (!el) return;
+        let timer = null;
+        const start = () => { if (!timer) { fn(); timer = setInterval(fn, intervalMs); } };
+        const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver(
+            (entries) => entries.forEach((e) => (e.isIntersecting ? start() : stop())),
+            { threshold: 0.05 }
+          ).observe(el);
+        } else {
+          start();
+        }
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) stop();
+        });
+      }
+
+      /* ───────────── Scroll progress rail ───────────── */
+      (function scrollProgress() {
+        const bar = $('#scroll-progress');
+        if (!bar) return;
+        let ticking = false;
+        const paint = () => {
+          const max = document.documentElement.scrollHeight - window.innerHeight;
+          const pct = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+          bar.style.transform = `scaleX(${pct})`;
+          ticking = false;
+        };
+        window.addEventListener(
+          'scroll',
+          () => { if (!ticking) { ticking = true; requestAnimationFrame(paint); } },
+          { passive: true }
+        );
+        paint();
+      })();
+
+      /* ───────────── Shared synthetic-signal helper ─────────────
+         Mean-reverting random walk: values wander but keep coming home
+         to `base`, which reads far more like real telemetry than noise. */
+      function walk(prev, model) {
+        const pull = (model.base - prev) * 0.18;
+        const noise = (Math.random() - 0.5) * model.jitter * 2;
+        return Math.min(model.max, Math.max(model.min, prev + pull + noise));
+      }
+
+      /* ───────────── Hero telemetry chips ───────────── */
+      (function heroChips() {
+        const wrap = $('#portrait-wrap');
+        if (!wrap) return;
+        const avail = $('[data-chip="avail"]', wrap);
+        const mttr = $('[data-chip="mttr"]', wrap);
+        const p1 = $('[data-chip="p1"]', wrap);
+        let a = 99.98, m = 18;
+
+        whileVisible(wrap, () => {
+          a = walk(a, { base: 99.977, jitter: 0.012, min: 99.93, max: 99.999 });
+          m = walk(m, { base: 18, jitter: 2.4, min: 11, max: 27 });
+          if (avail) avail.textContent = a.toFixed(2) + '%';
+          if (mttr) mttr.textContent = Math.round(m) + 'm';
+          if (p1) p1.textContent = Math.random() > 0.88 ? '1' : '0';
+        }, reduceMotion ? 9000 : 3200);
+      })();
+
+      /* ═══════════════ NOC FLOOR ═══════════════ */
+
+      const KPI_MODELS = {
+        availability: { base: 99.976, jitter: 0.014, min: 99.90, max: 99.999, decimals: 2, higherIsBetter: true },
+        latency:      { base: 28,    jitter: 3.2,   min: 19,    max: 46,     decimals: 0, higherIsBetter: false },
+        loss:         { base: 0.08,  jitter: 0.055, min: 0,     max: 0.62,   decimals: 2, higherIsBetter: false },
+        utilisation:  { base: 62,    jitter: 4.5,   min: 41,    max: 87,     decimals: 0, higherIsBetter: false },
+        queue:        { base: 7,     jitter: 2.0,   min: 1,     max: 14,     decimals: 0, higherIsBetter: false },
+        mtta:         { base: 3.4,   jitter: 0.75,  min: 1.2,   max: 6.4,    decimals: 1, higherIsBetter: false },
+      };
+
+      const SPARK_POINTS = 40;
+
+      function buildSparkPath(history, w, h, pad) {
+        const lo = Math.min.apply(null, history);
+        const hi = Math.max.apply(null, history);
+        const span = hi - lo || 1;
+        const step = w / (history.length - 1 || 1);
+        return history.map((v, i) => {
+          const x = i * step;
+          const y = h - pad - ((v - lo) / span) * (h - pad * 2);
+          return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`;
+        }).join(' ');
+      }
+
+      function sparkY(value, history, h, pad) {
+        const lo = Math.min.apply(null, history);
+        const hi = Math.max.apply(null, history);
+        const span = hi - lo || 1;
+        return h - pad - ((value - lo) / span) * (h - pad * 2);
+      }
+
+      function initKpiTile(tile) {
+        const key = tile.getAttribute('data-kpi');
+        const model = KPI_MODELS[key];
+        if (!model) return null;
+
+        const target = parseFloat(tile.getAttribute('data-target'));
+        const colour = COLOURS[tile.getAttribute('data-colour')] || COLOURS.forest;
+        const svg = $('.kpi-spark', tile);
+        const valueEl = $('[data-value]', tile);
+        const deltaEl = $('[data-delta]', tile);
+        const statusEl = $('[data-status]', tile);
+        const W = 220, H = 38, PAD = 4;
+
+        // Seed with history so the first paint already has a shape.
+        const history = [model.base];
+        for (let i = 1; i < SPARK_POINTS; i++) history.push(walk(history[i - 1], model));
+
+        const ns = 'http://www.w3.org/2000/svg';
+        const area = document.createElementNS(ns, 'path');
+        area.setAttribute('class', 'spark-area');
+        area.setAttribute('fill', colour);
+        const line = document.createElementNS(ns, 'path');
+        line.setAttribute('class', 'spark-line');
+        line.setAttribute('stroke', colour);
+        const thresh = document.createElementNS(ns, 'line');
+        thresh.setAttribute('class', 'kpi-threshold');
+        thresh.setAttribute('stroke', COLOURS.gold);
+        thresh.setAttribute('x1', '0');
+        thresh.setAttribute('x2', String(W));
+        const head = document.createElementNS(ns, 'circle');
+        head.setAttribute('class', 'spark-head');
+        head.setAttribute('r', '2.6');
+        head.setAttribute('fill', colour);
+        svg.append(area, thresh, line, head);
+
+        function paint() {
+          const d = buildSparkPath(history, W, H, PAD);
+          line.setAttribute('d', d);
+          area.setAttribute('d', `${d} L${W} ${H} L0 ${H} Z`);
+
+          const last = history[history.length - 1];
+          head.setAttribute('cx', String(W));
+          head.setAttribute('cy', String(sparkY(last, history, H, PAD)));
+
+          // Only draw the SLO line when it actually falls inside the window.
+          const lo = Math.min.apply(null, history);
+          const hi = Math.max.apply(null, history);
+          if (target >= lo && target <= hi) {
+            const ty = sparkY(target, history, H, PAD);
+            thresh.setAttribute('y1', String(ty));
+            thresh.setAttribute('y2', String(ty));
+            thresh.style.display = '';
+          } else {
+            thresh.style.display = 'none';
+          }
+
+          valueEl.textContent = last.toFixed(model.decimals);
+
+          const prev = history[history.length - 2] || last;
+          const diff = last - prev;
+          const breach = model.higherIsBetter ? last < target : last > target;
+          const moved = Math.abs(diff) > model.jitter * 0.25;
+          const improving = model.higherIsBetter ? diff > 0 : diff < 0;
+
+          const dp = model.decimals === 0 ? 1 : model.decimals;
+          const shown = Math.abs(diff).toFixed(dp);
+          const isZero = parseFloat(shown) === 0;
+          deltaEl.className = 'kpi-delta ' + (isZero || !moved ? 'flat' : improving ? 'up' : 'down');
+          deltaEl.textContent = isZero ? 'steady' : (diff >= 0 ? '▲ ' : '▼ ') + shown;
+
+          tile.classList.toggle('is-breach', breach);
+          if (statusEl) {
+            statusEl.textContent = breach ? 'threshold crossed' : statusEl.getAttribute('data-ok') || statusEl.textContent;
+            statusEl.style.color = breach ? COLOURS.rust : '';
+          }
+        }
+
+        // Remember the healthy wording so we can restore it after a breach.
+        if (statusEl && !statusEl.getAttribute('data-ok')) {
+          statusEl.setAttribute('data-ok', statusEl.textContent.trim());
+        }
+
+        paint();
+        return function tick() {
+          history.push(walk(history[history.length - 1], model));
+          if (history.length > SPARK_POINTS) history.shift();
+          paint();
+        };
+      }
+
+      (function nocFloor() {
+        const section = $('#noc');
+        if (!section) return;
+
+        const tickers = $$('.kpi-tile', section).map(initKpiTile).filter(Boolean);
+        const clock = $('#noc-clock');
+
+        whileVisible(section, () => {
+          tickers.forEach((t) => t());
+          if (clock) clock.textContent = new Date().toTimeString().slice(0, 8);
+        }, reduceMotion ? 10000 : 2000);
+
+        /* ── SLA gauge + error budget ──
+           The ring is scaled over 99.9–100% (disclosed in the markup);
+           a true 0–100% ring would be visually useless up here. */
+        const gaugeFill = $('#sla-gauge-fill');
+        const slaPct = $('#sla-pct');
+        const budgetFill = $('#budget-fill');
+        const budgetLabel = $('#budget-label');
+        const burnRate = $('#burn-rate');
+        const CIRC = 339.29;
+
+        // Month-to-date availability, mean-reverting inside a healthy band so the
+        // budget below lands somewhere meaningful instead of pinning to 0 or 100.
+        const SLA_MODEL = { base: 99.978, jitter: 0.008, min: 99.958, max: 99.995 };
+        let achieved = SLA_MODEL.base;
+
+        function paintSla() {
+          achieved = walk(achieved, SLA_MODEL);
+          const frac = Math.min(1, Math.max(0, (achieved - 99.9) / 0.1));
+          if (gaugeFill) gaugeFill.setAttribute('stroke-dashoffset', String(CIRC * (1 - frac)));
+          if (slaPct) slaPct.innerHTML = achieved.toFixed(2) + '<span class="text-[0.7rem] text-ink-faint">%</span>';
+
+          // Budget remaining follows from how much of the 0.05% allowance is spent.
+          const spent = Math.min(1, Math.max(0, (100 - achieved) / 0.05));
+          const remaining = Math.round((1 - spent) * 100);
+          if (budgetFill) budgetFill.style.width = remaining + '%';
+          if (budgetLabel) budgetLabel.textContent = remaining + '%';
+
+          const burn = (spent / 0.55).toFixed(1);
+          if (burnRate) {
+            burnRate.textContent = burn + '×';
+            burnRate.style.color = parseFloat(burn) >= 1 ? COLOURS.rust : COLOURS.gold;
+          }
+          if (gaugeFill) gaugeFill.setAttribute('stroke', remaining < 20 ? COLOURS.rust : COLOURS.forest);
+        }
+        paintSla();
+        whileVisible(section, paintSla, reduceMotion ? 20000 : 9000);
+
+        /* ── Alarm console ── */
+        const ALARM_POOL = [
+          { sev: 'P1', msg: 'Core link down · protection path active',        state: 'ack' },
+          { sev: 'P2', msg: 'TX ring capacity degraded · redundancy lost',    state: 'open' },
+          { sev: 'P2', msg: 'BGP peer flap · session re-established',         state: 'cleared' },
+          { sev: 'P2', msg: 'API gateway latency above SLO · 3 consecutive',  state: 'open' },
+          { sev: 'P3', msg: 'RAN cell accessibility dip · single site',       state: 'open' },
+          { sev: 'P3', msg: 'Microwave SNR margin low · weather correlated',  state: 'ack' },
+          { sev: 'P3', msg: 'Interface errors incrementing · Gi0/0/3',        state: 'open' },
+          { sev: 'P3', msg: 'Sync source switched to secondary clock',        state: 'cleared' },
+          { sev: 'P4', msg: 'Scheduled backup completed · config archived',   state: 'cleared' },
+          { sev: 'P4', msg: 'Threshold tuning applied · false positive fixed',state: 'cleared' },
+          { sev: 'P4', msg: 'Housekeeping · stale alarm auto-closed',         state: 'cleared' },
+          { sev: 'P4', msg: 'Polling agent heartbeat OK · all collectors up', state: 'cleared' },
+        ];
+        const SEV_COLOUR = { P1: COLOURS.rust, P2: COLOURS.gold, P3: COLOURS.azure, P4: '#7A766C' };
+
+        const ticker = $('#alarm-ticker');
+        const alarmCount = $('#alarm-count');
+        const counts = { P1: 0, P2: 1, P3: 3, P4: 5 };
+
+        function stamp(offsetSec) {
+          const d = new Date(Date.now() - offsetSec * 1000);
+          return d.toTimeString().slice(0, 8);
+        }
+
+        function addAlarm(item, offsetSec, animate) {
+          if (!ticker) return;
+          const row = document.createElement('div');
+          row.className = 'alarm-row';
+          if (!animate) row.style.animation = 'none';
+          row.innerHTML =
+            `<span class="a-ts">${stamp(offsetSec)}</span>` +
+            `<span class="a-sev" style="color:${SEV_COLOUR[item.sev]};background:${SEV_COLOUR[item.sev]}1f">${item.sev}</span>` +
+            `<span class="a-msg">${item.msg}</span>` +
+            `<span class="a-state ${item.state}">${item.state.toUpperCase()}</span>`;
+          ticker.insertBefore(row, ticker.firstChild);
+          while (ticker.children.length > 8) ticker.removeChild(ticker.lastChild);
+        }
+
+        function refreshCounts() {
+          Object.keys(counts).forEach((k) => {
+            const el = $(`[data-sev-count="${k}"]`, section);
+            if (el) el.textContent = String(counts[k]);
+          });
+          if (alarmCount) {
+            alarmCount.textContent = String(counts.P1 + counts.P2 + counts.P3 + counts.P4);
+          }
+        }
+
+        // Seed the console so it never starts empty.
+        [10, 9, 8, 4, 2, 1].forEach((i, n) => {
+          addAlarm(ALARM_POOL[(n * 2 + 3) % ALARM_POOL.length], i * 47, false);
+        });
+        refreshCounts();
+
+        whileVisible(section, () => {
+          // Weighted so the feed looks like a real shift: mostly P3/P4.
+          const r = Math.random();
+          const sev = r > 0.97 ? 'P1' : r > 0.82 ? 'P2' : r > 0.45 ? 'P3' : 'P4';
+          const pool = ALARM_POOL.filter((a) => a.sev === sev);
+          const item = pool[Math.floor(Math.random() * pool.length)];
+          addAlarm(item, 0, true);
+
+          counts[sev] = Math.max(0, counts[sev] + (item.state === 'cleared' ? -1 : 1));
+          counts.P1 = Math.min(counts.P1, 2);
+          counts.P2 = Math.min(counts.P2, 4);
+          counts.P3 = Math.min(counts.P3, 7);
+          counts.P4 = Math.min(counts.P4, 9);
+          refreshCounts();
+        }, reduceMotion ? 12000 : 4200);
+
+        /* ── Incident lifecycle rail ── */
+        const steps = $$('.lifecycle-step', section);
+        const lifeCaption = $('#lifecycle-caption');
+        const SCENARIOS = [
+          'P2 · transmission ring capacity degradation',
+          'P1 · core link failure · protection path engaged',
+          'P3 · single-site RAN accessibility dip',
+          'P2 · digital platform latency above SLO',
+        ];
+        let stepIdx = 0, scenarioIdx = 0;
+
+        function paintStep() {
+          steps.forEach((s, i) => s.classList.toggle('is-live', i === stepIdx));
+          if (lifeCaption) lifeCaption.textContent = 'Simulating: ' + SCENARIOS[scenarioIdx];
+        }
+        paintStep();
+
+        if (steps.length) {
+          whileVisible(section, () => {
+            stepIdx = (stepIdx + 1) % steps.length;
+            if (stepIdx === 0) scenarioIdx = (scenarioIdx + 1) % SCENARIOS.length;
+            paintStep();
+          }, reduceMotion ? 8000 : 2300);
+
+          steps.forEach((s, i) => {
+            s.addEventListener('mouseenter', () => { stepIdx = i; paintStep(); });
+          });
+        }
+      })();
+
+      /* ═══════════════ OPS REEL ═══════════════ */
+
+      /*
+        REEL_MEDIA — leave every value null to use the built-in vector scenes
+        and the synthesised soundbed.
+
+        To use real footage, drop files in assets/reel/ and point at them:
+          alarm: { video: 'assets/reel/alarm.mp4', narration: 'assets/audio/alarm.mp3' }
+        `video` replaces that scene's SVG; `narration` replaces the synth bed
+        while that scene is on screen.
+      */
+      const REEL_MEDIA = {
+        alarm:      { video: null, narration: null },
+        kpi:        { video: null, narration: null },
+        sla:        { video: null, narration: null },
+        automation: { video: null, narration: null },
+      };
+
+      const REEL_SCENES = [
+        {
+          id: 'alarm', ms: 9000, kicker: 'Scene 01 · Detect',
+          title: 'An alarm arrives at 02:41',
+          body: 'A transmission ring loses redundancy. No customer outage yet — which is exactly the window where the NOC earns its keep.',
+          tone: 'alert',
+        },
+        {
+          id: 'kpi', ms: 9000, kicker: 'Scene 02 · Watch',
+          title: 'KPIs under continuous watch',
+          body: 'Availability, latency and utilisation against their thresholds. One sample means nothing; the trend is the signal.',
+          tone: 'steady',
+        },
+        {
+          id: 'sla', ms: 9000, kicker: 'Scene 03 · Decide',
+          title: 'The SLA budget decides priority',
+          body: 'Sixty-four percent of the month’s error budget still unspent, burning at 0.8×. That arithmetic is what makes triage defensible.',
+          tone: 'low',
+        },
+        {
+          id: 'automation', ms: 9000, kicker: 'Scene 04 · Automate',
+          title: 'Fourteen traps, one ticket',
+          body: 'Enrichment, dedupe and routing handled before a human looks. The queue stays human-sized and the shift keeps its attention.',
+          tone: 'bright',
+        },
+      ];
+
+      /* ── Synthesised ops-floor soundbed ──
+         A quiet filtered-noise room tone plus sparse telemetry blips whose
+         character follows the current scene. Synthesised rather than looped
+         so there is no seam to hear, and it costs no download. */
+      function createAudioEngine() {
+        let ctx = null, master = null, blipTimer = null, nodes = [];
+        let tone = 'steady';
+
+        const TONES = {
+          alert:  { notes: [523.25, 659.25], gap: [1400, 2600], wave: 'square',   gain: 0.055 },
+          steady: { notes: [392.00, 523.25], gap: [2200, 4200], wave: 'sine',     gain: 0.045 },
+          low:    { notes: [261.63, 329.63], gap: [2800, 5200], wave: 'sine',     gain: 0.04 },
+          bright: { notes: [523.25, 698.46, 783.99], gap: [900, 1900], wave: 'triangle', gain: 0.045 },
+        };
+
+        function noiseBuffer(audio) {
+          const len = audio.sampleRate * 4;
+          const buf = audio.createBuffer(1, len, audio.sampleRate);
+          const data = buf.getChannelData(0);
+          // Cheap pink-ish noise — smoother and less hissy than white.
+          let b0 = 0, b1 = 0, b2 = 0;
+          for (let i = 0; i < len; i++) {
+            const white = Math.random() * 2 - 1;
+            b0 = 0.99765 * b0 + white * 0.0990460;
+            b1 = 0.96300 * b1 + white * 0.2965164;
+            b2 = 0.57000 * b2 + white * 1.0526913;
+            data[i] = (b0 + b1 + b2 + white * 0.1848) * 0.06;
+          }
+          return buf;
+        }
+
+        function blip() {
+          if (!ctx || ctx.state !== 'running') return;
+          const cfg = TONES[tone] || TONES.steady;
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = cfg.wave;
+          osc.frequency.value = cfg.notes[Math.floor(Math.random() * cfg.notes.length)];
+          g.gain.setValueAtTime(0.0001, now);
+          g.gain.exponentialRampToValueAtTime(cfg.gain, now + 0.012);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+          osc.connect(g).connect(master);
+          osc.start(now);
+          osc.stop(now + 0.45);
+
+          const [lo, hi] = cfg.gap;
+          blipTimer = setTimeout(blip, lo + Math.random() * (hi - lo));
+        }
+
+        return {
+          get running() { return !!ctx && ctx.state === 'running'; },
+          setTone(t) { tone = t; },
+          async start() {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return false;
+            if (!ctx) {
+              ctx = new AC();
+              master = ctx.createGain();
+              master.gain.value = 0.0001;
+              master.connect(ctx.destination);
+
+              // Room tone: filtered noise + two detuned sub oscillators.
+              const noise = ctx.createBufferSource();
+              noise.buffer = noiseBuffer(ctx);
+              noise.loop = true;
+              const lp = ctx.createBiquadFilter();
+              lp.type = 'lowpass';
+              lp.frequency.value = 420;
+              const ng = ctx.createGain();
+              ng.gain.value = 0.5;
+              noise.connect(lp).connect(ng).connect(master);
+              noise.start();
+              nodes.push(noise);
+
+              [55, 82.5].forEach((f, i) => {
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.type = 'sine';
+                o.frequency.value = f;
+                g.gain.value = i === 0 ? 0.045 : 0.025;
+                o.connect(g).connect(master);
+                o.start();
+                nodes.push(o);
+              });
+            }
+            try { await ctx.resume(); } catch (e) { return false; }
+            master.gain.cancelScheduledValues(ctx.currentTime);
+            master.gain.setValueAtTime(Math.max(0.0001, master.gain.value), ctx.currentTime);
+            master.gain.exponentialRampToValueAtTime(0.32, ctx.currentTime + 0.8);
+            if (!blipTimer) blip();
+            return true;
+          },
+          stop() {
+            if (!ctx) return;
+            clearTimeout(blipTimer);
+            blipTimer = null;
+            master.gain.cancelScheduledValues(ctx.currentTime);
+            master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+            master.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
+            setTimeout(() => { if (ctx && ctx.state === 'running') ctx.suspend(); }, 500);
+          },
+        };
+      }
+
+      const reelApi = (function reel() {
+        const stage = $('#reel-stage');
+        if (!stage) return null;
+
+        const clips = $$('.reel-clip', stage);
+        const chapters = $('#reel-chapters');
+        const progress = $('#reel-progress');
+        const kicker = $('#reel-kicker');
+        const title = $('#reel-title');
+        const body = $('#reel-body');
+        const playBtn = $('#reel-play');
+        const playLabel = $('#reel-play-label');
+        const iconPlay = $('#reel-icon-play');
+        const iconPause = $('#reel-icon-pause');
+        const audioBtn = $('#reel-audio');
+        const audioLabel = $('#reel-audio-label');
+        const iconSound = $('#reel-icon-sound');
+        const iconMuted = $('#reel-icon-muted');
+        const notes = $$('#reel-notes li');
+
+        let index = 0;
+        let playing = !reduceMotion;
+        let sceneStart = 0;
+        let rafId = null;
+        let onScreen = true;
+        let narration = null;
+        const engine = createAudioEngine();
+
+        // Swap in real footage wherever REEL_MEDIA provides a path.
+        clips.forEach((clip) => {
+          const conf = REEL_MEDIA[clip.getAttribute('data-clip')];
+          if (!conf || !conf.video) return;
+          const svg = $('svg', clip);
+          const video = document.createElement('video');
+          video.src = conf.video;
+          video.muted = true;
+          video.loop = true;
+          video.playsInline = true;
+          video.preload = 'metadata';
+          video.setAttribute('aria-hidden', 'true');
+          // Only replace the vector scene once the file actually loads.
+          video.addEventListener('loadeddata', () => { if (svg) svg.remove(); }, { once: true });
+          video.addEventListener('error', () => video.remove(), { once: true });
+          clip.insertBefore(video, clip.firstChild);
+        });
+
+        // Chapter dots
+        REEL_SCENES.forEach((scene, i) => {
+          const dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = 'reel-dot' + (i === 0 ? ' is-active' : '');
+          dot.setAttribute('role', 'tab');
+          dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+          dot.setAttribute('aria-label', `Scene ${i + 1}: ${scene.title}`);
+          dot.addEventListener('click', () => go(i, true));
+          chapters && chapters.appendChild(dot);
+        });
+        const dots = chapters ? $$('.reel-dot', chapters) : [];
+
+        function playNarration(scene) {
+          if (narration) { narration.pause(); narration = null; }
+          const conf = REEL_MEDIA[scene.id];
+          if (!conf || !conf.narration || !audioOn) return;
+          narration = new Audio(conf.narration);
+          narration.play().catch(() => { narration = null; });
+        }
+
+        function go(i, restartClock) {
+          index = ((i % REEL_SCENES.length) + REEL_SCENES.length) % REEL_SCENES.length;
+          const scene = REEL_SCENES[index];
+
+          clips.forEach((c, n) => {
+            const active = n === index;
+            c.classList.toggle('is-active', active);
+            const v = $('video', c);
+            if (v) { active ? v.play().catch(() => {}) : v.pause(); }
+          });
+          dots.forEach((d, n) => {
+            d.classList.toggle('is-active', n === index);
+            d.setAttribute('aria-selected', n === index ? 'true' : 'false');
+          });
+          notes.forEach((n, j) => {
+            n.style.opacity = j === index ? '1' : '0.42';
+            n.style.transition = 'opacity .35s ease';
+          });
+
+          if (kicker) kicker.textContent = scene.kicker;
+          if (title) title.textContent = scene.title;
+          if (body) body.textContent = scene.body;
+
+          engine.setTone(scene.tone);
+          playNarration(scene);
+          if (restartClock !== false) sceneStart = performance.now();
+        }
+
+        function frame(now) {
+          if (playing && onScreen) {
+            const scene = REEL_SCENES[index];
+            const elapsed = now - sceneStart;
+            if (progress) progress.style.width = Math.min(100, (elapsed / scene.ms) * 100) + '%';
+            if (elapsed >= scene.ms) go(index + 1);
+          } else {
+            // Hold the clock so pausing does not skip a scene.
+            sceneStart = now - (progress ? (parseFloat(progress.style.width) / 100) * REEL_SCENES[index].ms : 0);
+          }
+          rafId = requestAnimationFrame(frame);
+        }
+
+        function setPlaying(next) {
+          playing = next;
+          playBtn && playBtn.classList.toggle('is-on', playing);
+          if (playLabel) playLabel.textContent = playing ? 'Pause' : 'Play';
+          if (iconPlay) iconPlay.classList.toggle('hidden', playing);
+          if (iconPause) iconPause.classList.toggle('hidden', !playing);
+          playBtn && playBtn.setAttribute('aria-label', playing ? 'Pause the reel' : 'Play the reel');
+          clips.forEach((c) => {
+            const v = $('video', c);
+            if (v && c.classList.contains('is-active')) playing ? v.play().catch(() => {}) : v.pause();
+          });
+        }
+
+        /* Audio state lives here, not in a DOM class: engine.start() is async,
+           so reading the class back would let a click and an off-screen
+           auto-mute interleave and land on the wrong state. A sequence token
+           makes the last call win. */
+        let audioOn = false;
+        let audioSeq = 0;
+
+        function paintAudio(on, failed) {
+          audioBtn && audioBtn.classList.toggle('is-on', on);
+          audioBtn && audioBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+          audioBtn && audioBtn.setAttribute('aria-label', on ? 'Turn reel sound off' : 'Turn reel sound on');
+          if (audioLabel) audioLabel.textContent = failed ? 'Sound unavailable' : on ? 'Sound on' : 'Sound off';
+          if (iconSound) iconSound.classList.toggle('hidden', !on);
+          if (iconMuted) iconMuted.classList.toggle('hidden', on);
+        }
+
+        async function setAudio(next) {
+          if (next === audioOn) return audioOn;
+          const seq = ++audioSeq;
+
+          if (!next) {
+            audioOn = false;
+            engine.stop();
+            if (narration) { narration.pause(); narration = null; }
+            paintAudio(false, false);
+            return false;
+          }
+
+          const ok = await engine.start();
+          if (seq !== audioSeq) return audioOn; // superseded while awaiting
+          audioOn = ok;
+          paintAudio(ok, !ok);
+          if (ok) playNarration(REEL_SCENES[index]);
+          return ok;
+        }
+
+        playBtn && playBtn.addEventListener('click', () => setPlaying(!playing));
+        audioBtn && audioBtn.addEventListener('click', () => setAudio(!audioOn));
+
+        // Keyboard control when the reel has focus.
+        stage.setAttribute('tabindex', '0');
+        stage.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight') { e.preventDefault(); go(index + 1, true); }
+          else if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1, true); }
+          else if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); setPlaying(!playing); }
+        });
+
+        // Pause offscreen — and never leave audio running on a page nobody is looking at.
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver(
+            (entries) => entries.forEach((e) => {
+              onScreen = e.isIntersecting;
+              if (!onScreen && audioOn) setAudio(false);
+            }),
+            { threshold: 0.2 }
+          ).observe(stage);
+        }
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden && audioOn) setAudio(false);
+        });
+
+        go(0, true);
+        setPlaying(playing);
+        sceneStart = performance.now();
+        rafId = requestAnimationFrame(frame);
+
+        return {
+          toggleAudio: () => setAudio(!audioOn),
+          next: () => go(index + 1, true),
+        };
+      })();
+
+      /* ═══════════════ COMMAND PALETTE ═══════════════ */
+      (function commandPalette() {
+        const overlay = $('#cmdk');
+        const input = $('#cmdk-input');
+        const list = $('#cmdk-list');
+        const status = $('#cmdk-status');
+        const openBtn = $('#cmdk-open');
+        if (!overlay || !input || !list) return;
+
+        const goTo = (hash) => () => {
+          const el = document.querySelector(hash);
+          if (el) el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        };
+
+        const COMMANDS = [
+          { label: 'NOC Ops & SLA', hint: 'section', keys: 'noc soc kpi sla uptime monitoring network operations', run: goTo('#noc') },
+          { label: 'Experience — Safaricom NOC', hint: 'section', keys: 'experience safaricom work history internship', run: goTo('#experience') },
+          { label: 'Ops Reel', hint: 'section', keys: 'reel video clips watch demo', run: goTo('#reel') },
+          { label: 'Projects', hint: 'section', keys: 'projects work systems automation rag', run: goTo('#projects') },
+          { label: 'Skills', hint: 'section', keys: 'skills stack tools tech', run: goTo('#skills') },
+          { label: 'Certifications', hint: 'section', keys: 'certs ccna jncia itil aws certification', run: goTo('#certifications') },
+          { label: 'Contact', hint: 'section', keys: 'contact hire email reach', run: goTo('#contact') },
+          {
+            label: 'Copy email address', hint: 'ondiekiian0@gmail.com', keys: 'copy email address mail',
+            run: async () => {
+              try {
+                await navigator.clipboard.writeText('ondiekiian0@gmail.com');
+                announce('Email address copied to clipboard');
+              } catch (e) {
+                window.location.href = 'mailto:ondiekiian0@gmail.com';
+              }
+            },
+          },
+          { label: 'Call +254 793 007 266', hint: 'tel', keys: 'call phone number ring', run: () => { window.location.href = 'tel:+254793007266'; } },
+          { label: 'Open GitHub', hint: '↗', keys: 'github code repos source', run: () => window.open('https://github.com/ianondieki', '_blank', 'noopener') },
+          { label: 'Open LinkedIn', hint: '↗', keys: 'linkedin profile network connect', run: () => window.open('https://www.linkedin.com/in/ian-ondieki/', '_blank', 'noopener') },
+          { label: 'Toggle reel sound', hint: 'audio', keys: 'sound audio mute reel music', run: () => reelApi && reelApi.toggleAudio() },
+          { label: 'Print / save as PDF', hint: '⌘P', keys: 'print pdf save resume cv download', run: () => window.print() },
+        ];
+
+        let filtered = COMMANDS.slice();
+        let cursor = 0;
+        let lastFocus = null;
+
+        function announce(msg) { if (status) status.textContent = msg; }
+
+        function render() {
+          list.innerHTML = '';
+          if (!filtered.length) {
+            const empty = document.createElement('p');
+            empty.className = 'cmdk-empty';
+            empty.textContent = 'No matches.';
+            list.appendChild(empty);
+            return;
+          }
+          filtered.forEach((cmd, i) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'cmdk-item';
+            btn.setAttribute('role', 'option');
+            btn.setAttribute('aria-selected', i === cursor ? 'true' : 'false');
+            btn.innerHTML = `<span>${cmd.label}</span><span class="ck-hint">${cmd.hint}</span>`;
+            btn.addEventListener('click', () => execute(i));
+            btn.addEventListener('mousemove', () => { cursor = i; syncSelection(); });
+            list.appendChild(btn);
+          });
+        }
+
+        function syncSelection() {
+          $$('.cmdk-item', list).forEach((el, i) => {
+            el.setAttribute('aria-selected', i === cursor ? 'true' : 'false');
+            if (i === cursor) el.scrollIntoView({ block: 'nearest' });
+          });
+        }
+
+        function execute(i) {
+          const cmd = filtered[i];
+          if (!cmd) return;
+          close();
+          // Let the overlay finish closing before scrolling or navigating.
+          setTimeout(() => cmd.run(), 60);
+        }
+
+        function filter(q) {
+          const needle = q.trim().toLowerCase();
+          filtered = !needle
+            ? COMMANDS.slice()
+            : COMMANDS.filter((c) => (c.label + ' ' + c.keys).toLowerCase().includes(needle));
+          cursor = 0;
+          render();
+        }
+
+        function open() {
+          lastFocus = document.activeElement;
+          overlay.hidden = false;
+          overlay.classList.add('is-open');
+          input.value = '';
+          filter('');
+          input.focus();
+        }
+
+        function close() {
+          overlay.classList.remove('is-open');
+          overlay.hidden = true;
+          if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
+
+        openBtn && openBtn.addEventListener('click', open);
+
+        overlay.addEventListener('mousedown', (e) => {
+          if (e.target === overlay) close();
+        });
+
+        input.addEventListener('input', () => filter(input.value));
+
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowDown') { e.preventDefault(); cursor = Math.min(cursor + 1, filtered.length - 1); syncSelection(); }
+          else if (e.key === 'ArrowUp') { e.preventDefault(); cursor = Math.max(cursor - 1, 0); syncSelection(); }
+          else if (e.key === 'Enter') { e.preventDefault(); execute(cursor); }
+          else if (e.key === 'Escape') { e.preventDefault(); close(); }
+        });
+
+        document.addEventListener('keydown', (e) => {
+          const isToggle = (e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey);
+          if (isToggle) {
+            e.preventDefault();
+            overlay.classList.contains('is-open') ? close() : open();
+          } else if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
+            close();
+          }
+        });
+      })();
     })();
   </script>
 </body>
