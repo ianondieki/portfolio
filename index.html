@@ -2427,6 +2427,174 @@
       .drill-opt:hover:not(:disabled) { transform: none; }
     }
 
+
+    /* ═══════════ SERVICE TOPOLOGY (#topology) ═══════════
+       The map lives inside a .term-panel, which is dark navy in both themes,
+       so node and link colours are literal on-dark values rather than tokens.
+       The detail card beside it is a light surface and uses the tokens. */
+    .band-topology {
+      background:
+        radial-gradient(ellipse 55% 45% at 10% 15%, rgba(77, 163, 199, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 90% 85%, rgba(26, 82, 176, 0.07) 0%, transparent 55%),
+        linear-gradient(180deg, #F7FAFE 0%, #EEF4FB 50%, #F7FAFE 100%);
+    }
+    [data-theme="dark"] .band-topology {
+      background:
+        radial-gradient(ellipse 55% 45% at 10% 15%, rgba(77, 163, 199, 0.08) 0%, transparent 55%),
+        linear-gradient(180deg, #0C1424 0%, #0A1220 50%, #0C1424 100%);
+    }
+
+    /* Map scrolls sideways on phones rather than shrinking labels to nothing */
+    .topo-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .topo-scroll svg { display: block; min-width: 640px; width: 100%; height: auto; }
+
+    .topo-link {
+      fill: none;
+      stroke: rgba(238, 243, 250, 0.22);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      transition: stroke 0.35s ease, stroke-width 0.35s ease, stroke-dasharray 0.35s ease, opacity 0.35s ease;
+    }
+    .topo-link.is-path { stroke: rgba(96, 165, 250, 0.9); stroke-width: 2.4; }
+    .topo-link.is-down { stroke: #F08A72; stroke-dasharray: 2 6; opacity: 0.85; }
+    .topo-link.is-protect { stroke: #E8A33D; stroke-width: 2.4; stroke-dasharray: 7 5; animation: topo-march 1.4s linear infinite; }
+    .topo-link.is-dim { opacity: 0.25; }
+    @keyframes topo-march { to { stroke-dashoffset: -24; } }
+
+    .topo-node { cursor: pointer; outline: none; }
+    .topo-node .n-ring {
+      fill: #0E1A33;
+      stroke-width: 1.8;
+      transition: stroke 0.3s ease, r 0.3s ease, fill 0.3s ease;
+    }
+    .topo-node .n-dot { transition: fill 0.3s ease; }
+    .topo-node .n-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 9.5px;
+      fill: #C9D6EA;
+      text-anchor: middle;
+      pointer-events: none;
+    }
+    .topo-node .n-sub {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 7.5px;
+      fill: #8CA2C2;
+      text-anchor: middle;
+      pointer-events: none;
+    }
+    .topo-node:hover .n-ring, .topo-node:focus-visible .n-ring { stroke-width: 2.6; }
+    .topo-node:focus-visible .n-ring { stroke: #FFFFFF; }
+    .topo-node.is-selected .n-ring { stroke: #FFFFFF; stroke-width: 2.6; }
+    .topo-node.is-down .n-ring { stroke: #F08A72; fill: rgba(240, 138, 114, 0.14); }
+    .topo-node.is-down .n-dot { fill: #F08A72; }
+    .topo-node.is-warn .n-ring { stroke: #E8A33D; fill: rgba(232, 163, 61, 0.12); }
+    .topo-node.is-warn .n-dot { fill: #E8A33D; }
+    .topo-node.is-unprotected .n-ring { stroke-dasharray: 3 3; }
+    .topo-node.is-dim { opacity: 0.35; }
+    .topo-pulse { animation: topo-pulse 1.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+    @keyframes topo-pulse {
+      0%   { transform: scale(0.6); opacity: 0.6; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    /* Layer legend chips */
+    .topo-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; }
+    .topo-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #8CA2C2;
+    }
+    .topo-legend i { width: 0.55rem; height: 0.55rem; border-radius: 50%; display: inline-block; }
+
+    /* Fault controls */
+    .topo-fault {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 0.8rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--edge);
+      background: var(--surface);
+      color: var(--ink-mute);
+      font-size: 0.8rem;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+    .topo-fault:hover { color: var(--ink); border-color: rgba(var(--rust-rgb) / 0.5); }
+    .topo-fault:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
+    .topo-fault.is-active { border-color: var(--rust); background: rgba(var(--rust-rgb) / 0.08); color: var(--ink); }
+    .topo-fault.restore { border-color: rgba(18, 164, 126, 0.4); }
+    .topo-fault.restore:hover { border-color: var(--status); }
+    .topo-fault i {
+      width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--rust); display: inline-block;
+    }
+    .topo-fault.restore i { background: var(--status); }
+    .topo-fault.hidden { display: none; }  /* .topo-fault sets display; make the toggle explicit */
+
+    /* Detail card */
+    .topo-card {
+      border-radius: 0.75rem;
+      border: 1px solid var(--edge);
+      background: var(--surface);
+      box-shadow: 0 14px 40px -28px rgba(11, 27, 60, 0.35);
+      min-height: 100%;
+    }
+    [data-theme="dark"] .topo-card { box-shadow: none; }
+    .topo-kv { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+    .topo-kv div {
+      padding: 0.55rem 0.65rem;
+      border-radius: 0.45rem;
+      background: var(--surface-2);
+      border: 1px solid var(--edge);
+    }
+    .topo-kv .k {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.52rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint);
+    }
+    .topo-kv .v {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.95rem; font-weight: 600; color: var(--ink); margin-top: 0.15rem; font-variant-numeric: tabular-nums;
+    }
+    .topo-dep { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .topo-dep span {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.62rem;
+      padding: 0.18rem 0.5rem;
+      border-radius: 0.3rem;
+      background: rgba(var(--ink-rgb) / 0.05);
+      border: 1px solid var(--edge);
+      color: var(--ink-mute);
+    }
+    .topo-impact {
+      border-left: 2px solid var(--rust);
+      background: rgba(var(--rust-rgb) / 0.06);
+      border-radius: 0 0.45rem 0.45rem 0;
+      padding: 0.7rem 0.85rem;
+      font-size: 0.83rem;
+      line-height: 1.55;
+      color: var(--ink-mute);
+    }
+    .topo-impact.ok { border-left-color: var(--status); background: rgba(18, 164, 126, 0.07); }
+    .topo-impact strong { color: var(--ink); font-weight: 600; }
+    .topo-state {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.2rem 0.5rem; border-radius: 0.3rem; border: 1px solid currentColor;
+    }
+    .topo-state.up { color: var(--status); }
+    .topo-state.warn { color: var(--gold); }
+    .topo-state.down { color: var(--rust); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .topo-link.is-protect { animation: none; }
+      .topo-pulse { animation: none; opacity: 0; }
+    }
+
   </style>
 </head>
 <body class="text-ink font-body antialiased">
@@ -2521,6 +2689,7 @@
       <a class="rail-item" href="#top" data-section="top"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Intro</span></a>
       <a class="rail-item" href="#about" data-section="about"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">About</span></a>
       <a class="rail-item" href="#noc" data-section="noc"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">NOC Ops</span></a>
+      <a class="rail-item" href="#topology" data-section="topology"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Topology</span></a>
       <a class="rail-item" href="#drill" data-section="drill"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Shift drill</span></a>
       <a class="rail-item" href="#experience" data-section="experience"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Experience</span></a>
       <a class="rail-item" href="#reel" data-section="reel"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Ops Reel</span></a>
@@ -3123,6 +3292,102 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ SERVICE TOPOLOGY ═══════════════
+         A layered map — core, aggregation, transmission ring, access sites,
+         digital platform — rendered from TOPO_NODES / TOPO_LINKS in the
+         script block. Click a node for its KPIs and dependencies; inject a
+         fault to watch protection switching and the blast radius, and see
+         the correlated alarm land in the #noc console above.
+    -->
+    <section id="topology" class="band band-topology py-20 sm:py-28" aria-labelledby="topology-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 sm:mb-12">
+          <div class="max-w-2xl">
+            <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Service view</p>
+            <h2 id="topology-heading" class="font-display text-2xl sm:text-3xl lg:text-[2.35rem] font-semibold tracking-tight leading-tight">
+              One alarm, five layers. <span class="text-forest-glow">Where does it hurt?</span>
+            </h2>
+            <p class="mt-4 text-ink-mute leading-relaxed">
+              An NSOC does not watch boxes; it watches services, and a service crosses every layer.
+              Click any node to see what it depends on and what depends on it. Then break something
+              and watch the protection path light up — and the alarm land in the console above.
+            </p>
+          </div>
+          <div class="shrink-0 flex flex-col gap-2 lg:items-end">
+            <p class="font-mono text-[0.58rem] tracking-[0.14em] uppercase text-ink-faint">Inject a fault</p>
+            <div class="flex flex-wrap gap-2 lg:justify-end" id="topo-faults" role="group" aria-label="Fault injection">
+              <button type="button" class="topo-fault" data-fault="ring-west"><i aria-hidden="true"></i>Cut ring · west span</button>
+              <button type="button" class="topo-fault" data-fault="core-a"><i aria-hidden="true"></i>Fail CORE-A</button>
+              <button type="button" class="topo-fault" data-fault="api-gw"><i aria-hidden="true"></i>Degrade API gateway</button>
+              <button type="button" class="topo-fault restore hidden" data-fault="restore" id="topo-restore"><i aria-hidden="true"></i>Restore</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-5 lg:gap-6 items-stretch">
+
+          <!-- ── The map ── -->
+          <div class="lg:col-span-8 term-panel">
+            <div class="term-chrome">
+              <span class="term-dot live"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">service topology · illustrative</span>
+              <span class="ml-auto font-mono text-[0.58rem]" id="topo-status"><span class="text-forest-glow">● all paths nominal</span></span>
+            </div>
+            <div class="topo-scroll px-2 pt-2">
+              <svg id="topo-svg" viewBox="0 0 800 440" role="group" aria-label="Interactive service topology: core, aggregation, transmission ring, access sites and digital platform">
+                <!-- nodes and links are rendered by JS -->
+              </svg>
+            </div>
+            <div class="px-4 sm:px-5 py-3 border-t border-white/5">
+              <div class="topo-legend">
+                <span><i style="background:#60A5FA"></i>Core</span>
+                <span><i style="background:#4DA3C7"></i>Aggregation</span>
+                <span><i style="background:#E8A33D"></i>Transmission ring</span>
+                <span><i style="background:#4ADE9F"></i>Access / RAN</span>
+                <span><i style="background:#A8BBD6"></i>Digital platform</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Node detail / impact ── -->
+          <div class="lg:col-span-4 topo-card p-5 sm:p-6" id="topo-card" aria-live="polite">
+            <div class="flex items-start justify-between gap-3 mb-1">
+              <div>
+                <p class="font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint" id="topo-layer">Select a node</p>
+                <h3 class="font-display text-lg font-semibold text-ink leading-tight mt-0.5" id="topo-name">Click anything on the map</h3>
+              </div>
+              <span class="topo-state up" id="topo-state">up</span>
+            </div>
+            <p class="text-sm text-ink-mute leading-relaxed mt-2" id="topo-role">
+              Each node carries synthetic KPIs and a real dependency graph. The point is the graph: the question on shift is never "is this box up?" but "who notices if it isn't?"
+            </p>
+
+            <div class="topo-kv mt-4" id="topo-kv">
+              <div><p class="k">Availability</p><p class="v">—</p></div>
+              <div><p class="k">Latency</p><p class="v">—</p></div>
+              <div><p class="k">Utilisation</p><p class="v">—</p></div>
+            </div>
+
+            <p class="mt-4 mb-1.5 font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint">Depends on</p>
+            <div class="topo-dep" id="topo-upstream"><span>—</span></div>
+            <p class="mt-3 mb-1.5 font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint">Serves</p>
+            <div class="topo-dep" id="topo-downstream"><span>—</span></div>
+
+            <div class="topo-impact ok mt-5" id="topo-impact">
+              <strong>No active fault.</strong> Inject one above to see the blast radius, the protection path, and the severity call that follows from both.
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-4 font-mono text-[0.58rem] text-ink-faint leading-relaxed max-w-3xl">
+          Illustrative topology with synthetic KPIs. It demonstrates the dependency reasoning a service view requires — it is not a diagram of any operator's network.
+        </p>
       </div>
     </section>
 
@@ -4914,7 +5179,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
       });
 
       // ── Active section highlighting ──
-      const sectionIds = ['top', 'about', 'noc', 'drill', 'experience', 'reel', 'projects', 'skills', 'certifications', 'contact'];
+      const sectionIds = ['top', 'about', 'noc', 'topology', 'drill', 'experience', 'reel', 'projects', 'skills', 'certifications', 'contact'];
       const railItems = document.querySelectorAll('.rail-item[data-section]');
       const navCrumb = document.getElementById('nav-crumb');
       const navLinks = document.querySelectorAll('.nav-link[data-section]');
@@ -5293,6 +5558,9 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const $ = (sel, root) => (root || document).querySelector(sel);
       const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+      /* Cross-panel messages: the topology map raises correlated alarms on the
+         NOC console through here, without either knowing the other's internals. */
+      const bus = {};
 
       const COLOURS = { forest: '#2F7BE8', azure: '#4DA3C7', gold: '#E8A33D', rust: '#B8492E' };
 
@@ -5588,6 +5856,12 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
           addAlarm(ALARM_POOL[(n * 2 + 3) % ALARM_POOL.length], i * 47, false);
         });
         refreshCounts();
+
+        bus.pushAlarm = (item) => {
+          addAlarm(item, 0, true);
+          counts[item.sev] = Math.max(0, Math.min(9, counts[item.sev] + (item.state === 'cleared' ? -1 : 1)));
+          refreshCounts();
+        };
 
         whileVisible(section, () => {
           // Weighted so the feed looks like a real shift: mostly P3/P4.
@@ -5994,6 +6268,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
 
         const COMMANDS = [
           { label: 'NOC Ops & SLA', hint: 'section', keys: 'noc soc kpi sla uptime monitoring network operations', run: goTo('#noc') },
+          { label: 'Service topology — break something', hint: 'section', keys: 'topology map network core ring fault service view dependency', run: goTo('#topology') },
           { label: 'Shift simulator — sit the shift', hint: 'section', keys: 'drill simulator triage quiz test shift alarm scenario', run: goTo('#drill') },
           { label: 'Experience — Safaricom NOC', hint: 'section', keys: 'experience safaricom work history internship', run: goTo('#experience') },
           { label: 'Ops Reel', hint: 'section', keys: 'reel video clips watch demo', run: goTo('#reel') },
@@ -6110,6 +6385,242 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
             close();
           }
         });
+      })();
+
+      /* ═══════════════ SERVICE TOPOLOGY ═══════════════
+         Nodes carry a layer, a position, an explicit upstream list (what they
+         depend on) and a line about what they serve. Links are undirected.
+         Faults mark links down, light a protection path, flag the blast
+         radius, and push a correlated alarm onto the #noc console via `bus`. */
+      const TOPO_LAYER = {
+        core:     { colour: '#60A5FA', name: 'Core' },
+        agg:      { colour: '#4DA3C7', name: 'Aggregation' },
+        tx:       { colour: '#E8A33D', name: 'Transmission ring' },
+        access:   { colour: '#4ADE9F', name: 'Access / RAN' },
+        platform: { colour: '#A8BBD6', name: 'Digital platform' },
+      };
+      const TOPO_NODES = [
+        { id: 'core-a', label: 'CORE-A', sub: 'core router', layer: 'core', x: 300, y: 62,  up: ['core-b'], serves: 'Half of all traffic · AGG-1 · AGG-2 · API-GW', kpi: [99.995, 2, 54] },
+        { id: 'core-b', label: 'CORE-B', sub: 'core router', layer: 'core', x: 500, y: 62,  up: ['core-a'], serves: 'Half of all traffic · AGG-1 · AGG-2 · API-GW', kpi: [99.995, 2, 51] },
+        { id: 'api-gw', label: 'API-GW', sub: 'digital platform', layer: 'platform', x: 690, y: 62, up: ['core-a', 'core-b'], serves: 'Customer apps · payment API · partner integrations', kpi: [99.97, 28, 63] },
+        { id: 'agg-1',  label: 'AGG-1',  sub: 'aggregation', layer: 'agg', x: 300, y: 160, up: ['core-a', 'core-b'], serves: 'Ring entry north · 4 access sites downstream', kpi: [99.99, 4, 58] },
+        { id: 'agg-2',  label: 'AGG-2',  sub: 'aggregation', layer: 'agg', x: 500, y: 160, up: ['core-a', 'core-b'], serves: 'Ring entry east · 4 access sites downstream', kpi: [99.99, 4, 71] },
+        { id: 'tx-n',   label: 'TX-N',   sub: 'ring head',  layer: 'tx', x: 400, y: 236, up: ['agg-1'], serves: 'Ring 07 · west and east arcs', kpi: [99.98, 1, 44] },
+        { id: 'tx-e',   label: 'TX-E',   sub: 'ring east',  layer: 'tx', x: 560, y: 296, up: ['agg-2', 'tx-n'], serves: 'NBO-0433 · south arc', kpi: [99.98, 1, 71] },
+        { id: 'tx-s',   label: 'TX-S',   sub: 'ring south', layer: 'tx', x: 400, y: 356, up: ['tx-e', 'tx-w'], serves: 'NBO-0418 · NBO-0421', kpi: [99.98, 2, 49] },
+        { id: 'tx-w',   label: 'TX-W',   sub: 'ring west',  layer: 'tx', x: 240, y: 296, up: ['tx-n', 'tx-s'], serves: 'NBO-0412 · south arc', kpi: [99.98, 1, 46] },
+        { id: 's-0412', label: 'NBO-0412', sub: 'access site', layer: 'access', x: 110, y: 356, up: ['tx-w'], serves: '≈1.4k subscribers · voice + data · 3 sectors', kpi: [99.9, 14, 38] },
+        { id: 's-0418', label: 'NBO-0418', sub: 'access site', layer: 'access', x: 300, y: 412, up: ['tx-s'], serves: '≈1.1k subscribers · voice + data · 3 sectors', kpi: [99.9, 15, 41] },
+        { id: 's-0421', label: 'NBO-0421', sub: 'access site', layer: 'access', x: 500, y: 412, up: ['tx-s'], serves: '≈0.9k subscribers · voice + data · 2 sectors', kpi: [99.9, 16, 33] },
+        { id: 's-0433', label: 'NBO-0433', sub: 'access site', layer: 'access', x: 690, y: 356, up: ['tx-e'], serves: '≈1.6k subscribers · voice + data · 3 sectors', kpi: [99.9, 13, 52] },
+      ];
+      const TOPO_LINKS = [
+        ['core-a', 'core-b'], ['core-a', 'api-gw'], ['core-b', 'api-gw'],
+        ['core-a', 'agg-1'], ['core-a', 'agg-2'], ['core-b', 'agg-1'], ['core-b', 'agg-2'],
+        ['agg-1', 'tx-n'], ['agg-2', 'tx-e'],
+        ['tx-n', 'tx-e'], ['tx-e', 'tx-s'], ['tx-s', 'tx-w'], ['tx-w', 'tx-n'],
+        ['tx-w', 's-0412'], ['tx-s', 's-0418'], ['tx-s', 's-0421'], ['tx-e', 's-0433'],
+      ];
+      /* Severity calls below follow the matrix in #noc exactly: a service that is
+         up with redundancy lost is a P2, however loudly it deserves attention. */
+      const TOPO_FAULTS = {
+        'ring-west': {
+          downLinks: [['tx-w', 'tx-n']],
+          protect: [['tx-w', 'tx-s'], ['tx-s', 'tx-e'], ['tx-e', 'agg-2']],
+          down: [], warn: ['tx-w'], unprotected: ['tx-w', 'tx-s', 's-0412', 's-0418', 's-0421'],
+          focus: 'tx-w',
+          status: '<span class="text-gold">● ring 07 west span down · protection active</span>',
+          impact: '<strong>West span lost. Protection switched.</strong> TX-W now reaches aggregation the long way — TX-S → TX-E → AGG-2. Four access sites are running unprotected: one more cut is an outage. East path utilisation 71% → 88%. <strong>Call: P2.</strong> Service is up; redundancy is not. Escalate to transmission with the span, the timestamps and the weather attached.',
+          alarm: { sev: 'P2', msg: 'TX · ring 07 west span LOS · protection switch OK · 4 sites unprotected', state: 'open' },
+        },
+        'core-a': {
+          downLinks: [['core-a', 'core-b'], ['core-a', 'agg-1'], ['core-a', 'agg-2'], ['core-a', 'api-gw']],
+          protect: [['core-b', 'agg-1'], ['core-b', 'agg-2'], ['core-b', 'api-gw']],
+          down: ['core-a'], warn: ['core-b'], unprotected: ['agg-1', 'agg-2', 'api-gw'],
+          focus: 'core-a',
+          status: '<span class="text-rust">● CORE-A down · all traffic on CORE-B</span>',
+          impact: '<strong>CORE-A failed. CORE-B is carrying everything.</strong> Both aggregation nodes and the API gateway failed over cleanly — no customer impact — but the whole core is now one fault from a total outage. <strong>Call: P2, worked on a P1 clock.</strong> Shift lead paged, core domain engaged, vendor case open within the hour, change freeze on the core until CORE-A is back.',
+          alarm: { sev: 'P2', msg: 'CORE · CORE-A unreachable · failover to CORE-B complete · core redundancy lost', state: 'ack' },
+        },
+        'api-gw': {
+          downLinks: [], protect: [],
+          down: [], warn: ['api-gw'], unprotected: [],
+          focus: 'api-gw',
+          status: '<span class="text-gold">● API gateway p95 850 ms · SLO breach</span>',
+          impact: '<strong>API gateway degraded, not down.</strong> p95 latency 850 ms against a 400 ms SLO for three intervals; error rate 0.3% and climbing. Both upstream paths are clean, which points at the gateway itself — and at the 13:47 release. <strong>Call: P2.</strong> Burn rate 2.4× with 12% of the budget left: change freeze, rollback raised with the owner now.',
+          alarm: { sev: 'P2', msg: 'DIG · API gateway p95 850ms > SLO 400ms · 3 intervals · burn 2.4×', state: 'open' },
+        },
+      };
+
+      (function serviceTopology() {
+        const svg = $('#topo-svg');
+        if (!svg) return;
+        const NS = 'http://www.w3.org/2000/svg';
+        const byId = Object.fromEntries(TOPO_NODES.map((n) => [n.id, n]));
+        const linkKey = (a, b) => [a, b].sort().join('|');
+        const linkEls = new Map();
+        const nodeEls = new Map();
+        let selected = null;
+        let activeFault = null;
+
+        const el = {
+          status: $('#topo-status'), layer: $('#topo-layer'), name: $('#topo-name'),
+          state: $('#topo-state'), role: $('#topo-role'), kv: $$('#topo-kv .v'),
+          upstream: $('#topo-upstream'), downstream: $('#topo-downstream'),
+          impact: $('#topo-impact'), restore: $('#topo-restore'),
+        };
+
+        // ── Draw links first so nodes sit on top ──
+        const linkLayer = document.createElementNS(NS, 'g');
+        TOPO_LINKS.forEach(([a, b]) => {
+          const A = byId[a], B = byId[b];
+          const p = document.createElementNS(NS, 'path');
+          p.setAttribute('class', 'topo-link');
+          p.setAttribute('d', `M${A.x} ${A.y} L${B.x} ${B.y}`);
+          linkLayer.appendChild(p);
+          linkEls.set(linkKey(a, b), p);
+        });
+        svg.appendChild(linkLayer);
+
+        // ── Nodes ──
+        const nodeLayer = document.createElementNS(NS, 'g');
+        TOPO_NODES.forEach((n) => {
+          const g = document.createElementNS(NS, 'g');
+          g.setAttribute('class', 'topo-node');
+          g.setAttribute('transform', `translate(${n.x}, ${n.y})`);
+          g.setAttribute('role', 'button');
+          g.setAttribute('tabindex', '0');
+          g.setAttribute('aria-label', `${n.label}, ${TOPO_LAYER[n.layer].name}`);
+          const colour = TOPO_LAYER[n.layer].colour;
+          const r = n.layer === 'core' ? 15 : n.layer === 'access' ? 11 : 13;
+          g.innerHTML =
+            `<circle class="topo-pulse" r="${r}" fill="${colour}" opacity="0" />` +
+            `<circle class="n-ring" r="${r}" stroke="${colour}" />` +
+            `<circle class="n-dot" r="${r * 0.33}" fill="${colour}" />` +
+            `<text class="n-label" y="${r + 13}">${n.label}</text>` +
+            `<text class="n-sub" y="${r + 23}">${n.sub}</text>`;
+          g.addEventListener('click', () => select(n.id));
+          g.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(n.id); }
+          });
+          nodeLayer.appendChild(g);
+          nodeEls.set(n.id, g);
+        });
+        svg.appendChild(nodeLayer);
+
+        // The primary service path: shortest route to a core node following `up`.
+        // A ring makes nearly everything reachable, so lighting every alternative
+        // reads as noise — the path a packet actually takes is the useful picture.
+        function primaryPath(id) {
+          const prev = { [id]: null };
+          const queue = [id];
+          while (queue.length) {
+            const cur = queue.shift();
+            if (byId[cur].layer === 'core') {
+              const path = [];
+              for (let n = cur; n !== null; n = prev[n]) path.unshift(n);
+              return path;
+            }
+            byId[cur].up.forEach((u) => { if (!(u in prev)) { prev[u] = cur; queue.push(u); } });
+          }
+          return [id];
+        }
+        function downstreamOf(id) {
+          return TOPO_NODES.filter((n) => n.up.includes(id)).map((n) => n.id);
+        }
+
+        function stateOf(id) {
+          if (!activeFault) return 'up';
+          const f = TOPO_FAULTS[activeFault];
+          if (f.down.includes(id)) return 'down';
+          if (f.warn.includes(id)) return 'warn';
+          return 'up';
+        }
+
+        function select(id) {
+          selected = id;
+          const n = byId[id];
+          nodeEls.forEach((g, k) => g.classList.toggle('is-selected', k === id));
+
+          // Light the primary path toward core
+          const path = primaryPath(id);
+          const onPath = new Set();
+          for (let i = 0; i < path.length - 1; i++) onPath.add(linkKey(path[i], path[i + 1]));
+          linkEls.forEach((p, key) => {
+            p.classList.toggle('is-path', onPath.has(key) && !p.classList.contains('is-down') && !p.classList.contains('is-protect'));
+          });
+
+          const state = stateOf(id);
+          const jitter = (v, j) => (v + (Math.random() - 0.5) * j);
+          const [avail, lat, util] = n.kpi;
+          el.layer.textContent = TOPO_LAYER[n.layer].name;
+          el.name.textContent = n.label;
+          el.state.textContent = state === 'down' ? 'down' : state === 'warn' ? 'degraded' : 'up';
+          el.state.className = 'topo-state ' + state;
+          el.role.textContent = n.serves;
+          el.kv[0].textContent = state === 'down' ? '0.00%' : jitter(avail, 0.004).toFixed(3) + '%';
+          el.kv[1].textContent = state === 'down' ? '—' : (state === 'warn' && n.id === 'api-gw' ? '850 ms' : Math.max(1, Math.round(jitter(lat, 1.5))) + ' ms');
+          el.kv[2].textContent = state === 'down' ? '—' : Math.round(jitter(state === 'warn' && n.layer === 'core' ? 96 : util, 3)) + '%';
+          el.upstream.innerHTML = n.up.length ? n.up.map((u) => `<span>${byId[u].label}</span>`).join('') : '<span>— top of the chain</span>';
+          const ds = downstreamOf(id);
+          el.downstream.innerHTML = ds.length ? ds.map((d) => `<span>${byId[d].label}</span>`).join('') : '<span>subscribers only</span>';
+        }
+
+        function clearFaultMarks() {
+          linkEls.forEach((p) => p.classList.remove('is-down', 'is-protect'));
+          nodeEls.forEach((g) => {
+            g.classList.remove('is-down', 'is-warn', 'is-unprotected');
+            const pulse = g.querySelector('.topo-pulse');
+            if (pulse) pulse.setAttribute('opacity', '0');
+          });
+        }
+
+        function inject(faultId) {
+          clearFaultMarks();
+          activeFault = faultId;
+          const f = TOPO_FAULTS[faultId];
+          f.downLinks.forEach(([a, b]) => linkEls.get(linkKey(a, b)).classList.add('is-down'));
+          f.protect.forEach(([a, b]) => linkEls.get(linkKey(a, b)).classList.add('is-protect'));
+          f.down.forEach((id) => nodeEls.get(id).classList.add('is-down'));
+          f.warn.forEach((id) => nodeEls.get(id).classList.add('is-warn'));
+          f.unprotected.forEach((id) => nodeEls.get(id).classList.add('is-unprotected'));
+          const pulse = nodeEls.get(f.focus).querySelector('.topo-pulse');
+          if (pulse && !reduceMotion) pulse.setAttribute('opacity', '1');
+
+          el.status.innerHTML = f.status + ' · <a href="#noc" class="underline decoration-dotted underline-offset-2">alarm in console ↑</a>';
+          el.impact.className = 'topo-impact mt-5';
+          el.impact.innerHTML = f.impact;
+          $$('.topo-fault[data-fault]').forEach((b) => b.classList.toggle('is-active', b.getAttribute('data-fault') === faultId));
+          el.restore.classList.remove('hidden');
+
+          // Correlated alarm lands on the #noc console.
+          if (bus.pushAlarm) bus.pushAlarm(f.alarm);
+          select(f.focus);
+        }
+
+        function restore() {
+          activeFault = null;
+          clearFaultMarks();
+          el.status.innerHTML = '<span class="text-forest-glow">● all paths nominal</span>';
+          el.impact.className = 'topo-impact ok mt-5';
+          el.impact.innerHTML = '<strong>Restored.</strong> Every path is back to nominal. On a real floor this is where the ticket gets its close-out note and the RCA gets its first line.';
+          $$('.topo-fault[data-fault]').forEach((b) => b.classList.remove('is-active'));
+          el.restore.classList.add('hidden');
+          if (bus.pushAlarm) bus.pushAlarm({ sev: 'P4', msg: 'OPS · fault cleared · all topology paths nominal · ticket closed', state: 'cleared' });
+          if (selected) select(selected);
+        }
+
+        $$('.topo-fault[data-fault]').forEach((b) => {
+          b.addEventListener('click', () => {
+            const f = b.getAttribute('data-fault');
+            if (f === 'restore') restore();
+            else if (activeFault === f) restore();
+            else inject(f);
+          });
+        });
+
+        // Start on the gateway: the node a service view cares about most.
+        select('api-gw');
       })();
 
       /* ═══════════════ SHIFT SIMULATOR ═══════════════
