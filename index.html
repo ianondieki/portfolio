@@ -2736,6 +2736,114 @@
       padding: 0.9rem 1.4rem; border-top: 1px solid var(--edge); background: rgba(var(--ink-rgb) / 0.02);
     }
 
+
+    /* ═══════════ JOURNEY (#journey) ═══════════
+       A vertical rail of phases, not years — the page does not fabricate
+       dates it was not given. Add years in the markup when you want them;
+       the .jr-when slot is already there. Pure markup, no script. */
+    .band-journey {
+      background:
+        radial-gradient(ellipse 50% 40% at 15% 10%, rgba(26, 82, 176, 0.06) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 40% at 90% 90%, rgba(217, 130, 31, 0.05) 0%, transparent 55%),
+        linear-gradient(180deg, #F7FAFE 0%, #F2F6FC 50%, #F7FAFE 100%);
+    }
+    [data-theme="dark"] .band-journey {
+      background:
+        radial-gradient(ellipse 50% 40% at 15% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 55%),
+        linear-gradient(180deg, #0C1424 0%, #0A1220 50%, #0C1424 100%);
+    }
+
+    .jr { position: relative; padding-left: 2.1rem; }
+    @media (min-width: 640px) { .jr { padding-left: 2.6rem; } }
+    /* the rail */
+    .jr::before {
+      content: '';
+      position: absolute;
+      left: 0.55rem;
+      top: 0.9rem;
+      bottom: 0.9rem;
+      width: 2px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, rgba(var(--forest-rgb) / 0.15) 0%, var(--forest) 22%, var(--forest) 78%, rgba(var(--gold-rgb) / 0.9) 100%);
+    }
+    @media (min-width: 640px) { .jr::before { left: 0.8rem; } }
+
+    .jr-item { position: relative; padding: 0 0 2.4rem; }
+    .jr-item:last-child { padding-bottom: 0; }
+
+    .jr-dot {
+      position: absolute;
+      left: -2.1rem;
+      top: 0.55rem;
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--forest);
+      box-shadow: 0 0 0 4px var(--base);
+      display: grid;
+      place-items: center;
+    }
+    @media (min-width: 640px) { .jr-dot { left: -2.6rem; top: 0.5rem; width: 1.2rem; height: 1.2rem; } }
+    .jr-dot::after { content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--forest); }
+    .jr-item.is-now .jr-dot { border-color: var(--gold); }
+    .jr-item.is-now .jr-dot::after { background: var(--gold); animation: pulse-dot 2.4s ease-in-out infinite; }
+
+    .jr-when {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .jr-when .jr-phase {
+      color: var(--forest);
+      font-weight: 600;
+    }
+    .jr-item.is-now .jr-when .jr-phase { color: var(--gold); }
+    .jr-title {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-top: 0.35rem;
+      line-height: 1.25;
+    }
+    .jr-org { color: var(--ink-mute); font-weight: 500; font-size: 0.9rem; margin-top: 0.15rem; }
+    .jr-body { color: var(--ink-mute); font-size: 0.93rem; line-height: 1.65; margin-top: 0.6rem; max-width: 42rem; }
+    .jr-body strong { color: var(--ink); font-weight: 600; }
+    .jr-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.75rem; }
+    .jr-link {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.62rem; letter-spacing: 0.06em;
+      color: var(--forest);
+      margin-top: 0.7rem;
+      text-decoration: none;
+    }
+    .jr-link:hover { color: var(--forest-glow); text-decoration: underline; text-underline-offset: 3px; }
+
+    /* Side column: the throughline */
+    .jr-aside {
+      border-radius: 0.75rem;
+      border: 1px solid var(--edge);
+      background: var(--surface);
+      padding: 1.25rem 1.4rem;
+      box-shadow: 0 14px 40px -28px rgba(11, 27, 60, 0.35);
+    }
+    [data-theme="dark"] .jr-aside { box-shadow: none; }
+    .jr-stat { display: grid; grid-template-columns: auto 1fr; gap: 0.75rem; align-items: baseline; padding: 0.55rem 0; border-bottom: 1px solid var(--edge); }
+    .jr-stat:last-child { border-bottom: 0; }
+    .jr-stat b { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 1.15rem; font-weight: 600; color: var(--ink); min-width: 2.6rem; }
+    .jr-stat span { font-size: 0.85rem; color: var(--ink-mute); line-height: 1.45; }
+
+    @media (prefers-reduced-motion: reduce) { .jr-item.is-now .jr-dot::after { animation: none; } }
+
   </style>
 </head>
 <body class="text-ink font-body antialiased">
@@ -2836,6 +2944,7 @@
       <a class="rail-item" href="#runbooks" data-section="runbooks"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Runbooks</span></a>
       <a class="rail-item" href="#reel" data-section="reel"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Ops Reel</span></a>
       <a class="rail-item" href="#projects" data-section="projects"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Projects</span></a>
+      <a class="rail-item" href="#journey" data-section="journey"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Journey</span></a>
       <a class="rail-item" href="#skills" data-section="skills"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Skills</span></a>
       <a class="rail-item" href="#certifications" data-section="certifications"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Certs</span></a>
       <a class="rail-item" href="#contact" data-section="contact"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Contact</span></a>
@@ -5229,6 +5338,126 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
 
     <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
 
+    <!-- ═══════════════ JOURNEY ═══════════════
+         Phases, not years: the page only states what it was given. To show
+         dates, fill the empty <span class="jr-year"> in each .jr-when —
+         e.g. <span class="jr-year">2023 – 2024</span>.
+    -->
+    <section id="journey" class="band band-journey py-20 sm:py-28" aria-labelledby="journey-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+
+        <div class="mb-12 sm:mb-14 max-w-2xl">
+          <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Journey</p>
+          <h2 id="journey-heading" class="font-display text-2xl sm:text-3xl lg:text-[2.35rem] font-semibold tracking-tight leading-tight">
+            From the floor to the automation — <span class="text-forest-glow">and back</span>.
+          </h2>
+          <p class="mt-4 text-ink-mute leading-relaxed">
+            The throughline is simple: learn how services break by watching them break, then build the
+            things that stop the repetitive breaks from needing a human. Both halves are the same job.
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+
+          <ol class="jr lg:col-span-8" aria-label="Career and learning timeline">
+
+            <li class="jr-item">
+              <span class="jr-dot" aria-hidden="true"></span>
+              <p class="jr-when"><span class="jr-phase">01 · Foundation</span><span class="jr-year"></span></p>
+              <h3 class="jr-title">B.Sc. Software Engineering</h3>
+              <p class="jr-org">Multimedia University of Kenya · Nairobi</p>
+              <p class="jr-body">
+                Where the systems thinking started: data structures, networks, operating systems, and the
+                habit of asking how a thing fails before asking how it works.
+              </p>
+              <div class="jr-tags">
+                <span class="tech-tag">Networks</span><span class="tech-tag">Operating systems</span><span class="tech-tag">Software design</span>
+              </div>
+            </li>
+
+            <li class="jr-item">
+              <span class="jr-dot" aria-hidden="true"></span>
+              <p class="jr-when"><span class="jr-phase">02 · The floor</span><span class="jr-year"></span></p>
+              <h3 class="jr-title">NOC Engineering Intern</h3>
+              <p class="jr-org">Safaricom PLC · Network Operations Centre · multi-SOC rotation</p>
+              <p class="jr-body">
+                Five Security / Operations Centres — <strong>IP, Transmission, RAN, Digital Services, Core</strong> —
+                on a 24×7 rotation supporting Kenya’s largest mobile network and live M-Pesa infrastructure.
+                Learned to read KPIs, classify honestly, and escalate with the evidence attached.
+              </p>
+              <div class="jr-tags">
+                <span class="tech-tag">24×7 shifts</span><span class="tech-tag">Incident triage</span><span class="tech-tag">Escalation</span><span class="tech-tag">KPI monitoring</span>
+              </div>
+              <a class="jr-link" href="#experience">See the rotation map →</a>
+            </li>
+
+            <li class="jr-item">
+              <span class="jr-dot" aria-hidden="true"></span>
+              <p class="jr-when"><span class="jr-phase">03 · Credentials</span><span class="jr-year"></span></p>
+              <h3 class="jr-title">CCNA · JNCIA · ITIL Foundation</h3>
+              <p class="jr-org">Cisco · Juniper · AXELOS — plus the UDARA project certification</p>
+              <p class="jr-body">
+                The vocabulary under the judgement. CCNA and JNCIA for the layer-3 reasoning; ITIL for
+                incident, problem and change — the language an NSOC uses to explain itself to the rest of
+                the business.
+              </p>
+              <div class="jr-tags">
+                <span class="tech-tag">Routing &amp; switching</span><span class="tech-tag">Junos fundamentals</span><span class="tech-tag">ITIL v4</span>
+              </div>
+              <a class="jr-link" href="#certifications">All credentials →</a>
+            </li>
+
+            <li class="jr-item">
+              <span class="jr-dot" aria-hidden="true"></span>
+              <p class="jr-when"><span class="jr-phase">04 · Building</span><span class="jr-year"></span></p>
+              <h3 class="jr-title">Agentic automation &amp; RAG systems</h3>
+              <p class="jr-org">Independent projects · n8n · LangGraph · Python · Node.js</p>
+              <p class="jr-body">
+                Appointment scheduling agents, WhatsApp flows, a research assistant, a RAG chatbot grounded
+                in real documents — each one wired to real APIs and designed for failure modes first. The
+                same instinct as the floor, pointed at the toil.
+              </p>
+              <div class="jr-tags">
+                <span class="tech-tag">n8n</span><span class="tech-tag">LangGraph</span><span class="tech-tag">RAG</span><span class="tech-tag">Claude &amp; Gemini APIs</span>
+              </div>
+              <a class="jr-link" href="#projects">Inspect the pipelines →</a>
+            </li>
+
+            <li class="jr-item is-now">
+              <span class="jr-dot" aria-hidden="true"></span>
+              <p class="jr-when"><span class="jr-phase">05 · Now</span><span class="jr-year"></span></p>
+              <h3 class="jr-title">Network &amp; Service Operations Centre Engineer — interviewing</h3>
+              <p class="jr-org">Nairobi · finishing AWS Certified AI Practitioner (AIF-C01)</p>
+              <p class="jr-body">
+                Looking for a floor to hold a shift on, and the latitude to automate the parts of it that
+                should never have needed a person. This page is the interview I would give if you asked me
+                to show rather than tell.
+              </p>
+              <div class="jr-tags">
+                <span class="tech-tag">NSOC</span><span class="tech-tag">SLA ownership</span><span class="tech-tag">Automation</span>
+              </div>
+              <a class="jr-link" href="#contact">Get in touch →</a>
+            </li>
+          </ol>
+
+          <!-- ── The throughline in numbers ── -->
+          <aside class="jr-aside lg:col-span-4 lg:sticky lg:top-24" aria-label="Summary">
+            <p class="font-mono text-[0.58rem] tracking-[0.14em] uppercase text-ink-faint mb-2">At a glance</p>
+            <div class="jr-stat"><b>5</b><span>operations centres rotated through — IP, transmission, radio, digital, core</span></div>
+            <div class="jr-stat"><b>24×7</b><span>shift coverage model learned on live infrastructure</span></div>
+            <div class="jr-stat"><b>3</b><span>completed certifications underneath the judgement: CCNA, JNCIA, ITIL</span></div>
+            <div class="jr-stat"><b>4</b><span>shipped automation systems, each wired to real APIs</span></div>
+            <div class="jr-stat"><b>1</b><span>certification in flight — AWS AI Practitioner</span></div>
+            <p class="mt-4 pt-4 border-t border-ink/5 text-sm text-ink-mute leading-relaxed">
+              Operations first. Automation second. Both in the same head — which is the whole pitch.
+            </p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
     <!-- ═══════════════ SKILLS ═══════════════ -->
     <section id="skills" class="band band-skills py-20 sm:py-28" aria-labelledby="skills-heading">
       <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
@@ -5582,7 +5811,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
       });
 
       // ── Active section highlighting ──
-      const sectionIds = ['top', 'about', 'noc', 'topology', 'drill', 'experience', 'runbooks', 'reel', 'projects', 'skills', 'certifications', 'contact'];
+      const sectionIds = ['top', 'about', 'noc', 'topology', 'drill', 'experience', 'runbooks', 'reel', 'projects', 'journey', 'skills', 'certifications', 'contact'];
       const railItems = document.querySelectorAll('.rail-item[data-section]');
       const navCrumb = document.getElementById('nav-crumb');
       const navLinks = document.querySelectorAll('.nav-link[data-section]');
@@ -6677,6 +6906,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
           { label: 'Runbooks — BGP, ring, site, API', hint: 'section', keys: 'runbook playbook procedure bgp transmission ran api incident checklist', run: goTo('#runbooks') },
           { label: 'Ops Reel', hint: 'section', keys: 'reel video clips watch demo', run: goTo('#reel') },
           { label: 'Projects', hint: 'section', keys: 'projects work systems automation rag', run: goTo('#projects') },
+          { label: 'Journey — the timeline', hint: 'section', keys: 'journey timeline career history path story', run: goTo('#journey') },
           { label: 'Skills', hint: 'section', keys: 'skills stack tools tech', run: goTo('#skills') },
           { label: 'Certifications', hint: 'section', keys: 'certs ccna jncia itil aws certification', run: goTo('#certifications') },
           { label: 'Contact', hint: 'section', keys: 'contact hire email reach', run: goTo('#contact') },
