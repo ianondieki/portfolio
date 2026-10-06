@@ -2595,6 +2595,147 @@
       .topo-pulse { animation: none; opacity: 0; }
     }
 
+
+    /* ═══════════ RUNBOOKS (#runbooks) ═══════════
+       Four playbooks behind an accessible tab strip. Light card on the light
+       page; every colour routes through the tokens. Checkboxes are cosmetic —
+       they let a reader walk the first-five-minutes list the way a shift
+       engineer would, but nothing is stored. */
+    .band-runbooks {
+      background:
+        radial-gradient(ellipse 55% 45% at 90% 10%, rgba(217, 130, 31, 0.06) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 40% at 10% 90%, rgba(26, 82, 176, 0.06) 0%, transparent 55%),
+        linear-gradient(180deg, #F4F8FD 0%, #FAFCFE 50%, #F4F8FD 100%);
+    }
+    [data-theme="dark"] .band-runbooks {
+      background:
+        radial-gradient(ellipse 55% 45% at 90% 10%, rgba(232, 163, 61, 0.07) 0%, transparent 55%),
+        linear-gradient(180deg, #0E1726 0%, #0B1322 50%, #0E1726 100%);
+    }
+
+    .rb-card {
+      border-radius: 0.8rem;
+      border: 1px solid var(--edge);
+      background: var(--surface);
+      box-shadow: 0 14px 40px -28px rgba(11, 27, 60, 0.35);
+      overflow: hidden;
+    }
+    [data-theme="dark"] .rb-card { box-shadow: none; }
+
+    .rb-tabs {
+      display: flex;
+      gap: 0.25rem;
+      padding: 0.5rem;
+      border-bottom: 1px solid var(--edge);
+      background: rgba(var(--ink-rgb) / 0.025);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .rb-tabs::-webkit-scrollbar { display: none; }
+    .rb-tab {
+      flex: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0.9rem;
+      border-radius: 0.5rem;
+      border: 1px solid transparent;
+      color: var(--ink-mute);
+      font-size: 0.84rem;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .rb-tab:hover { color: var(--ink); background: rgba(var(--ink-rgb) / 0.04); }
+    .rb-tab:focus-visible { outline: 2px solid var(--forest); outline-offset: -2px; }
+    .rb-tab[aria-selected="true"] {
+      background: var(--surface);
+      border-color: var(--edge);
+      color: var(--ink);
+      box-shadow: 0 1px 2px rgba(11, 27, 60, 0.06);
+    }
+    .rb-tab .rb-dom {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      padding: 0.12rem 0.4rem;
+      border-radius: 0.25rem;
+      background: rgba(var(--forest-rgb) / 0.1);
+      color: var(--forest);
+    }
+    .rb-tab[aria-selected="true"] .rb-dom { background: var(--forest); color: #fff; }
+
+    .rb-panel { display: none; }
+    .rb-panel.is-active { display: block; }
+
+    .rb-head {
+      padding: 1.25rem 1.4rem 1.1rem;
+      border-bottom: 1px solid var(--edge);
+      display: grid;
+      gap: 1rem;
+    }
+    @media (min-width: 900px) { .rb-head { grid-template-columns: 1.4fr 1fr; align-items: start; } }
+    .rb-sev-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .rb-sev-row .rb-chip {
+      display: inline-flex; flex-direction: column; gap: 0.1rem;
+      padding: 0.45rem 0.7rem;
+      border-radius: 0.45rem;
+      border: 1px solid var(--edge);
+      background: var(--surface-2);
+      min-width: 6.5rem;
+    }
+    .rb-chip .k { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); }
+    .rb-chip .v { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.82rem; font-weight: 600; color: var(--ink); }
+
+    .rb-body { display: grid; gap: 0; }
+    @media (min-width: 900px) { .rb-body { grid-template-columns: 1fr 1fr; } .rb-body > .rb-block:nth-child(odd) { border-right: 1px solid var(--edge); } }
+    .rb-block { padding: 1.15rem 1.4rem; border-bottom: 1px solid var(--edge); }
+    .rb-block:last-child { border-bottom: 0; }
+    @media (min-width: 900px) { .rb-block:nth-last-child(-n+2) { border-bottom: 0; } }
+    .rb-block-title {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint);
+      margin-bottom: 0.7rem;
+    }
+    .rb-block-title .n {
+      width: 1.1rem; height: 1.1rem; border-radius: 0.3rem; display: grid; place-items: center;
+      background: rgba(var(--forest-rgb) / 0.12); color: var(--forest); font-size: 0.55rem; font-weight: 600;
+    }
+
+    /* First-five-minutes checklist */
+    .rb-check { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.4rem 0; cursor: pointer; }
+    .rb-check input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .rb-check .box {
+      flex: none; width: 1rem; height: 1rem; margin-top: 0.15rem;
+      border-radius: 0.25rem; border: 1.5px solid rgba(var(--ink-rgb) / 0.3);
+      display: grid; place-items: center; transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .rb-check .box::after { content: ''; width: 0.5rem; height: 0.3rem; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translate(1px, -1px); opacity: 0; }
+    .rb-check input:checked + .box { background: var(--status); border-color: var(--status); }
+    .rb-check input:checked + .box::after { opacity: 1; }
+    .rb-check input:focus-visible + .box { outline: 2px solid var(--forest); outline-offset: 2px; }
+    .rb-check .t { font-size: 0.86rem; line-height: 1.5; color: var(--ink-mute); }
+    .rb-check input:checked ~ .t { color: var(--ink-faint); text-decoration: line-through; text-decoration-color: rgba(var(--ink-rgb) / 0.3); }
+
+    /* if → then decision rows */
+    .rb-decision { display: grid; grid-template-columns: auto 1fr; gap: 0.4rem 0.7rem; align-items: baseline; padding: 0.45rem 0; border-bottom: 1px dashed var(--edge); font-size: 0.85rem; line-height: 1.5; }
+    .rb-decision:last-child { border-bottom: 0; }
+    .rb-decision .if { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); padding-top: 0.2rem; }
+    .rb-decision .cond { color: var(--ink); font-weight: 500; }
+    .rb-decision .then { color: var(--ink-mute); grid-column: 2; }
+
+    .rb-list { display: grid; gap: 0.45rem; font-size: 0.86rem; line-height: 1.5; color: var(--ink-mute); }
+    .rb-list li { display: flex; gap: 0.6rem; }
+    .rb-list li::before { content: '—'; color: var(--forest); flex: none; }
+    .rb-list strong { color: var(--ink); font-weight: 600; }
+
+    .rb-footer {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      padding: 0.9rem 1.4rem; border-top: 1px solid var(--edge); background: rgba(var(--ink-rgb) / 0.02);
+    }
+
   </style>
 </head>
 <body class="text-ink font-body antialiased">
@@ -2692,6 +2833,7 @@
       <a class="rail-item" href="#topology" data-section="topology"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Topology</span></a>
       <a class="rail-item" href="#drill" data-section="drill"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Shift drill</span></a>
       <a class="rail-item" href="#experience" data-section="experience"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Experience</span></a>
+      <a class="rail-item" href="#runbooks" data-section="runbooks"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Runbooks</span></a>
       <a class="rail-item" href="#reel" data-section="reel"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Ops Reel</span></a>
       <a class="rail-item" href="#projects" data-section="projects"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Projects</span></a>
       <a class="rail-item" href="#skills" data-section="skills"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Skills</span></a>
@@ -3651,6 +3793,267 @@
             <p class="mt-3 font-mono text-[0.6rem] text-ink-faint text-center sm:text-left">
               Decorative console — not live Safaricom telemetry. Encodes the rotation, not proprietary data.
             </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ RUNBOOKS ═══════════════
+         Four playbooks: trigger, severity and clock, the first five minutes,
+         decision points, escalation and comms, close-out. Written from
+         training and certification knowledge — generic to any multi-domain
+         operator, not reproduced from any employer's documentation.
+    -->
+    <section id="runbooks" class="band band-runbooks py-20 sm:py-28" aria-labelledby="runbooks-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 sm:mb-12">
+          <div class="max-w-2xl">
+            <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Runbooks</p>
+            <h2 id="runbooks-heading" class="font-display text-2xl sm:text-3xl lg:text-[2.35rem] font-semibold tracking-tight leading-tight">
+              What I would write <span class="text-forest-glow">before</span> the alarm.
+            </h2>
+            <p class="mt-4 text-ink-mute leading-relaxed">
+              A runbook is judgement, written down while nobody is panicking. Four of the incidents a
+              multi-domain NOC sees most, each with the first five minutes, the decision points, and
+              who hears about it. Tick through the checklist — that is how it is meant to be read.
+            </p>
+          </div>
+          <p class="shrink-0 font-mono text-[0.58rem] text-ink-faint lg:text-right max-w-[16rem] leading-relaxed">
+            Written from CCNA, JNCIA and ITIL training plus rotation experience. Generic to any operator — not reproduced from anyone's internal documentation.
+          </p>
+        </div>
+
+        <div class="rb-card">
+          <div class="rb-tabs" role="tablist" aria-label="Runbooks">
+            <button type="button" class="rb-tab" role="tab" id="rb-tab-bgp" aria-selected="true" aria-controls="rb-bgp" tabindex="0"><span class="rb-dom">IP</span>BGP session flap</button>
+            <button type="button" class="rb-tab" role="tab" id="rb-tab-tx" aria-selected="false" aria-controls="rb-tx" tabindex="-1"><span class="rb-dom">TX</span>Ring span degradation</button>
+            <button type="button" class="rb-tab" role="tab" id="rb-tab-ran" aria-selected="false" aria-controls="rb-ran" tabindex="-1"><span class="rb-dom">RAN</span>Site down</button>
+            <button type="button" class="rb-tab" role="tab" id="rb-tab-api" aria-selected="false" aria-controls="rb-api" tabindex="-1"><span class="rb-dom">DIG</span>API latency SLO breach</button>
+          </div>
+
+          <!-- ══ RB 1 · BGP ══ -->
+          <div class="rb-panel is-active" role="tabpanel" id="rb-bgp" aria-labelledby="rb-tab-bgp" tabindex="0">
+            <div class="rb-head">
+              <div>
+                <p class="font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint">Trigger</p>
+                <p class="mt-1 text-[0.95rem] text-ink leading-relaxed">BGP neighbour state change — Established → Idle or Active — two or more transitions in ten minutes on a peer carrying production prefixes.</p>
+              </div>
+              <div>
+                <p class="font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint mb-2">Severity &amp; clock</p>
+                <div class="rb-sev-row">
+                  <span class="rb-chip"><span class="k">Default</span><span class="v text-gold">P2</span></span>
+                  <span class="rb-chip"><span class="k">Respond</span><span class="v">15 min</span></span>
+                  <span class="rb-chip"><span class="k">Resolve</span><span class="v">8 hrs</span></span>
+                  <span class="rb-chip"><span class="k">Upgrade to P1 if</span><span class="v text-rust">prefixes withdrawn, no alternate</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="rb-body">
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">1</span>First five minutes</p>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Confirm scope: which peer, which prefixes, and is traffic already flowing on an alternate path?</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Check the interface under the session — errors, flaps, optical levels. A clean BGP log on a dirty interface is a layer-1 problem wearing a layer-3 alarm.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Check the change calendar for either end of the session in the last hour.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Capture the BGP log and build the timeline <strong>before</strong> anyone touches the session.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Read the reason code: hold-timer expiry points at the link; an admin reset points at a human.</span></label>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">2</span>Decision points</p>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Flap correlates with interface errors or optical levels</span><span class="then">It is transmission or optics. Hand to TX with the interface counters attached — do not debug BGP.</span></div>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Interface is clean and the peer is external</span><span class="then">Raise with the peer's NOC through the agreed contact — after internal confirmation, never before.</span></div>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Prefixes withdrawn and no alternate path is carrying them</span><span class="then">Upgrade to P1, open the bridge, shift lead paged now.</span></div>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">3</span>Escalation &amp; comms</p>
+                <ul class="rb-list">
+                  <li><span><strong>IP domain engineer</strong> — peer ID, prefix list, timestamps, log excerpt, traffic graph for the last hour. A page with evidence gets answered; a page that says "BGP is flapping" gets a question back.</span></li>
+                  <li><span><strong>Update cadence</strong> — every 30 min on the ticket while P2; every 15 on the bridge if it becomes P1.</span></li>
+                  <li><span><strong>Customer comms</strong> — only if traffic is actually impacted. A clean failover is not news.</span></li>
+                </ul>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">4</span>Close-out</p>
+                <ul class="rb-list">
+                  <li><span>Session Established and stable for 30 min, no route churn, traffic back on the primary path.</span></li>
+                  <li><span>Ticket closed with a root-cause <strong>category</strong>, not a guess: link / optics / config / peer / unknown.</span></li>
+                  <li><span><strong>RCA</strong> if it flapped more than twice in a week, or if any customer noticed.</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="rb-footer">
+              <p class="font-mono text-[0.58rem] text-ink-faint">The quiet skill: knowing it is not a BGP problem.</p>
+              <button type="button" class="drill-btn ghost rb-clear" data-clear="rb-bgp">Clear ticks</button>
+            </div>
+          </div>
+
+          <!-- ══ RB 2 · Transmission ══ -->
+          <div class="rb-panel" role="tabpanel" id="rb-tx" aria-labelledby="rb-tab-tx" tabindex="0" hidden>
+            <div class="rb-head">
+              <div>
+                <p class="font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint">Trigger</p>
+                <p class="mt-1 text-[0.95rem] text-ink leading-relaxed">Loss of signal, high bit-error rate, or SNR-margin alarm on a ring span — with or without a protection-switch event.</p>
+              </div>
+              <div>
+                <p class="font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint mb-2">Severity &amp; clock</p>
+                <div class="rb-sev-row">
+                  <span class="rb-chip"><span class="k">Default</span><span class="v text-gold">P2</span></span>
+                  <span class="rb-chip"><span class="k">Respond</span><span class="v">15 min</span></span>
+                  <span class="rb-chip"><span class="k">Resolve</span><span class="v">8 hrs</span></span>
+                  <span class="rb-chip"><span class="k">Upgrade to P1 if</span><span class="v text-rust">a second span fails</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="rb-body">
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">1</span>First five minutes</p>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Confirm the protection switch completed — traffic on the surviving arc, no site isolated.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Read utilisation on the surviving path. Headroom is the number that decides how calm you can afford to be.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Correlate: weather at the hop sites for microwave; fibre work orders and road works for fibre.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">List every site that is now unprotected and estimate the subscribers behind them.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Check power and environmental alarms at both ends of the span — a dead site looks like a dead span.</span></label>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">2</span>Decision points</p>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Microwave span and heavy rain at the hop</span><span class="then">Rain fade. Monitor, expect self-recovery, no dispatch yet — but the unprotected list still goes on the ticket.</span></div>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Fibre span, clear weather, abrupt LOS</span><span class="then">Probable cut. Transmission domain dispatches field; the NOC owns the clock and the comms.</span></div>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Surviving path above 85% utilisation</span><span class="then">Pre-emptive escalation: ask the domain for traffic engineering before a second fault forces it.</span></div>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">3</span>Escalation &amp; comms</p>
+                <ul class="rb-list">
+                  <li><span><strong>Transmission domain</strong> — span ID, both end sites, timestamps, weather snapshot, surviving-path utilisation, the unprotected site list.</span></li>
+                  <li><span><strong>Field dispatch</strong> goes through the domain, not from the NOC console.</span></li>
+                  <li><span><strong>Customer comms</strong> only if a second fault lands. Until then this is invisible to subscribers, and should stay that way.</span></li>
+                </ul>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">4</span>Close-out</p>
+                <ul class="rb-list">
+                  <li><span>Span restored, protection reverted (or confirmed revertive), BER clean for an hour.</span></li>
+                  <li><span>Ticket note states cause: weather / cut / equipment — and whether the ring is back to full protection.</span></li>
+                  <li><span><strong>RCA</strong> for any cut; a note for weather, plus a tally if the same hop fades every rainy season.</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="rb-footer">
+              <p class="font-mono text-[0.58rem] text-ink-faint">The number that matters is the one on the path that is still up.</p>
+              <button type="button" class="drill-btn ghost rb-clear" data-clear="rb-tx">Clear ticks</button>
+            </div>
+          </div>
+
+          <!-- ══ RB 3 · RAN ══ -->
+          <div class="rb-panel" role="tabpanel" id="rb-ran" aria-labelledby="rb-tab-ran" tabindex="0" hidden>
+            <div class="rb-head">
+              <div>
+                <p class="font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint">Trigger</p>
+                <p class="mt-1 text-[0.95rem] text-ink leading-relaxed">Every cell on a site out of service, or the site unreachable from the management network.</p>
+              </div>
+              <div>
+                <p class="font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint mb-2">Severity &amp; clock</p>
+                <div class="rb-sev-row">
+                  <span class="rb-chip"><span class="k">Default</span><span class="v text-gold">P2</span></span>
+                  <span class="rb-chip"><span class="k">Respond</span><span class="v">15 min</span></span>
+                  <span class="rb-chip"><span class="k">Resolve</span><span class="v">8 hrs</span></span>
+                  <span class="rb-chip"><span class="k">Upgrade to P1 if</span><span class="v text-rust">hub site, or several sites in one area</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="rb-body">
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">1</span>First five minutes</p>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Is it the site or the road to it? Check transmission to the site before anything else.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Read the power alarms: mains fail, battery discharge, generator state. The battery runtime clock starts now.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Check whether neighbouring cells are absorbing the load — that is your real customer-impact number.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Check for a maintenance window on the site. An outage inside a window is a different ticket.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Estimate subscribers affected from the site's busy-hour traffic, and write it on the ticket.</span></label>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">2</span>Decision points</p>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Transmission to the site is down</span><span class="then">This is the ring runbook, not this one. Hand to TX, keep the RAN ticket linked.</span></div>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Mains failed, battery discharging</span><span class="then">Facilities and field, with the runtime estimate. Generator dispatch if runtime is shorter than the ETA.</span></div>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Equipment fault, site reachable</span><span class="then">RAN domain; remote reset only if the runbook permits it and traffic is already lost anyway.</span></div>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Several sites down in one area</span><span class="then">Suspect common transmission or power. Upgrade to P1 and look upstream, not at the sites.</span></div>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">3</span>Escalation &amp; comms</p>
+                <ul class="rb-list">
+                  <li><span><strong>RAN domain + field operations</strong> — site ID, power state, battery runtime, subscriber estimate, neighbour-cell load.</span></li>
+                  <li><span><strong>Customer care</strong> briefed if the site is likely to be down for more than an hour, with the area, not the site ID.</span></li>
+                  <li><span><strong>Updates</strong> every 30 min; every 15 if upgraded.</span></li>
+                </ul>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">4</span>Close-out</p>
+                <ul class="rb-list">
+                  <li><span>All cells in service and accessibility / retainability back at baseline for an hour — not just "site reachable".</span></li>
+                  <li><span>Field report attached; cause recorded as power / transmission / equipment / environmental.</span></li>
+                  <li><span><strong>RCA</strong> if a hub site, a repeat within 30 days, or any outage over four hours.</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="rb-footer">
+              <p class="font-mono text-[0.58rem] text-ink-faint">Most "site down" alarms are a power or transmission problem that happens to live at a site.</p>
+              <button type="button" class="drill-btn ghost rb-clear" data-clear="rb-ran">Clear ticks</button>
+            </div>
+          </div>
+
+          <!-- ══ RB 4 · API ══ -->
+          <div class="rb-panel" role="tabpanel" id="rb-api" aria-labelledby="rb-tab-api" tabindex="0" hidden>
+            <div class="rb-head">
+              <div>
+                <p class="font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint">Trigger</p>
+                <p class="mt-1 text-[0.95rem] text-ink leading-relaxed">p95 latency above the SLO for three consecutive intervals, or error rate above threshold, on a customer-facing API.</p>
+              </div>
+              <div>
+                <p class="font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint mb-2">Severity &amp; clock</p>
+                <div class="rb-sev-row">
+                  <span class="rb-chip"><span class="k">Default</span><span class="v text-gold">P2</span></span>
+                  <span class="rb-chip"><span class="k">Respond</span><span class="v">15 min</span></span>
+                  <span class="rb-chip"><span class="k">Resolve</span><span class="v">8 hrs</span></span>
+                  <span class="rb-chip"><span class="k">P1 clock if</span><span class="v text-rust">burn rate &gt; 1.0× or errors &gt; 5%</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="rb-body">
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">1</span>First five minutes</p>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Confirm it is the service and not the monitor: a synthetic probe from a second vantage point.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">List every deployment to the tier in the last hour. A degradation that starts after a change <strong>is</strong> the change until proven otherwise.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Check the dependencies the API calls — database, cache, auth, the network path — before blaming the API.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Compare traffic volume to baseline. A surge is a capacity story, not a defect story.</span></label>
+                <label class="rb-check"><input type="checkbox" /><span class="box"></span><span class="t">Read the error budget and burn rate. They decide the clock, whatever the severity label says.</span></label>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">2</span>Decision points</p>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">A deployment landed inside the window</span><span class="then">Roll back first, investigate second. The evidence survives a rollback; it does not survive a restart.</span></div>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">No change, traffic well above baseline</span><span class="then">Scale or rate-limit with the owner; this is capacity, and the fix is not a code fix.</span></div>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">A dependency is the slow one</span><span class="then">That team's incident. Link the tickets and keep the customer-facing one as the parent.</span></div>
+                <div class="rb-decision"><span class="if">if</span><span class="cond">Burn rate above 1.0×</span><span class="then">Change freeze on the tier via the change manager — that is what the budget exists to trigger.</span></div>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">3</span>Escalation &amp; comms</p>
+                <ul class="rb-list">
+                  <li><span><strong>Service owner and on-call developer</strong> — p95 trend, error samples, the deployment list, the dependency check results.</span></li>
+                  <li><span><strong>Change manager</strong> for the freeze; <strong>status page</strong> if customer-visible for more than 15 min.</span></li>
+                  <li><span><strong>Never</strong> move the threshold to silence the alarm. The SLO is the contract, not the config.</span></li>
+                </ul>
+              </div>
+              <div class="rb-block">
+                <p class="rb-block-title"><span class="n">4</span>Close-out</p>
+                <ul class="rb-list">
+                  <li><span>p95 back under the SLO for 30 min, error rate at baseline, rollback confirmed or fix deployed through change.</span></li>
+                  <li><span>Budget consumed by the incident recorded on the ticket in minutes — it changes the next decision.</span></li>
+                  <li><span><strong>RCA mandatory</strong> for any SLO breach. That is not bureaucracy; it is the only way the budget stops burning next month.</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="rb-footer">
+              <p class="font-mono text-[0.58rem] text-ink-faint">The severity is a label. The burn rate is the clock.</p>
+              <button type="button" class="drill-btn ghost rb-clear" data-clear="rb-api">Clear ticks</button>
+            </div>
           </div>
         </div>
       </div>
@@ -5179,7 +5582,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
       });
 
       // ── Active section highlighting ──
-      const sectionIds = ['top', 'about', 'noc', 'topology', 'drill', 'experience', 'reel', 'projects', 'skills', 'certifications', 'contact'];
+      const sectionIds = ['top', 'about', 'noc', 'topology', 'drill', 'experience', 'runbooks', 'reel', 'projects', 'skills', 'certifications', 'contact'];
       const railItems = document.querySelectorAll('.rail-item[data-section]');
       const navCrumb = document.getElementById('nav-crumb');
       const navLinks = document.querySelectorAll('.nav-link[data-section]');
@@ -6271,6 +6674,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
           { label: 'Service topology — break something', hint: 'section', keys: 'topology map network core ring fault service view dependency', run: goTo('#topology') },
           { label: 'Shift simulator — sit the shift', hint: 'section', keys: 'drill simulator triage quiz test shift alarm scenario', run: goTo('#drill') },
           { label: 'Experience — Safaricom NOC', hint: 'section', keys: 'experience safaricom work history internship', run: goTo('#experience') },
+          { label: 'Runbooks — BGP, ring, site, API', hint: 'section', keys: 'runbook playbook procedure bgp transmission ran api incident checklist', run: goTo('#runbooks') },
           { label: 'Ops Reel', hint: 'section', keys: 'reel video clips watch demo', run: goTo('#reel') },
           { label: 'Projects', hint: 'section', keys: 'projects work systems automation rag', run: goTo('#projects') },
           { label: 'Skills', hint: 'section', keys: 'skills stack tools tech', run: goTo('#skills') },
@@ -6621,6 +7025,52 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
 
         // Start on the gateway: the node a service view cares about most.
         select('api-gw');
+      })();
+
+      /* ═══════════════ RUNBOOKS ═══════════════
+         WAI-ARIA tabs: arrow keys move between tabs, Home/End jump, and only
+         the selected tab is in the tab order. Checklists are cosmetic and
+         reset per panel; nothing is persisted. */
+      (function runbooks() {
+        const list = $('#runbooks [role="tablist"]');
+        if (!list) return;
+        const tabs = $$('[role="tab"]', list);
+        const panels = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')));
+
+        function activate(i, focus) {
+          tabs.forEach((t, n) => {
+            const on = n === i;
+            t.setAttribute('aria-selected', on ? 'true' : 'false');
+            t.setAttribute('tabindex', on ? '0' : '-1');
+          });
+          panels.forEach((p, n) => {
+            const on = n === i;
+            p.classList.toggle('is-active', on);
+            if (on) p.removeAttribute('hidden'); else p.setAttribute('hidden', '');
+          });
+          if (focus) tabs[i].focus();
+          // Keep the selected tab visible when the strip scrolls on phones.
+          tabs[i].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+        }
+
+        tabs.forEach((t, i) => {
+          t.addEventListener('click', () => activate(i, false));
+          t.addEventListener('keydown', (e) => {
+            let next = null;
+            if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+            else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+            else if (e.key === 'Home') next = 0;
+            else if (e.key === 'End') next = tabs.length - 1;
+            if (next !== null) { e.preventDefault(); activate(next, true); }
+          });
+        });
+
+        $$('.rb-clear').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const panel = document.getElementById(btn.getAttribute('data-clear'));
+            if (panel) $$('input[type="checkbox"]', panel).forEach((c) => { c.checked = false; });
+          });
+        });
       })();
 
       /* ═══════════════ SHIFT SIMULATOR ═══════════════
