@@ -3,13 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Ian Ondieki — Network &amp; Service Operations engineer in Nairobi. Safaricom NOC-trained across five SOCs (IP, Transmission, RAN, Digital Services, Core). KPI monitoring, SLA and error-budget management, ITIL incident lifecycle — plus the automation that removes the toil. CCNA · JNCIA · ITIL." />
-  <meta name="theme-color" content="#0C1018" />
+  <meta name="description" content="Ian Ondieki — Network &amp; Service Operations engineer in Nairobi. Safaricom NOC-trained across five SOCs (IP, Transmission, RAN, Digital Services, Core). A live ops floor you can break, a shift simulator graded against the escalation matrix, four runbooks, and the automation that removes the toil. CCNA · JNCIA · ITIL." />
+  <meta name="theme-color" content="#F4F7FB" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0B1220" media="(prefers-color-scheme: dark)" />
   <meta property="og:title" content="Ian Ondieki — Network &amp; Service Operations Engineer" />
-  <meta property="og:description" content="Safaricom NOC-trained across five SOCs. KPI monitoring, SLA and error-budget management, ITIL incident lifecycle — and the automation that keeps the queue human-sized. Nairobi, Kenya." />
+  <meta property="og:description" content="Safaricom NOC-trained across five SOCs. Sit a simulated shift, break a service topology, read the runbooks — then see the automation that keeps the queue human-sized. Nairobi, Kenya." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <title>Ian Ondieki — Network &amp; Service Operations Engineer · Nairobi</title>
+
+  <!-- Structured data: every value below also appears in the visible page. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Ian Ondieki",
+    "jobTitle": "Network & Service Operations Engineer",
+    "description": "Network and service operations engineer trained on Safaricom's NOC across five operations centres; builds agentic automation and RAG systems.",
+    "email": "mailto:ondiekiian0@gmail.com",
+    "telephone": "+254793007266",
+    "address": { "@type": "PostalAddress", "addressLocality": "Nairobi", "addressCountry": "KE" },
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "Multimedia University of Kenya" },
+    "sameAs": [
+      "https://github.com/ianondieki",
+      "https://www.linkedin.com/in/ian-ondieki/"
+    ],
+    "hasCredential": [
+      { "@type": "EducationalOccupationalCredential", "name": "CCNA", "credentialCategory": "certification", "recognizedBy": { "@type": "Organization", "name": "Cisco" } },
+      { "@type": "EducationalOccupationalCredential", "name": "JNCIA", "credentialCategory": "certification", "recognizedBy": { "@type": "Organization", "name": "Juniper Networks" } },
+      { "@type": "EducationalOccupationalCredential", "name": "ITIL Foundation", "credentialCategory": "certification" }
+    ],
+    "knowsAbout": [
+      "Network operations centre", "Service operations", "Incident management", "SLA and error budgets",
+      "ITIL", "BGP", "OSPF", "MPLS", "SNMP", "Syslog", "Transmission networks", "Radio access networks",
+      "Agentic automation", "Retrieval-augmented generation"
+    ]
+  }
+  </script>
 
   <!-- Favicon: node-graph mark -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2310151F'/%3E%3Ccircle cx='8' cy='16' r='3' fill='%230F8B5C'/%3E%3Ccircle cx='24' cy='10' r='2.5' fill='%23E8A33D'/%3E%3Ccircle cx='24' cy='22' r='2.5' fill='%23EDEAE2'/%3E%3Cpath d='M11 16 L21.5 10.5 M11 16 L21.5 21.5' stroke='%230F8B5C' stroke-width='1.5' fill='none' opacity='0.85'/%3E%3C/svg%3E" />
@@ -2962,8 +2992,9 @@
 
         <nav class="hidden md:flex items-center gap-5 lg:gap-6 text-sm font-medium" aria-label="Primary">
           <a href="#noc" class="nav-link" data-section="noc">NOC Ops</a>
+          <a href="#drill" class="nav-link" data-section="drill">Drill</a>
+          <a href="#runbooks" class="nav-link" data-section="runbooks">Runbooks</a>
           <a href="#experience" class="nav-link" data-section="experience">Experience</a>
-          <a href="#reel" class="nav-link" data-section="reel">Reel</a>
           <a href="#projects" class="nav-link" data-section="projects">Projects</a>
           <a href="#skills" class="nav-link" data-section="skills">Skills</a>
           <a href="#contact" class="nav-link" data-section="contact">Contact</a>
@@ -3002,9 +3033,13 @@
       <div id="mobile-menu" class="mobile-menu md:hidden border-t border-ink/5">
         <nav class="flex flex-col gap-1 py-3 text-sm" aria-label="Mobile">
           <a href="#noc" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">NOC Ops &amp; SLA</a>
+          <a href="#topology" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Service topology</a>
+          <a href="#drill" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Shift simulator</a>
           <a href="#experience" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Experience</a>
+          <a href="#runbooks" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Runbooks</a>
           <a href="#reel" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Ops Reel</a>
           <a href="#projects" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Projects</a>
+          <a href="#journey" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Journey</a>
           <a href="#skills" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Skills</a>
           <a href="#certifications" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Certifications</a>
           <a href="#contact" class="px-2 py-2.5 rounded-md text-ink-mute hover:text-ink hover:bg-surface">Contact</a>
