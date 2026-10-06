@@ -2844,6 +2844,91 @@
 
     @media (prefers-reduced-motion: reduce) { .jr-item.is-now .jr-dot::after { animation: none; } }
 
+
+    /* ═══════════ SHIPPED · LIVE FROM GITHUB (inside #projects) ═══════════
+       Real data or an honest "unreachable" — never invented repositories.
+       Light card on the light page; tokens throughout. */
+    .gh-panel {
+      border-radius: 0.8rem;
+      border: 1px solid var(--edge);
+      background: var(--surface);
+      box-shadow: 0 14px 40px -28px rgba(11, 27, 60, 0.35);
+      padding: 1.4rem 1.5rem 1.5rem;
+    }
+    [data-theme="dark"] .gh-panel { box-shadow: none; }
+    .gh-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    .gh-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.66rem; letter-spacing: 0.04em;
+      padding: 0.45rem 0.75rem; border-radius: 0.45rem;
+      border: 1px solid var(--edge); background: var(--surface-2); color: var(--ink-mute);
+      transition: color 0.2s ease, border-color 0.2s ease;
+      white-space: nowrap;
+    }
+    .gh-link:hover { color: var(--ink); border-color: rgba(var(--forest-rgb) / 0.45); }
+    .gh-status {
+      margin-top: 0.9rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.6rem; letter-spacing: 0.06em; color: var(--ink-faint);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .gh-status .status-dot { flex: none; }
+    .gh-status.is-live .status-dot { background: var(--status); }
+    .gh-status.is-off .status-dot { background: var(--rust); animation: none; }
+
+    .gh-grid { display: grid; gap: 0.75rem; margin-top: 1rem; }
+    @media (min-width: 640px) { .gh-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .gh-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    .gh-grid[hidden], .gh-fallback[hidden] { display: none; }
+
+    .gh-card {
+      display: flex; flex-direction: column; gap: 0.55rem;
+      padding: 0.95rem 1rem;
+      border-radius: 0.6rem;
+      border: 1px solid var(--edge);
+      background: var(--surface-2);
+      color: inherit; text-decoration: none;
+      transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+      min-height: 100%;
+    }
+    .gh-card:hover { border-color: rgba(var(--forest-rgb) / 0.5); transform: translateY(-2px); }
+    .gh-card:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
+    .gh-name {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.82rem; font-weight: 600; color: var(--ink);
+      display: flex; align-items: center; gap: 0.45rem;
+      overflow-wrap: anywhere;
+    }
+    .gh-name svg { flex: none; width: 0.85rem; height: 0.85rem; color: var(--ink-faint); }
+    .gh-desc { font-size: 0.82rem; line-height: 1.5; color: var(--ink-mute); flex: 1; }
+    .gh-desc.is-empty { color: var(--ink-faint); font-style: italic; }
+    .gh-meta {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.58rem; letter-spacing: 0.05em; color: var(--ink-faint);
+    }
+    .gh-meta span { display: inline-flex; align-items: center; gap: 0.35rem; }
+    .gh-lang { width: 0.55rem; height: 0.55rem; border-radius: 50%; display: inline-block; border: 1px solid rgba(var(--ink-rgb) / 0.1); }
+    .gh-topics { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .gh-topics span {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.55rem; padding: 0.12rem 0.4rem; border-radius: 0.25rem;
+      background: rgba(var(--forest-rgb) / 0.08); color: var(--forest);
+    }
+
+    .gh-fallback {
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 0.6rem;
+      border: 1px dashed var(--edge);
+      background: rgba(var(--ink-rgb) / 0.02);
+      font-size: 0.85rem; line-height: 1.55; color: var(--ink-mute);
+    }
+    .gh-fallback strong { color: var(--ink); font-weight: 600; }
+
+    @media (prefers-reduced-motion: reduce) { .gh-card:hover { transform: none; } }
+
   </style>
 </head>
 <body class="text-ink font-body antialiased">
@@ -5333,6 +5418,43 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
             </article>
           </div>
         </div>
+
+        <!-- ── Shipped · live from GitHub ──
+             Fetched client-side from the public GitHub API the first time
+             this block nears the viewport (unauthenticated: 60 requests an
+             hour per visitor, cached in sessionStorage for ten minutes).
+             If the API is unreachable or rate-limited the panel says so and
+             links to the profile — it never shows invented repositories.
+        -->
+        <div class="gh-panel mt-16 sm:mt-20" id="gh-panel" aria-labelledby="gh-heading">
+          <div class="gh-head">
+            <div class="max-w-xl">
+              <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-2">Shipped</p>
+              <h3 id="gh-heading" class="font-display text-xl sm:text-2xl font-semibold tracking-tight">Live from GitHub</h3>
+              <p class="mt-2 text-sm text-ink-mute leading-relaxed">
+                The six repositories pushed most recently — pulled from the public API as you scrolled here, not typed in. Real timestamps beat claims.
+              </p>
+            </div>
+            <a class="gh-link" href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" aria-label="Open the GitHub profile (opens in new tab)">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+              github.com/ianondieki ↗
+            </a>
+          </div>
+
+          <p class="gh-status" id="gh-status" role="status" aria-live="polite">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="gh-status-text">Waiting until this block is on screen…</span>
+          </p>
+
+          <div class="gh-grid" id="gh-grid" hidden></div>
+
+          <div class="gh-fallback" id="gh-fallback" hidden>
+            <strong>GitHub’s API is not reachable from here right now</strong> — <span id="gh-fallback-why">network</span>.
+            Nothing is shown rather than something made up. The repositories are one click away at
+            <a href="https://github.com/ianondieki" target="_blank" rel="noopener noreferrer" class="text-forest underline underline-offset-2">github.com/ianondieki ↗</a>.
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -6906,6 +7028,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
           { label: 'Runbooks — BGP, ring, site, API', hint: 'section', keys: 'runbook playbook procedure bgp transmission ran api incident checklist', run: goTo('#runbooks') },
           { label: 'Ops Reel', hint: 'section', keys: 'reel video clips watch demo', run: goTo('#reel') },
           { label: 'Projects', hint: 'section', keys: 'projects work systems automation rag', run: goTo('#projects') },
+          { label: 'Shipped — live from GitHub', hint: 'panel', keys: 'github repos shipped code live repositories', run: goTo('#gh-panel') },
           { label: 'Journey — the timeline', hint: 'section', keys: 'journey timeline career history path story', run: goTo('#journey') },
           { label: 'Skills', hint: 'section', keys: 'skills stack tools tech', run: goTo('#skills') },
           { label: 'Certifications', hint: 'section', keys: 'certs ccna jncia itil aws certification', run: goTo('#certifications') },
@@ -7301,6 +7424,126 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
             if (panel) $$('input[type="checkbox"]', panel).forEach((c) => { c.checked = false; });
           });
         });
+      })();
+
+      /* ═══════════════ SHIPPED · LIVE FROM GITHUB ═══════════════
+         One unauthenticated call to the public API, made the first time the
+         panel nears the viewport, cached in sessionStorage for ten minutes.
+         Any failure — offline, blocked, rate-limited, timed out — shows the
+         fallback note and the profile link. Nothing is ever fabricated. */
+      (function shippedPanel() {
+        const panel = $('#gh-panel');
+        if (!panel) return;
+        const grid = $('#gh-grid');
+        const status = $('#gh-status');
+        const statusText = $('#gh-status-text');
+        const fallback = $('#gh-fallback');
+        const fallbackWhy = $('#gh-fallback-why');
+
+        const USER = 'ianondieki';
+        const API = `https://api.github.com/users/${USER}/repos?sort=pushed&direction=desc&per_page=20&type=owner`;
+        const CACHE_KEY = 'gh-shipped-v1';
+        const TTL_MS = 10 * 60 * 1000;
+        const LANG = {
+          JavaScript: '#F1E05A', TypeScript: '#3178C6', Python: '#3572A5', HTML: '#E34C26', CSS: '#563D7C',
+          Shell: '#89E051', 'Jupyter Notebook': '#DA5B0B', Java: '#B07219', Go: '#00ADD8', Dockerfile: '#384D54',
+          Vue: '#41B883', PHP: '#4F5D95', C: '#555555', 'C++': '#F34B7D', Rust: '#DEA584', Kotlin: '#A97BFF',
+        };
+
+        const esc = (v) => String(v == null ? '' : v)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+        function relative(iso) {
+          const diff = Date.now() - new Date(iso).getTime();
+          const d = Math.floor(diff / 86400000);
+          if (d <= 0) return 'today';
+          if (d === 1) return 'yesterday';
+          if (d < 30) return `${d} days ago`;
+          const m = Math.floor(d / 30);
+          if (m < 12) return `${m} month${m > 1 ? 's' : ''} ago`;
+          const y = Math.floor(d / 365);
+          return `${y} year${y > 1 ? 's' : ''} ago`;
+        }
+
+        function setStatus(text, mode) {
+          statusText.textContent = text;
+          status.classList.toggle('is-live', mode === 'live');
+          status.classList.toggle('is-off', mode === 'off');
+        }
+
+        function render(repos, fromCache) {
+          grid.innerHTML = repos.map((r) => `
+            <a class="gh-card" href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">
+              <span class="gh-name">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8z"/></svg>
+                ${esc(r.name)}
+              </span>
+              <span class="gh-desc${r.desc ? '' : ' is-empty'}">${esc(r.desc || 'No description yet.')}</span>
+              ${r.topics.length ? `<span class="gh-topics">${r.topics.map((t) => `<span>${esc(t)}</span>`).join('')}</span>` : ''}
+              <span class="gh-meta">
+                ${r.lang ? `<span><i class="gh-lang" style="background:${LANG[r.lang] || '#A8BBD6'}"></i>${esc(r.lang)}</span>` : ''}
+                <span>★ ${r.stars}</span>
+                <span>pushed ${relative(r.pushed)}</span>
+              </span>
+            </a>`).join('');
+          grid.removeAttribute('hidden');
+          fallback.setAttribute('hidden', '');
+          setStatus(`${repos.length} repositories · api.github.com${fromCache ? ' · cached' : ' · live'}`, 'live');
+        }
+
+        function showFallback(reason) {
+          const why = {
+            'rate-limited': 'the unauthenticated rate limit for this network is spent; try again in an hour',
+            timeout: 'the request timed out',
+            network: 'the request was blocked or the network is offline',
+            empty: 'the API returned no public repositories',
+          }[reason] || reason;
+          fallbackWhy.textContent = why;
+          fallback.removeAttribute('hidden');
+          grid.setAttribute('hidden', '');
+          setStatus('api.github.com unreachable', 'off');
+        }
+
+        async function load() {
+          try {
+            const c = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
+            if (c && Date.now() - c.t < TTL_MS && Array.isArray(c.repos) && c.repos.length) { render(c.repos, true); return; }
+          } catch (e) { /* storage unavailable: fall through to a live fetch */ }
+
+          setStatus('fetching from api.github.com…', '');
+          const ctl = new AbortController();
+          const timer = setTimeout(() => ctl.abort(), 7000);
+          try {
+            const res = await fetch(API, { headers: { Accept: 'application/vnd.github+json' }, signal: ctl.signal });
+            clearTimeout(timer);
+            if (res.status === 403 || res.status === 429) return showFallback('rate-limited');
+            if (!res.ok) return showFallback(`the API answered HTTP ${res.status}`);
+            const data = await res.json();
+            const repos = (Array.isArray(data) ? data : [])
+              .filter((r) => !r.fork && !r.archived)
+              .slice(0, 6)
+              .map((r) => ({
+                name: r.name, url: r.html_url, desc: r.description, lang: r.language,
+                stars: r.stargazers_count || 0, pushed: r.pushed_at, topics: (r.topics || []).slice(0, 3),
+              }));
+            if (!repos.length) return showFallback('empty');
+            try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), repos })); } catch (e) { /* ignore */ }
+            render(repos, false);
+          } catch (e) {
+            clearTimeout(timer);
+            showFallback(e && e.name === 'AbortError' ? 'timeout' : 'network');
+          }
+        }
+
+        // Load once, when the panel is about to come into view.
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            if (entries.some((e) => e.isIntersecting)) { io.disconnect(); load(); }
+          }, { rootMargin: '240px 0px' });
+          io.observe(panel);
+        } else {
+          load();
+        }
       })();
 
       /* ═══════════════ SHIFT SIMULATOR ═══════════════
