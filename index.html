@@ -2183,6 +2183,250 @@
       a { color: #111 !important; text-decoration: underline; }
     }
 
+
+    /* ═══════════ SHIFT SIMULATOR (#drill) ═══════════
+       Every colour routes through the theme tokens, so the section follows
+       the light/dark toggle without its own override block except where a
+       literal is unavoidable. The scenario card reuses .term-panel so it
+       reads as the same console as the alarm feed above it. */
+    .band-drill {
+      background:
+        radial-gradient(ellipse 60% 45% at 85% 10%, rgba(26, 82, 176, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 10% 90%, rgba(217, 130, 31, 0.05) 0%, transparent 55%),
+        linear-gradient(180deg, #F2F6FC 0%, #F7FAFE 50%, #F2F6FC 100%);
+    }
+    [data-theme="dark"] .band-drill {
+      background:
+        radial-gradient(ellipse 60% 45% at 85% 10%, rgba(59, 130, 246, 0.09) 0%, transparent 55%),
+        linear-gradient(180deg, #0D1627 0%, #0A1220 50%, #0D1627 100%);
+    }
+
+    /* Scenario progress — three ticks, one per alarm */
+    .drill-steps { display: flex; gap: 0.4rem; align-items: center; }
+    .drill-step {
+      height: 0.4rem;
+      width: 2rem;
+      border-radius: 999px;
+      background: rgba(var(--ink-rgb) / 0.12);
+      transition: background 0.3s ease, width 0.3s ease;
+    }
+    .drill-step.is-current { background: var(--forest); width: 2.8rem; }
+    .drill-step.is-done { background: var(--status); }
+    .drill-step.is-missed { background: var(--rust); }
+
+    /* The alarm as it would land on a console */
+    .drill-alarm-sev {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.3rem;
+      border: 1px solid rgba(238, 243, 250, 0.18);
+      color: #8CA2C2;
+    }
+    .drill-ctx {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+    .drill-ctx-item {
+      padding: 0.55rem 0.65rem;
+      border-radius: 0.45rem;
+      background: rgba(238, 243, 250, 0.045);
+      border: 1px solid rgba(238, 243, 250, 0.07);
+    }
+    .drill-ctx-item .k {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #8CA2C2;
+    }
+    .drill-ctx-item .v {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ink-on-dark);
+      margin-top: 0.15rem;
+      line-height: 1.25;
+    }
+    .drill-ctx-item .v.warn { color: var(--gold); }
+    .drill-ctx-item .v.bad { color: #F08A72; }
+    .drill-ctx-item .v.ok { color: #4ADE9F; }
+
+    /* Decision card — light surface on the light page, surface token in dark */
+    .drill-card {
+      border-radius: 0.75rem;
+      border: 1px solid var(--edge);
+      background: var(--surface);
+      box-shadow: 0 14px 40px -28px rgba(11, 27, 60, 0.35);
+    }
+    [data-theme="dark"] .drill-card { box-shadow: none; }
+
+    .drill-q {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--edge);
+    }
+    .drill-q:last-of-type { border-bottom: 0; }
+    .drill-q-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+    .drill-q-title {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-weight: 600;
+      font-size: 0.98rem;
+      color: var(--ink);
+      margin-top: 0.2rem;
+    }
+    .drill-opts {
+      display: grid;
+      gap: 0.45rem;
+      margin-top: 0.75rem;
+    }
+    @media (min-width: 640px) { .drill-opts.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 640px) { .drill-opts.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+    .drill-opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      width: 100%;
+      text-align: left;
+      padding: 0.65rem 0.8rem;
+      border-radius: 0.55rem;
+      border: 1px solid var(--edge);
+      background: var(--surface-2);
+      color: var(--ink-mute);
+      font-size: 0.86rem;
+      line-height: 1.4;
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+      cursor: pointer;
+    }
+    .drill-opt:hover:not(:disabled) { border-color: rgba(var(--forest-rgb) / 0.5); color: var(--ink); transform: translateY(-1px); }
+    .drill-opt:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
+    .drill-opt[aria-pressed="true"] {
+      border-color: var(--forest);
+      background: rgba(var(--forest-rgb) / 0.1);
+      color: var(--ink);
+    }
+    .drill-opt .opt-key {
+      flex: none;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.62rem;
+      font-weight: 600;
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 0.3rem;
+      display: grid;
+      place-items: center;
+      background: rgba(var(--ink-rgb) / 0.07);
+      color: var(--ink-faint);
+      margin-top: 0.05rem;
+    }
+    .drill-opt[aria-pressed="true"] .opt-key { background: var(--forest); color: #fff; }
+    .drill-opt:disabled { cursor: default; }
+    /* Post-submit grading: colours are deliberately explicit, not hover-dependent */
+    .drill-opt.is-right {
+      border-color: var(--status);
+      background: rgba(18, 164, 126, 0.1);
+      color: var(--ink);
+    }
+    .drill-opt.is-right .opt-key { background: var(--status); color: #fff; }
+    .drill-opt.is-wrong {
+      border-color: var(--rust);
+      background: rgba(var(--rust-rgb) / 0.08);
+      color: var(--ink-mute);
+    }
+    .drill-opt.is-wrong .opt-key { background: var(--rust); color: #fff; }
+
+    .drill-why {
+      margin-top: 0.65rem;
+      padding: 0.6rem 0.8rem;
+      border-left: 2px solid var(--forest);
+      background: rgba(var(--forest-rgb) / 0.06);
+      border-radius: 0 0.45rem 0.45rem 0;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      color: var(--ink-mute);
+    }
+    .drill-why strong { color: var(--ink); font-weight: 600; }
+
+    .drill-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--edge);
+      background: rgba(var(--ink-rgb) / 0.02);
+    }
+    .drill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.6rem 1.1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid transparent;
+      transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    }
+    .drill-btn.primary { background: var(--forest); color: #fff; }
+    .drill-btn.primary:hover:not(:disabled) { background: var(--forest-glow); }
+    .drill-btn.primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    .drill-btn.ghost { border-color: var(--edge); color: var(--ink-mute); background: var(--surface); }
+    .drill-btn.ghost:hover { color: var(--ink); border-color: rgba(var(--forest-rgb) / 0.4); }
+    /* .drill-btn sets display, so Tailwind's .hidden only wins if it happens to
+       be emitted later — make the toggle explicit instead of order-dependent. */
+    .drill-btn.hidden { display: none; }
+
+    .drill-score {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.35rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.72rem;
+      color: var(--ink-faint);
+    }
+    .drill-score b {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .drill-score.good b { color: var(--status); }
+    .drill-score.poor b { color: var(--rust); }
+
+    /* End-of-shift summary */
+    .drill-summary {
+      border-radius: 0.75rem;
+      border: 1px solid rgba(var(--forest-rgb) / 0.3);
+      background: rgba(var(--forest-rgb) / 0.06);
+      padding: 1.25rem 1.4rem;
+    }
+    .drill-summary-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid var(--edge);
+      font-size: 0.85rem;
+    }
+    .drill-summary-row:last-child { border-bottom: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .drill-opt, .drill-step { transition: none; }
+      .drill-opt:hover:not(:disabled) { transform: none; }
+    }
+
   </style>
 </head>
 <body class="text-ink font-body antialiased">
@@ -2277,6 +2521,7 @@
       <a class="rail-item" href="#top" data-section="top"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Intro</span></a>
       <a class="rail-item" href="#about" data-section="about"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">About</span></a>
       <a class="rail-item" href="#noc" data-section="noc"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">NOC Ops</span></a>
+      <a class="rail-item" href="#drill" data-section="drill"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Shift drill</span></a>
       <a class="rail-item" href="#experience" data-section="experience"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Experience</span></a>
       <a class="rail-item" href="#reel" data-section="reel"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Ops Reel</span></a>
       <a class="rail-item" href="#projects" data-section="projects"><span class="rail-tick" aria-hidden="true"></span><span class="rail-label">Projects</span></a>
@@ -2878,6 +3123,123 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <div class="hairline hairline-between mx-auto max-w-content" aria-hidden="true"></div>
+
+    <!-- ═══════════════ SHIFT SIMULATOR ═══════════════
+         Three alarms, three calls each. The visitor is graded against the
+         escalation matrix in #noc, with the reasoning spelled out — it
+         teaches as it tests, which is the point: judgement is the job.
+         Scenarios live in DRILL_SCENARIOS in the script block.
+    -->
+    <section id="drill" class="band band-drill py-20 sm:py-28" aria-labelledby="drill-heading">
+      <div class="band-inner mx-auto max-w-content px-5 sm:px-8">
+
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 sm:mb-12">
+          <div class="max-w-2xl">
+            <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-3">Shift simulator</p>
+            <h2 id="drill-heading" class="font-display text-2xl sm:text-3xl lg:text-[2.35rem] font-semibold tracking-tight leading-tight">
+              Sit the shift. <span class="text-forest-glow">Three alarms, three calls.</span>
+            </h2>
+            <p class="mt-4 text-ink-mute leading-relaxed">
+              Each alarm lands the way it would on a console. Classify it, choose the first action,
+              choose who hears about it — then see the call I would make and why. It is graded
+              against the escalation matrix above, and nothing leaves your browser.
+            </p>
+          </div>
+          <div class="shrink-0 flex flex-col gap-3 lg:items-end">
+            <div class="drill-steps" id="drill-steps" aria-label="Scenario progress">
+              <span class="drill-step is-current" data-step="0"></span>
+              <span class="drill-step" data-step="1"></span>
+              <span class="drill-step" data-step="2"></span>
+            </div>
+            <p class="font-mono text-[0.6rem] text-ink-faint" id="drill-progress">Alarm 1 of 3</p>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-5 lg:gap-6 items-start" id="drill-stage">
+
+          <!-- ── The alarm, as the console would show it ── -->
+          <div class="lg:col-span-5 term-panel has-scan">
+            <div class="term-chrome">
+              <span class="term-dot alert"></span>
+              <span class="term-dot warn"></span>
+              <span class="term-dot live"></span>
+              <span class="ml-2 font-mono text-[0.62rem] text-ink-faint">incoming alarm</span>
+              <span class="ml-auto font-mono text-[0.58rem] text-ink-faint" id="drill-ts">--:--</span>
+            </div>
+            <div class="activity-strip" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="p-5 sm:p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="drill-alarm-sev" id="drill-domain">TX</span>
+                <span class="font-mono text-[0.6rem] text-ink-faint" id="drill-source">—</span>
+              </div>
+              <p class="font-display text-[1.05rem] sm:text-lg font-semibold leading-snug text-ink" id="drill-alarm">
+                Loading scenario…
+              </p>
+              <p class="mt-3 text-sm text-ink-mute leading-relaxed" id="drill-detail"></p>
+
+              <p class="mt-5 mb-2 font-mono text-[0.55rem] tracking-[0.14em] uppercase text-ink-faint">What the console shows</p>
+              <div class="drill-ctx" id="drill-ctx"></div>
+
+              <p class="mt-5 font-mono text-[0.58rem] text-ink-faint leading-relaxed">
+                Illustrative scenario. Built from the kind of alarm a multi-domain NOC sees — not reproduced from any employer's incident record.
+              </p>
+            </div>
+          </div>
+
+          <!-- ── The three calls ── -->
+          <div class="lg:col-span-7 drill-card" id="drill-card">
+            <div class="drill-q">
+              <p class="drill-q-label">Call 1 of 3</p>
+              <p class="drill-q-title">How do you classify it?</p>
+              <div class="drill-opts cols-4" id="drill-q-sev" role="group" aria-label="Severity"></div>
+              <div class="drill-why hidden" id="drill-why-sev"></div>
+            </div>
+            <div class="drill-q">
+              <p class="drill-q-label">Call 2 of 3</p>
+              <p class="drill-q-title">What is your first action?</p>
+              <div class="drill-opts cols-2" id="drill-q-act" role="group" aria-label="First action"></div>
+              <div class="drill-why hidden" id="drill-why-act"></div>
+            </div>
+            <div class="drill-q">
+              <p class="drill-q-label">Call 3 of 3</p>
+              <p class="drill-q-title">Who needs to hear about it, and how?</p>
+              <div class="drill-opts cols-2" id="drill-q-esc" role="group" aria-label="Escalation"></div>
+              <div class="drill-why hidden" id="drill-why-esc"></div>
+            </div>
+            <div class="drill-actions">
+              <span class="drill-score" id="drill-score" aria-live="polite"></span>
+              <div class="flex items-center gap-2">
+                <button type="button" class="drill-btn ghost hidden" id="drill-reset">Restart shift</button>
+                <button type="button" class="drill-btn primary" id="drill-submit" disabled>Make the call</button>
+                <button type="button" class="drill-btn primary hidden" id="drill-next">Next alarm →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── End-of-shift summary (hidden until the third alarm is graded) ── -->
+        <div class="drill-summary mt-6 hidden" id="drill-summary" role="status" aria-live="polite">
+          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-3">
+            <div>
+              <p class="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-forest-glow">Shift handover</p>
+              <p class="font-display text-lg font-semibold text-ink mt-1" id="drill-summary-title">Shift complete</p>
+            </div>
+            <p class="drill-score good" id="drill-summary-score"></p>
+          </div>
+          <div id="drill-summary-rows"></div>
+          <p class="mt-4 text-sm text-ink-mute leading-relaxed" id="drill-summary-note"></p>
+        </div>
+
+        <noscript>
+          <p class="mt-6 text-sm text-ink-mute">The shift simulator needs JavaScript. The escalation matrix above describes the same judgement in a static form.</p>
+        </noscript>
       </div>
     </section>
 
@@ -4552,7 +4914,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
       });
 
       // ── Active section highlighting ──
-      const sectionIds = ['top', 'about', 'noc', 'experience', 'reel', 'projects', 'skills', 'certifications', 'contact'];
+      const sectionIds = ['top', 'about', 'noc', 'drill', 'experience', 'reel', 'projects', 'skills', 'certifications', 'contact'];
       const railItems = document.querySelectorAll('.rail-item[data-section]');
       const navCrumb = document.getElementById('nav-crumb');
       const navLinks = document.querySelectorAll('.nav-link[data-section]');
@@ -5632,6 +5994,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
 
         const COMMANDS = [
           { label: 'NOC Ops & SLA', hint: 'section', keys: 'noc soc kpi sla uptime monitoring network operations', run: goTo('#noc') },
+          { label: 'Shift simulator — sit the shift', hint: 'section', keys: 'drill simulator triage quiz test shift alarm scenario', run: goTo('#drill') },
           { label: 'Experience — Safaricom NOC', hint: 'section', keys: 'experience safaricom work history internship', run: goTo('#experience') },
           { label: 'Ops Reel', hint: 'section', keys: 'reel video clips watch demo', run: goTo('#reel') },
           { label: 'Projects', hint: 'section', keys: 'projects work systems automation rag', run: goTo('#projects') },
@@ -5748,6 +6111,276 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
           }
         });
       })();
+
+      /* ═══════════════ SHIFT SIMULATOR ═══════════════
+         Three alarms. For each: severity, first action, escalation.
+         `right` is the index of the defensible call; `why` is the reasoning
+         shown after grading — written so that a wrong answer still teaches
+         the matrix rather than just scoring zero. */
+      const DRILL_SCENARIOS = [
+        {
+          domain: 'TX', ts: '02:41', source: 'ring 07 · west span',
+          alarm: 'Ring 07 west span: loss of signal. Traffic has switched to the east path.',
+          detail: 'Four sites on the ring are now running unprotected. No customer tickets. Heavy rain reported at the western hop site.',
+          ctx: [
+            { k: 'Customer impact', v: 'None yet', tone: 'ok' },
+            { k: 'Redundancy', v: 'Lost · 4 sites', tone: 'bad' },
+            { k: 'East path util', v: '71% → 88%', tone: 'warn' },
+            { k: 'Weather · west hop', v: 'Heavy rain', tone: 'warn' },
+          ],
+          sev: {
+            opts: ['P1', 'P2', 'P3', 'P4'], right: 1,
+            why: '<strong>P2.</strong> Service is up, so it is not a P1 — but four sites are one more fault away from an outage and the surviving path is at 88%. "Degraded, redundancy lost" is exactly the P2 definition. Calling it P3 because "nobody is complaining" is how a P2 becomes a 3am P1.',
+          },
+          act: {
+            opts: [
+              'Confirm the protection switch completed cleanly and the east path has headroom',
+              'Remotely reset the west span optics to try to bring it back',
+              'Hold until a second alarm confirms it is real',
+              'Open a P1 bridge and page every domain',
+            ], right: 0,
+            why: '<strong>Verify the switch, then protect the survivor.</strong> The first job is to know whether the thing keeping customers up actually worked. Resetting optics before you understand the fault destroys evidence and will not fix rain fade. Waiting wastes the window; a P1 bridge for an up service burns credibility.',
+          },
+          esc: {
+            opts: [
+              'Transmission domain — ticket with span ID, timestamps and the weather correlation attached',
+              'Vendor NOC directly, since it is probably their equipment',
+              'RAN team, because the sites are radio sites',
+              'Nobody yet — monitor and escalate if it gets worse',
+            ], right: 0,
+            why: '<strong>Transmission, with context.</strong> The domain team owns the path; the vendor is their call, not the NOC’s. RAN is affected but not responsible. And "monitor" is not an escalation path for a lost-redundancy P2 at 88% utilisation — it is a hope.',
+          },
+        },
+        {
+          domain: 'DIG', ts: '14:07', source: 'api gateway · prod',
+          alarm: 'API gateway p95 latency 850 ms against a 400 ms SLO, three consecutive intervals.',
+          detail: 'Error rate 0.3% and climbing slowly. A release went to the gateway tier at 13:47. Two customer tickets in the last ten minutes.',
+          ctx: [
+            { k: 'Error budget left', v: '12%', tone: 'bad' },
+            { k: 'Burn rate', v: '2.4×', tone: 'bad' },
+            { k: 'Last change', v: '13:47 · gateway', tone: 'warn' },
+            { k: 'Customer tickets', v: '2 · rising', tone: 'warn' },
+          ],
+          sev: {
+            opts: ['P1', 'P2', 'P3', 'P4'], right: 1,
+            why: '<strong>P2 — handled with P1 urgency.</strong> The service is degraded, not down, so the matrix says P2. But a 2.4× burn with 12% budget left means the month’s SLA fails inside hours if nothing changes. The severity is P2; the clock is a P1 clock. Knowing the difference is the whole job.',
+          },
+          act: {
+            opts: [
+              'Correlate with the 13:47 release and raise a rollback with the owning team now',
+              'Restart the gateway nodes to clear whatever is stuck',
+              'Raise the latency threshold so the alarm stops firing',
+              'Wait one more interval to be sure it is not a blip',
+            ], right: 0,
+            why: '<strong>Correlate, then roll back.</strong> A degradation that starts twenty minutes after a change is the change until proven otherwise — and rollback is the fastest safe restore. Restarting destroys the evidence that proves it. Moving the threshold is the one answer that should end a career. Three consecutive intervals already <em>was</em> the wait.',
+          },
+          esc: {
+            opts: [
+              'Digital services owner and the change manager — change freeze on the tier until restored',
+              'Shift lead only; it is not a full outage',
+              'The vendor of the gateway software',
+              'Customer care, so they can tell callers it is known',
+            ], right: 0,
+            why: '<strong>Owner plus change manager, freeze now.</strong> Burn above 1.0× with budget nearly spent is the trigger for a freeze — that is what the error budget is <em>for</em>. Customer care should also be told, but it is a comms step, not the escalation. The vendor comes after the rollback result, not before.',
+          },
+        },
+        {
+          domain: 'RAN', ts: '09:15', source: 'site NBO-0412 · sector 2',
+          alarm: 'Site NBO-0412 sector 2: RRC setup success 97.1% against a 98% threshold.',
+          detail: 'One of three sectors. Traffic volume normal, no dropped-call alarm, no outage. The same sector dipped at this hour twice this month and recovered on its own.',
+          ctx: [
+            { k: 'Customer impact', v: 'None observed', tone: 'ok' },
+            { k: 'Scope', v: '1 sector · 1 site', tone: 'ok' },
+            { k: 'Pattern', v: '3rd time · same hour', tone: 'warn' },
+            { k: 'Power / neighbours', v: 'Mains OK · normal', tone: 'ok' },
+          ],
+          sev: {
+            opts: ['P1', 'P2', 'P3', 'P4'], right: 2,
+            why: '<strong>P3.</strong> Single site, single sector, traffic normal, no customer impact — the matrix is unambiguous. Over-calling this a P2 wakes an on-call engineer for a sector that recovers on its own, and the third time you do that, nobody answers the phone for the real P2. Under-calling to P4 ignores a pattern worth fixing.',
+          },
+          act: {
+            opts: [
+              'Pull the sector’s history and check for interference at that hour; log the recurrence',
+              'Page the RAN on-call engineer immediately',
+              'Reset the sector to clear it now',
+              'Clear the alarm — 97.1% is close enough to 98%',
+            ], right: 0,
+            why: '<strong>Investigate the pattern, log it.</strong> Three dips at the same hour is a story — scheduled load, interference, a neighbour cell — and the history tells it. Paging on-call for a P3 in business hours is a misuse of the rota. Resetting a sector carrying normal traffic drops the users who were fine. "Close enough" is not a threshold policy.',
+          },
+          esc: {
+            opts: [
+              'Ticket to the RAN optimisation queue with the recurrence pattern and timestamps attached',
+              'Shift lead, then vendor, per the P1 path',
+              'Open a bridge with the RAN domain lead',
+              'No escalation — it will recover like last time',
+            ], right: 0,
+            why: '<strong>A ticket with the pattern attached.</strong> P3 goes to a queue, not a person’s phone — but it does go. The recurrence is the valuable part: a ticket that says "third time, same hour, here are the three timestamps" gets fixed; one that says "sector dipped" gets closed. "It will recover" is true and still the wrong answer, because recovering is not the same as fixed.',
+          },
+        },
+      ];
+
+      (function shiftSimulator() {
+        const stage = $('#drill-stage');
+        if (!stage) return;
+
+        const el = {
+          ts: $('#drill-ts'), domain: $('#drill-domain'), source: $('#drill-source'),
+          alarm: $('#drill-alarm'), detail: $('#drill-detail'), ctx: $('#drill-ctx'),
+          progress: $('#drill-progress'), steps: $$('#drill-steps .drill-step'),
+          score: $('#drill-score'), submit: $('#drill-submit'), next: $('#drill-next'),
+          reset: $('#drill-reset'), summary: $('#drill-summary'),
+          summaryTitle: $('#drill-summary-title'), summaryScore: $('#drill-summary-score'),
+          summaryRows: $('#drill-summary-rows'), summaryNote: $('#drill-summary-note'),
+        };
+        const QUESTIONS = ['sev', 'act', 'esc'];
+        const KEYS = ['A', 'B', 'C', 'D'];
+
+        let idx = 0;
+        let picks = { sev: null, act: null, esc: null };
+        let graded = false;
+        const results = []; // per scenario: number right out of 3
+
+        function renderOptions(q, scenario) {
+          const wrap = $(`#drill-q-${q}`);
+          const why = $(`#drill-why-${q}`);
+          wrap.innerHTML = '';
+          why.classList.add('hidden');
+          why.innerHTML = '';
+          scenario[q].opts.forEach((text, i) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'drill-opt';
+            btn.setAttribute('aria-pressed', 'false');
+            btn.innerHTML = `<span class="opt-key" aria-hidden="true">${KEYS[i]}</span><span>${text}</span>`;
+            btn.addEventListener('click', () => {
+              if (graded) return;
+              picks[q] = i;
+              $$('.drill-opt', wrap).forEach((b, n) => b.setAttribute('aria-pressed', n === i ? 'true' : 'false'));
+              el.submit.disabled = !QUESTIONS.every((k) => picks[k] !== null);
+            });
+            wrap.appendChild(btn);
+          });
+        }
+
+        function render() {
+          const s = DRILL_SCENARIOS[idx];
+          picks = { sev: null, act: null, esc: null };
+          graded = false;
+
+          el.ts.textContent = s.ts;
+          el.domain.textContent = s.domain;
+          el.source.textContent = s.source;
+          el.alarm.textContent = s.alarm;
+          el.detail.textContent = s.detail;
+          el.ctx.innerHTML = s.ctx.map((c) =>
+            `<div class="drill-ctx-item"><p class="k">${c.k}</p><p class="v ${c.tone || ''}">${c.v}</p></div>`
+          ).join('');
+
+          QUESTIONS.forEach((q) => renderOptions(q, s));
+
+          el.progress.textContent = `Alarm ${idx + 1} of 3`;
+          el.steps.forEach((st, n) => {
+            st.classList.toggle('is-current', n === idx);
+            st.classList.toggle('is-done', n < idx && results[n] >= 2);
+            st.classList.toggle('is-missed', n < idx && results[n] < 2);
+          });
+
+          el.score.textContent = '';
+          el.score.className = 'drill-score';
+          el.submit.disabled = true;
+          el.submit.classList.remove('hidden');
+          el.next.classList.add('hidden');
+          el.reset.classList.toggle('hidden', idx === 0);
+        }
+
+        function grade() {
+          const s = DRILL_SCENARIOS[idx];
+          let right = 0;
+          QUESTIONS.forEach((q) => {
+            const wrap = $(`#drill-q-${q}`);
+            const why = $(`#drill-why-${q}`);
+            const correct = s[q].right;
+            $$('.drill-opt', wrap).forEach((b, n) => {
+              b.disabled = true;
+              if (n === correct) b.classList.add('is-right');
+              else if (n === picks[q]) b.classList.add('is-wrong');
+            });
+            if (picks[q] === correct) right++;
+            why.innerHTML = s[q].why;
+            why.classList.remove('hidden');
+          });
+          graded = true;
+          results[idx] = right;
+
+          el.score.innerHTML = `<b>${right}</b>/3 · ${right === 3 ? 'clean call' : right === 2 ? 'close — read the note' : 're-read the matrix'}`;
+          el.score.className = 'drill-score ' + (right === 3 ? 'good' : right <= 1 ? 'poor' : '');
+          el.submit.classList.add('hidden');
+          el.next.classList.remove('hidden');
+          el.next.textContent = idx === DRILL_SCENARIOS.length - 1 ? 'Hand over the shift →' : 'Next alarm →';
+          el.steps[idx].classList.toggle('is-done', right >= 2);
+          el.steps[idx].classList.toggle('is-missed', right < 2);
+          // Bring the first explanation into view on small screens.
+          $('#drill-why-sev').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
+        }
+
+        function summarise() {
+          const total = results.reduce((a, b) => a + b, 0);
+          const titles = ['Transmission · redundancy lost', 'Digital · SLO breach after a release', 'RAN · single-sector dip'];
+          el.summaryRows.innerHTML = results.map((r, n) =>
+            `<div class="drill-summary-row">
+               <span class="font-mono text-[0.6rem] text-ink-faint">0${n + 1}</span>
+               <span class="text-ink-mute">${titles[n]}</span>
+               <span class="font-mono text-xs ${r === 3 ? 'text-forest-glow' : r <= 1 ? 'text-rust' : 'text-gold'}">${r}/3</span>
+             </div>`
+          ).join('');
+          el.summaryScore.innerHTML = `<b>${total}</b>/9`;
+          el.summaryScore.className = 'drill-score ' + (total >= 8 ? 'good' : total <= 4 ? 'poor' : '');
+          el.summaryTitle.textContent = total >= 8 ? 'Clean shift — you would be fine on my rota.' : total >= 6 ? 'Solid shift. The notes above are the gaps.' : 'The matrix is above. Worth a second pass.';
+          el.summaryNote.textContent = 'This is the loop I ran on rotation and the loop I would run on your floor: classify honestly, act on evidence, escalate with context attached. The hard part was never reading the dashboard — it was deciding, quickly and defensibly, what deserves to wake someone up.';
+          el.summary.classList.remove('hidden');
+          stage.classList.add('hidden');
+          el.summary.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        }
+
+        function restart() {
+          idx = 0;
+          results.length = 0;
+          el.summary.classList.add('hidden');
+          stage.classList.remove('hidden');
+          render();
+          $('#drill').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        }
+
+        el.submit.addEventListener('click', grade);
+        el.next.addEventListener('click', () => {
+          if (idx === DRILL_SCENARIOS.length - 1) summarise();
+          else { idx++; render(); }
+        });
+        el.reset.addEventListener('click', restart);
+
+        // The summary gets its own restart so the stage is not needed to reach it.
+        const summaryRestart = document.createElement('button');
+        summaryRestart.type = 'button';
+        summaryRestart.className = 'drill-btn ghost mt-4';
+        summaryRestart.textContent = 'Run the shift again';
+        summaryRestart.addEventListener('click', restart);
+        el.summary.appendChild(summaryRestart);
+
+        // Keyboard: A–D pick an option in the first unanswered question; Enter submits.
+        stage.addEventListener('keydown', (e) => {
+          if (graded) return;
+          const k = e.key.toUpperCase();
+          const n = KEYS.indexOf(k);
+          if (n === -1 || e.metaKey || e.ctrlKey || e.altKey) return;
+          const q = QUESTIONS.find((key) => picks[key] === null);
+          if (!q) return;
+          const btn = $$(`#drill-q-${q} .drill-opt`)[n];
+          if (btn) { e.preventDefault(); btn.click(); btn.focus(); }
+        });
+
+        render();
+      })();
+
     })();
   </script>
 </body>
