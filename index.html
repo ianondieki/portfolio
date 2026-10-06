@@ -31,7 +31,11 @@
     "hasCredential": [
       { "@type": "EducationalOccupationalCredential", "name": "CCNA", "credentialCategory": "certification", "recognizedBy": { "@type": "Organization", "name": "Cisco" } },
       { "@type": "EducationalOccupationalCredential", "name": "JNCIA", "credentialCategory": "certification", "recognizedBy": { "@type": "Organization", "name": "Juniper Networks" } },
-      { "@type": "EducationalOccupationalCredential", "name": "ITIL Foundation", "credentialCategory": "certification" }
+      { "@type": "EducationalOccupationalCredential", "name": "ITIL Foundation", "credentialCategory": "certification" },
+      { "@type": "EducationalOccupationalCredential", "name": "AWS Security — AWS Skill Builder training badge", "credentialCategory": "badge", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" } },
+      { "@type": "EducationalOccupationalCredential", "name": "AWS Networking — AWS Skill Builder training badge", "credentialCategory": "badge", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" } },
+      { "@type": "EducationalOccupationalCredential", "name": "AWS Solutions Architect — AWS Skill Builder training badge", "credentialCategory": "badge", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" } },
+      { "@type": "EducationalOccupationalCredential", "name": "AWS Generative AI — AWS Skill Builder training badge", "credentialCategory": "badge", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" } }
     ],
     "knowsAbout": [
       "Network operations centre", "Service operations", "Incident management", "SLA and error budgets",
@@ -2959,6 +2963,27 @@
 
     @media (prefers-reduced-motion: reduce) { .gh-card:hover { transform: none; } }
 
+
+    /* ═══════════ AWS SKILL BUILDER · TRAINING BADGES (inside #certifications) ═══════════
+       Reuses .cert-badge so the theme author's dark override applies; the gold
+       top rule and icon tint mark these as badges, not certifications. */
+    .aws-badge { border-top: 2px solid var(--gold); }
+    .aws-badge-icon {
+      height: 2.5rem; width: 2.5rem; border-radius: 0.375rem;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(var(--gold-rgb) / 0.12);
+      border: 1px solid rgba(var(--gold-rgb) / 0.3);
+      color: var(--gold);
+    }
+    .aws-verify {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      margin-top: 0.75rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.6rem; letter-spacing: 0.06em;
+      color: var(--forest); text-decoration: none;
+    }
+    .aws-verify:hover { color: var(--forest-glow); text-decoration: underline; text-underline-offset: 3px; }
+
   </style>
 </head>
 <body class="text-ink font-body antialiased">
@@ -5552,14 +5577,15 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
               <span class="jr-dot" aria-hidden="true"></span>
               <p class="jr-when"><span class="jr-phase">03 · Credentials</span><span class="jr-year"></span></p>
               <h3 class="jr-title">CCNA · JNCIA · ITIL Foundation</h3>
-              <p class="jr-org">Cisco · Juniper · AXELOS — plus the UDARA project certification</p>
+              <p class="jr-org">Cisco · Juniper · AXELOS — plus the UDARA project certification and four AWS Skill Builder training badges</p>
               <p class="jr-body">
                 The vocabulary under the judgement. CCNA and JNCIA for the layer-3 reasoning; ITIL for
                 incident, problem and change — the language an NSOC uses to explain itself to the rest of
-                the business.
+                the business. AWS Skill Builder badges in Security, Networking, Solutions Architect and
+                Generative AI sit alongside — training badges, labelled as such.
               </p>
               <div class="jr-tags">
-                <span class="tech-tag">Routing &amp; switching</span><span class="tech-tag">Junos fundamentals</span><span class="tech-tag">ITIL v4</span>
+                <span class="tech-tag">Routing &amp; switching</span><span class="tech-tag">Junos fundamentals</span><span class="tech-tag">ITIL v4</span><span class="tech-tag">AWS Skill Builder</span>
               </div>
               <a class="jr-link" href="#certifications">All credentials →</a>
             </li>
@@ -5708,6 +5734,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
               <h3 class="font-display font-semibold text-sm mb-3">Cloud</h3>
               <ul class="flex flex-wrap gap-1.5">
                 <li><span class="tech-tag">AWS <span class="text-gold/80">(AI Practitioner in progress)</span></span></li>
+                <li><span class="tech-tag">AWS Skill Builder badges · Security · Networking · Solutions Architect · GenAI</span></li>
               </ul>
             </div>
           </div>
@@ -5780,6 +5807,74 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
             </div>
             <h3 class="font-display font-semibold text-sm">AWS Certified AI Practitioner</h3>
             <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">AIF-C01 · finishing</p>
+          </div>
+        </div>
+
+        <!-- ── AWS Skill Builder · training badges ──
+             Training badges are not certifications and are labelled as such,
+             deliberately and separately from the grid above.
+        -->
+        <div class="mt-14 reveal" id="aws-badges" aria-labelledby="aws-badges-heading">
+          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
+            <div class="max-w-2xl">
+              <p class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold mb-2">AWS Skill Builder</p>
+              <h3 id="aws-badges-heading" class="font-display text-xl sm:text-2xl font-semibold tracking-tight">Training badges</h3>
+              <p class="mt-2 text-sm text-ink-mute leading-relaxed">
+                Four AWS training badges earned through AWS Skill Builder. Badges, not certifications —
+                listed separately on purpose, because that distinction is the first thing a good interviewer checks.
+              </p>
+            </div>
+            <span class="avail-pill self-start sm:self-auto shrink-0"><span class="status-dot" aria-hidden="true"></span>4 badges · AWS Skill Builder</span>
+          </div>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="cert-badge aws-badge p-5">
+              <div class="flex items-start justify-between gap-2 mb-4">
+                <div class="aws-badge-icon" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg></div>
+                <span class="font-mono text-[0.6rem] text-gold tracking-wider uppercase">Badge</span>
+              </div>
+              <h4 class="font-display font-semibold text-sm">AWS Security</h4>
+              <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">Training badge · AWS Skill Builder</p>
+              <p class="mt-3 text-xs text-ink-mute leading-relaxed">Identity and access, the shared-responsibility model, encryption and logging — the controls an operations floor leans on.</p>
+              <!-- EDIT: paste this badge's Credly URL and remove the comment markers to show a verify link:
+              <a class="aws-verify" href="https://www.credly.com/badges/…" target="_blank" rel="noopener noreferrer">Verify on Credly ↗</a>
+              -->
+            </div>
+            <div class="cert-badge aws-badge p-5">
+              <div class="flex items-start justify-between gap-2 mb-4">
+                <div class="aws-badge-icon" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v5m0 0l-5.5 5.5M12 12l5.5 5.5"/></svg></div>
+                <span class="font-mono text-[0.6rem] text-gold tracking-wider uppercase">Badge</span>
+              </div>
+              <h4 class="font-display font-semibold text-sm">AWS Networking</h4>
+              <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">Training badge · AWS Skill Builder</p>
+              <p class="mt-3 text-xs text-ink-mute leading-relaxed">VPC design, routing, connectivity and DNS on AWS — the cloud end of the paths I watched on the floor.</p>
+              <!-- EDIT: paste this badge's Credly URL and remove the comment markers to show a verify link:
+              <a class="aws-verify" href="https://www.credly.com/badges/…" target="_blank" rel="noopener noreferrer">Verify on Credly ↗</a>
+              -->
+            </div>
+            <div class="cert-badge aws-badge p-5">
+              <div class="flex items-start justify-between gap-2 mb-4">
+                <div class="aws-badge-icon" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg></div>
+                <span class="font-mono text-[0.6rem] text-gold tracking-wider uppercase">Badge</span>
+              </div>
+              <h4 class="font-display font-semibold text-sm">AWS Solutions Architect</h4>
+              <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">Training badge · AWS Skill Builder</p>
+              <p class="mt-3 text-xs text-ink-mute leading-relaxed">Well-Architected thinking: resilient, cost-aware designs and the trade-offs behind each one.</p>
+              <!-- EDIT: paste this badge's Credly URL and remove the comment markers to show a verify link:
+              <a class="aws-verify" href="https://www.credly.com/badges/…" target="_blank" rel="noopener noreferrer">Verify on Credly ↗</a>
+              -->
+            </div>
+            <div class="cert-badge aws-badge p-5">
+              <div class="flex items-start justify-between gap-2 mb-4">
+                <div class="aws-badge-icon" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4m0 10v4m9-9h-4M7 12H3m13.5-6.5l-2.8 2.8M9.3 14.7l-2.8 2.8m0-11l2.8 2.8m5.4 5.4l2.8 2.8"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+                <span class="font-mono text-[0.6rem] text-gold tracking-wider uppercase">Badge</span>
+              </div>
+              <h4 class="font-display font-semibold text-sm">AWS Generative AI</h4>
+              <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">Training badge · AWS Skill Builder</p>
+              <p class="mt-3 text-xs text-ink-mute leading-relaxed">Foundation models, prompt design and the services around them — the ground under the automation work.</p>
+              <!-- EDIT: paste this badge's Credly URL and remove the comment markers to show a verify link:
+              <a class="aws-verify" href="https://www.credly.com/badges/…" target="_blank" rel="noopener noreferrer">Verify on Credly ↗</a>
+              -->
+            </div>
           </div>
         </div>
       </div>
@@ -7066,7 +7161,7 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
           { label: 'Shipped — live from GitHub', hint: 'panel', keys: 'github repos shipped code live repositories', run: goTo('#gh-panel') },
           { label: 'Journey — the timeline', hint: 'section', keys: 'journey timeline career history path story', run: goTo('#journey') },
           { label: 'Skills', hint: 'section', keys: 'skills stack tools tech', run: goTo('#skills') },
-          { label: 'Certifications', hint: 'section', keys: 'certs ccna jncia itil aws certification', run: goTo('#certifications') },
+          { label: 'Certifications', hint: 'section', keys: 'certs ccna jncia itil aws certification skill builder badges security networking architect generative ai', run: goTo('#certifications') },
           { label: 'Contact', hint: 'section', keys: 'contact hire email reach', run: goTo('#contact') },
           {
             label: 'Copy email address', hint: 'ondiekiian0@gmail.com', keys: 'copy email address mail',
