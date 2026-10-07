@@ -35,7 +35,7 @@
       { "@type": "EducationalOccupationalCredential", "name": "AWS Security — AWS Skill Builder training badge", "credentialCategory": "badge", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" } },
       { "@type": "EducationalOccupationalCredential", "name": "AWS Networking — AWS Skill Builder training badge", "credentialCategory": "badge", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" } },
       { "@type": "EducationalOccupationalCredential", "name": "AWS Solutions Architect — AWS Skill Builder training badge", "credentialCategory": "badge", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" } },
-      { "@type": "EducationalOccupationalCredential", "name": "AWS Generative AI — AWS Skill Builder training badge", "credentialCategory": "badge", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" } }
+      { "@type": "EducationalOccupationalCredential", "name": "AWS Cloud Quest: Generative AI Practitioner — Training Badge", "credentialCategory": "badge", "url": "https://www.credly.com/badges/b0413ad5-4e3a-4af8-8174-ddadc844ae04", "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services Training and Certification" } }
     ],
     "knowsAbout": [
       "Network operations centre", "Service operations", "Incident management", "SLA and error budgets",
@@ -2975,6 +2975,13 @@
       border: 1px solid rgba(var(--gold-rgb) / 0.3);
       color: var(--gold);
     }
+    .aws-badge-art {
+      height: 3.25rem; width: 3.25rem; border-radius: 0.5rem;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--edge);
+      padding: 0.15rem;
+    }
     .aws-verify {
       display: inline-flex; align-items: center; gap: 0.3rem;
       margin-top: 0.75rem;
@@ -5865,15 +5872,14 @@ collection = client.<span class="c-fn">get_or_create_collection</span>(
             </div>
             <div class="cert-badge aws-badge p-5">
               <div class="flex items-start justify-between gap-2 mb-4">
-                <div class="aws-badge-icon" aria-hidden="true"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4m0 10v4m9-9h-4M7 12H3m13.5-6.5l-2.8 2.8M9.3 14.7l-2.8 2.8m0-11l2.8 2.8m5.4 5.4l2.8 2.8"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+                <img class="aws-badge-art" src="assets/badges/aws-cloud-quest-generative-ai-practitioner.png" width="512" height="512" loading="lazy" decoding="async"
+                     alt="AWS Cloud Quest: Generative AI Practitioner training badge" />
                 <span class="font-mono text-[0.6rem] text-gold tracking-wider uppercase">Badge</span>
               </div>
-              <h4 class="font-display font-semibold text-sm">AWS Generative AI</h4>
-              <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">Training badge · AWS Skill Builder</p>
-              <p class="mt-3 text-xs text-ink-mute leading-relaxed">Foundation models, prompt design and the services around them — the ground under the automation work.</p>
-              <!-- EDIT: paste this badge's Credly URL and remove the comment markers to show a verify link:
-              <a class="aws-verify" href="https://www.credly.com/badges/…" target="_blank" rel="noopener noreferrer">Verify on Credly ↗</a>
-              -->
+              <h4 class="font-display font-semibold text-sm">AWS Cloud Quest: Generative AI Practitioner</h4>
+              <p class="mt-1 font-mono text-[0.65rem] text-ink-faint">Training badge · AWS Skill Builder · issued by AWS Training and Certification</p>
+              <p class="mt-3 text-xs text-ink-mute leading-relaxed">Building generative AI solutions on AWS AI services: prompt engineering, code generation, chatbot development, content moderation, and fine-tuning models.</p>
+              <a class="aws-verify" href="https://www.credly.com/badges/b0413ad5-4e3a-4af8-8174-ddadc844ae04" target="_blank" rel="noopener noreferrer" aria-label="Verify the Generative AI Practitioner badge on Credly (opens in new tab)">Verify on Credly ↗</a>
             </div>
           </div>
         </div>
